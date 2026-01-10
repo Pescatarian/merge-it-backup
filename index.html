@@ -6079,6 +6079,76 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
         // Initialize display
         displayNoData();
 
+        // ===== SUPABASE AUTH =====
+        const SUPABASE_URL = 'https://gsjqilmnwpvmdkkgnbhn.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdzanFpbG1ud3B2bWRra2duYmhuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjgwNDkzNDcsImV4cCI6MjA4MzYyNTM0N30.ZYgxp7v4huKK1_jBX7c45wGsx6I09XPkEgjjqxtJRuM';
+        const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        let currentUser = null;
+
+        function openAuthModal() {
+            document.getElementById('authModal').classList.add('active');
+            document.getElementById('authError').style.display = 'none';
+        }
+
+        function closeAuthModal() {
+            document.getElementById('authModal').classList.remove('active');
+            document.getElementById('authEmail').value = '';
+            document.getElementById('authPassword').value = '';
+        }
+
+        async function handleLogin() {
+            const email = document.getElementById('authEmail').value;
+            const password = document.getElementById('authPassword').value;
+            const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
+            if (error) {
+                document.getElementById('authError').textContent = error.message;
+                document.getElementById('authError').style.display = 'block';
+            } else {
+                currentUser = data.user;
+                updateAuthUI();
+                closeAuthModal();
+            }
+        }
+
+        async function handleSignup() {
+            const email = document.getElementById('authEmail').value;
+            const password = document.getElementById('authPassword').value;
+            const { data, error } = await supabaseClient.auth.signUp({ email, password });
+            if (error) {
+                document.getElementById('authError').textContent = error.message;
+                document.getElementById('authError').style.display = 'block';
+            } else {
+                alert('Check your email for confirmation link!');
+                closeAuthModal();
+            }
+        }
+
+        async function handleLogout() {
+            await supabaseClient.auth.signOut();
+            currentUser = null;
+            updateAuthUI();
+        }
+
+        function updateAuthUI() {
+            const authStatus = document.getElementById('authStatus');
+            if (currentUser) {
+                const displayName = currentUser.email.split('@')[0];
+                authStatus.innerHTML = `
+                    <span style="color: #10b981; font-size: 11px;">${displayName}</span>
+                    <button onclick="handleLogout()" style="background: #ef4444; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 10px;">Logout</button>
+                `;
+            } else {
+                authStatus.innerHTML = `<button id="loginBtn" onclick="openAuthModal()" style="background: #4a9eff; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 11px;">Login</button>`;
+            }
+        }
+
+        supabaseClient.auth.getSession().then(({ data: { session } }) => {
+            if (session) {
+                currentUser = session.user;
+                updateAuthUI();
+            }
+        });
+
         
         </script>
 
