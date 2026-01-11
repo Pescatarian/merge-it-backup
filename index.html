@@ -36,6 +36,10 @@
             overflow: hidden;
         }
 
+        .app-hidden {
+            display: none !important;
+        }
+
         /* TOP SEARCH BAR */
         .top-search-bar {
             background-color: #0d0d0d;
@@ -1124,10 +1128,14 @@
             background: transparent !important;
         }
 
+        
     </style>
 </head>
 <body>
-    <div class="main-content">
+    <div class="auth-required-overlay" style="display:flex; position:fixed; top:0; left:0; width:100%; height:100%; background:#1a1a1a; justify-content:center; align-items:center; z-index:9999;">
+        <h2 style="color:#e0e0e0;">Please log in to use this app</h2>
+    </div>
+    <div class="main-content app-hidden" id="appContent">
         <!-- TOP SEARCH BAR -->
         <div class="top-search-bar">
             <input 
@@ -1161,34 +1169,34 @@
         
         <!-- ACTIONS - TOP RIGHT CORNER -->
         <div style="position: fixed; top: 5px; right: 20px; display: flex; gap: 12px; z-index: 100; align-items: center;">
-            <div id="authStatus" style="display: flex; align-items: center; gap: 8px;">
-                <button id="loginBtn" onclick="openAuthModal()" style="background: #4a9eff; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 11px;">Login</button>
-            </div>
-            <div style="display: flex; flex-direction: column; align-items: center; cursor: pointer;" onclick="openImportModal()">
-                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <button onclick="openImportModal()" style="background: #333; color: white; border: 1px solid #555; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 12px; display: flex; align-items: center; gap: 6px;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
                     <path d="M4 17v2a2 2 0 002 2h12a2 2 0 002-2v-2"/>
                     <path d="M7 11l5 5 5-5"/>
                     <path d="M12 4v12"/>
                 </svg>
-                <span style="color: white; font-size: 10px; margin-top: 2px;">Import Data</span>
-            </div>
-            <div style="display: flex; flex-direction: column; align-items: center; cursor: pointer;" onclick="exportAllData()">
-                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                Import Data
+            </button>
+            <button onclick="exportAllData()" style="background: #333; color: white; border: 1px solid #555; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 12px; display: flex; align-items: center; gap: 6px;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
                     <path d="M4 17v2a2 2 0 002 2h12a2 2 0 002-2v-2"/>
                     <path d="M7 9l5-5 5 5"/>
                     <path d="M12 4v12"/>
                 </svg>
-                <span style="color: white; font-size: 10px; margin-top: 2px;">Export Report</span>
-            </div>
-            <div style="display: flex; flex-direction: column; align-items: center; cursor: pointer;" onclick="document.getElementById('importFileInput').click()">
-                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                Export Report
+            </button>
+            <button onclick="document.getElementById('importFileInput').click()" style="background: #333; color: white; border: 1px solid #555; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 12px; display: flex; align-items: center; gap: 6px;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
                     <path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/>
                     <path d="M12 11v6"/>
                     <path d="M9 14l3 3 3-3"/>
                 </svg>
-                <span style="color: white; font-size: 10px; margin-top: 2px;">Load Report</span>
-            </div>
+                Load Report
+            </button>
             <input type="file" id="importFileInput" accept=".json" style="display: none;" onchange="importDataFile(event)">
+            <div id="authStatus" style="display: flex; align-items: center; gap: 8px;">
+                <button id="loginBtn" onclick="openAuthModal()" style="background: #4a9eff; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 11px;">Login</button>
+            </div>
         </div>
 
        <!-- BREADCRUMB + AGGREGATE SECTION (Hidden by default) -->
@@ -1241,6 +1249,7 @@
             
             <div id="dataDisplay"></div>
         </div>
+    </div>
 
     <!-- MODALS -->
     <div id="importModal" class="modal">
@@ -1439,11 +1448,11 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
     </div>
 
     <!-- Auth Modal -->
-    <div id="authModal" class="modal">
+    <div id="authModal" class="modal" style="z-index: 10000;">
         <div class="modal-content" style="max-width: 400px;">
             <div class="modal-header">
                 <h3 class="modal-title" id="authModalTitle">Login</h3>
-                <button class="close-btn" onclick="closeAuthModal()">&times;</button>
+                <button class="close-btn" id="authCloseBtn" onclick="closeAuthModal()" style="display: none;">&times;</button>
             </div>
             <div id="authError" style="display: none; background: #ef4444; color: white; padding: 10px; border-radius: 4px; margin-bottom: 15px;"></div>
             <div class="input-group">
@@ -1457,7 +1466,7 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
             <div style="display: flex; gap: 10px; margin-top: 20px;">
                 <button class="btn btn-primary" onclick="handleLogin()">Login</button>
                 <button class="btn btn-success" onclick="handleSignup()">Sign Up</button>
-                <button class="btn btn-secondary" onclick="closeAuthModal()">Cancel</button>
+                <button class="btn btn-secondary" id="authCancelBtn" onclick="closeAuthModal()" style="display: none;">Cancel</button>
             </div>
         </div>
     </div>
@@ -6090,6 +6099,12 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
             document.getElementById('authError').style.display = 'none';
         }
 
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && document.getElementById('authModal').classList.contains('active')) {
+                handleLogin();
+            }
+        });
+
         function closeAuthModal() {
             document.getElementById('authModal').classList.remove('active');
             document.getElementById('authEmail').value = '';
@@ -6107,6 +6122,8 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                 currentUser = data.user;
                 updateAuthUI();
                 closeAuthModal();
+                document.getElementById('appContent').classList.remove('app-hidden');
+                document.querySelector('.auth-required-overlay').style.display = 'none';
             }
         }
 
@@ -6127,25 +6144,54 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
             await supabaseClient.auth.signOut();
             currentUser = null;
             updateAuthUI();
+            document.getElementById('appContent').classList.add('app-hidden');
+            document.querySelector('.auth-required-overlay').style.display = 'flex';
+            openAuthModal();
         }
 
         function updateAuthUI() {
             const authStatus = document.getElementById('authStatus');
             if (currentUser) {
-                const displayName = currentUser.email.split('@')[0];
                 authStatus.innerHTML = `
-                    <span style="color: #10b981; font-size: 11px;">${displayName}</span>
-                    <button onclick="handleLogout()" style="background: #ef4444; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 10px;">Logout</button>
+                    <div style="position: relative; margin-left: 20px;">
+                        <div onclick="toggleUserMenu()" style="width: 44px; height: 44px; background: #333; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center;">
+                            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                <circle cx="12" cy="7" r="4"></circle>
+                            </svg>
+                        </div>
+                        <div id="userDropdown" style="display: none; position: absolute; right: 0; top: 50px; background: #333; border-radius: 8px; padding: 8px 0; min-width: 120px; z-index: 1000;">
+                            <div onclick="handleLogout()" style="padding: 8px 16px; cursor: pointer; color: white; font-size: 12px;">Logout</div>
+                        </div>
+                    </div>
                 `;
             } else {
                 authStatus.innerHTML = `<button id="loginBtn" onclick="openAuthModal()" style="background: #4a9eff; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 11px;">Login</button>`;
             }
         }
 
+        function toggleUserMenu() {
+            const dropdown = document.getElementById('userDropdown');
+            dropdown.style.display = dropdown.style.display === 'none' ? 'block' : 'none';
+
+            document.addEventListener('click', function(e) {
+            const dropdown = document.getElementById('userDropdown');
+            if (dropdown && !e.target.closest('#authStatus')) {
+                dropdown.style.display = 'none';
+            }
+        });
+        }
+
         supabaseClient.auth.getSession().then(({ data: { session } }) => {
             if (session) {
                 currentUser = session.user;
                 updateAuthUI();
+                document.getElementById('appContent').classList.remove('app-hidden');
+                document.querySelector('.auth-required-overlay').style.display = 'none';
+            } else {
+                document.getElementById('appContent').classList.add('app-hidden');
+                document.querySelector('.auth-required-overlay').style.display = 'flex';
+                openAuthModal();
             }
         });
 
@@ -6154,3 +6200,4 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
 
     </body>
 </html>
+
