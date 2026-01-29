@@ -24,16 +24,13 @@
             overflow: hidden;
             font-size: 12px;
         }
-  
-        .sidebar {
-            display: none;
-        }
-    
+   
         .main-content {
             flex: 1;
             display: flex;
             flex-direction: column;
             overflow: hidden;
+            margin-left: 180px;
         }
 
         .app-hidden {
@@ -255,7 +252,230 @@
             background-color: #f97316;
             color: #fff;
         }
-                  
+         
+        .sidebar {
+            width: 180px;
+            background-color: #0d0d0d;
+            border-right: 1px solid #333;
+            overflow-y: auto;
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            left: 0;
+            top: 0;
+            height: 100vh;
+            padding-top: 50px;
+        }
+
+        .sidebar-header {
+            font-size: 14px;
+            font-weight: bold;
+            color: white;
+            letter-spacing: 1px;
+            position: fixed;
+            top: 12px;
+            left: 12px;
+            background-color: #0d0d0d;
+            z-index: 100;
+            padding: 0;
+            margin: 0;
+            border: none;
+        }
+
+        .filters-title {
+            position: fixed;
+            top: 12px;
+            left: 12px;
+            font-size: 14px;
+            font-weight: bold;
+            color: white;
+            letter-spacing: 1px;
+            z-index: 100;
+        }
+
+        .filter-sections-wrapper {
+            margin: auto 0;
+        }
+        
+
+        .card-grid-header span {
+            color: white !important;
+        }
+
+        #cardSelectionGrid {
+            color: white !important;
+        }
+
+        .card-label {
+            color: white !important;
+        }
+
+        #cardSelectionGrid .card-row {
+            padding-left: 12px;
+            padding-right: 30px;
+        }
+
+        #cardSelectionGrid .card-row .card-circles {
+            padding-right: 20px;
+        }
+
+        .filter-section {
+            margin-bottom: 12px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid #222;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .filter-section:last-child {
+            border-bottom: none;
+        }
+
+        .filter-header {
+            color: #fff;
+            margin-bottom: 8px;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 4px 0;
+        }
+
+        .filter-header:hover {
+            color: #4a9eff;
+        }
+
+        .collapse-icon {
+            font-size: 10px;
+            transition: transform 0.2s;
+        }
+
+        .collapse-icon.collapsed {
+            transform: rotate(-90deg);
+        }
+
+        .filter-content {
+            max-height: 500px;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+
+        .filter-content.collapsed {
+            max-height: 0;
+        }
+
+        /* CARD SELECTION GRID */
+        .card-grid-header {
+            display: grid;
+            grid-template-columns: 1fr 32px 32px;
+            gap: 4px;
+            margin-bottom: 6px;
+            font-size: 10px;
+            color: #888;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding-left: 12px;
+            padding-right: 30px;
+        }
+
+        .card-grid-header span:nth-child(2),
+        .card-grid-header span:nth-child(3) {
+            text-align: center;
+        }
+
+        .card-row {
+            display: grid;
+            grid-template-columns: 1fr 32px 32px;
+            gap: 4px;
+            align-items: center;
+            padding: 3px 0;
+        }
+
+        .card-label {
+            color: #b0b0b0;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        /* CIRCLE SELECTOR */
+        .circle-selector {
+            width: 18px;
+            height: 18px;
+            border: 2px solid #444;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto;
+        }
+
+        .circle-selector:hover {
+            border-color: #4a9eff;
+        }
+
+        .circle-selector.selected {
+            border-color: #4a9eff;
+            background-color: #4a9eff;
+        }
+
+        .circle-selector.selected::after {
+            content: '';
+            width: 6px;
+            height: 6px;
+            background-color: #fff;
+            border-radius: 50%;
+        }
+
+        /* OPTION LIST (Suit, Pairdness, Connectivity) */
+        .filter-option {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 4px 0;
+            cursor: pointer;
+            color: #ffffff;
+            font-size: 12px;
+            transition: color 0.15s;
+        }
+
+        .filter-option:hover {
+            color: #4a9eff;
+        }
+
+        .filter-option .circle-selector {
+            flex-shrink: 0;
+            margin: 0;
+        }
+
+        .filter-option.selected {
+            color: #fff;
+        }
+
+        /* CLEAR FILTERS BUTTON */
+        .clear-filters-btn {
+            margin-top: auto;
+            padding: 8px 12px;
+            background-color: #333;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 11px;
+            font-weight: 500;
+            transition: background-color 0.15s;
+        }
+
+        .clear-filters-btn:hover {
+            background-color: #444;
+        }
+
         /* BREADCRUMB + AGGREGATE SECTION */
         .breadcrumb-aggregate-section {
             background-color: #0d0d0d;
@@ -1199,7 +1419,7 @@
             </div>
         </div>
 
-       <!-- BREADCRUMB + AGGREGATE SECTION (Hidden by default) -->
+        <!-- BREADCRUMB + AGGREGATE SECTION (Hidden by default) -->
         <div class="breadcrumb-aggregate-section" id="breadcrumbAggregateSection" style="display: none;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; padding: 12px 20px; background-color: #0d0d0d; border-bottom: 1px solid #333;">
                 <div>
@@ -1243,12 +1463,146 @@
             </div>
         </div>
 
+        
        <!-- MAIN DATA DISPLAY -->
         <div class="chart-container">
             <div id="breadcrumbSection" style="display: none; margin-bottom: 20px; padding: 15px; background-color: #2a2a2a; border-radius: 8px; position: relative; z-index: 101;"></div>
             
             <div id="dataDisplay"></div>
         </div>
+    </div>
+
+    <!-- SIDEBAR FILTERS -->
+    <div class="sidebar">
+        <div class="sidebar-header">FILTERS SECTION</div>
+        <div class="filter-sections-wrapper">
+
+            <!-- Flop Filter Box -->
+            <div id="flopFilterBox" style="display: none; background: #1a1a1a; border: 1px solid #333; border-radius: 6px; padding: 12px; margin-bottom: 10px; width: 100%;">
+                <div style="display: flex; gap: 4px; flex-wrap: wrap;">
+                    <button class="flop-cat-btn" data-category="all" onclick="filterFlopBoard('all')" style="background: #2a2a2a; color: #fff; border: none; border-radius: 4px; padding: 4px 8px; font-size: 10px; cursor: pointer;">All</button>
+                    <button class="flop-cat-btn" data-category="rainbow" onclick="filterFlopBoard('rainbow')" style="background: #2a2a2a; color: #fff; border: none; border-radius: 4px; padding: 4px 8px; font-size: 10px; cursor: pointer;">Rainbow</button>
+                    <button class="flop-cat-btn" data-category="flushdraw" onclick="filterFlopBoard('flushdraw')" style="background: #2a2a2a; color: #fff; border: none; border-radius: 4px; padding: 4px 8px; font-size: 10px; cursor: pointer;">FD</button>
+                    <button class="flop-cat-btn" data-category="monotone" onclick="filterFlopBoard('monotone')" style="background: #2a2a2a; color: #fff; border: none; border-radius: 4px; padding: 4px 8px; font-size: 10px; cursor: pointer;">Mono</button>
+                    <button class="flop-cat-btn" data-category="straight" onclick="filterFlopBoard('straight')" style="background: #2a2a2a; color: #fff; border: none; border-radius: 4px; padding: 4px 8px; font-size: 10px; cursor: pointer;">Str</button>
+                    <button class="flop-cat-btn" data-category="paired" onclick="filterFlopBoard('paired')" style="background: #2a2a2a; color: #fff; border: none; border-radius: 4px; padding: 4px 8px; font-size: 10px; cursor: pointer;">Paired</button>
+                    <button id="vsBtn" onclick="toggleVsMode()" style="background: #2a2a2a; color: #f97316; border: 1px solid #f97316; border-radius: 4px; padding: 4px 8px; font-size: 10px; cursor: pointer;">VS</button>
+                </div>
+                <div style="margin-top: 8px;">
+                    <input type="text" id="boardFilterInput" placeholder="e.g. yes Q, no 8" 
+                        style="background: #2a2a2a; color: #fff; border: 1px solid #444; border-radius: 4px; padding: 5px 8px; font-size: 10px; width: 100%; box-sizing: border-box;"
+                        onkeyup="if(event.key === 'Enter') applyBoardFilter()">
+                    <div style="display: flex; gap: 4px; margin-top: 6px;">
+                        <button onclick="applyBoardFilter()" style="background: #3b82f6; color: #fff; border: none; border-radius: 4px; padding: 4px 10px; font-size: 10px; cursor: pointer; flex: 1;">Apply</button>
+                        <button onclick="clearBoardFilter()" style="background: #444; color: #fff; border: none; border-radius: 4px; padding: 4px 10px; font-size: 10px; cursor: pointer; flex: 1;">Clear</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Board Text Filter -->
+            <div id="boardTextFilter" style="padding: 0px 0px 0 0px; margin-bottom: 30px;">
+                <div style="font-size: 10px; font-weight: bold; color: #fffefe; margin-bottom: 6px; text-transform: uppercase;">Board Filter</div>
+                <input type="text" id="boardFilterInput" placeholder="e.g. yes Q, no 8" 
+                    style="background: #2a2a2a; color: #fff; border: 1px solid #444; border-radius: 4px; padding: 6px 8px; font-size: 10px; width: 100%; box-sizing: border-box;"
+                    onkeyup="if(event.key === 'Enter') applyBoardFilter()">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 4px; margin-top: 6px;">
+                    <button onclick="applyBoardFilter()" style="background: #3b82f6; color: #fff; border: none; border-radius: 4px; padding: 6px 0; font-size: 10px; cursor: pointer;">Apply</button>
+                    <button onclick="clearBoardFilter()" style="background: #444; color: #fff; border: none; border-radius: 4px; padding: 6px 0; font-size: 10px; cursor: pointer;">Clear</button>
+                </div>
+            </div>
+
+            <!-- CARD SELECTION -->
+            <div class="filter-section">
+                <div class="filter-header" onclick="toggleFilterSection(this)">
+                    CARD SELECTION
+                    <span class="collapse-icon">▼</span>
+                </div>
+                <div class="filter-content">
+                    <div class="card-grid-header">
+                        <span></span>
+                        <span>YES</span>
+                        <span>NO</span>
+                    </div>
+                    <div id="cardSelectionGrid"></div>
+                </div>
+            </div>
+      
+        <!-- SUIT -->
+        <div class="filter-section">
+            <div class="filter-header" onclick="toggleFilterSection(this)">
+                SUIT
+                <span class="collapse-icon">▼</span>
+            </div>
+            <div class="filter-content">
+                <div class="filter-option" onclick="toggleSuitFilter(this, 'all')">
+                    <div class="circle-selector"></div>
+                    <span>All</span>
+                </div>
+                <div class="filter-option" onclick="toggleSuitFilter(this, 'all-except-monotone')">
+                    <div class="circle-selector"></div>
+                    <span>All except monotone</span>
+                </div>
+                <div class="filter-option" onclick="toggleSuitFilter(this, '3-tone')">
+                    <div class="circle-selector"></div>
+                    <span>3-tone</span>
+                </div>
+                <div class="filter-option" onclick="toggleSuitFilter(this, '2-tone')">
+                    <div class="circle-selector"></div>
+                    <span>2-tone</span>
+                </div>
+                <div class="filter-option" onclick="toggleSuitFilter(this, 'monotone')">
+                    <div class="circle-selector"></div>
+                    <span>Monotone</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- PAIRDNESS -->
+        <div class="filter-section">
+            <div class="filter-header" onclick="toggleFilterSection(this)">
+                PAIRDNESS
+                <span class="collapse-icon">▼</span>
+            </div>
+            <div class="filter-content">
+                <div class="filter-option" onclick="togglePairdnessFilter(this, 'no-pair')">
+                    <div class="circle-selector"></div>
+                    <span>No pair</span>
+                </div>
+                <div class="filter-option" onclick="togglePairdnessFilter(this, 'paired')">
+                    <div class="circle-selector"></div>
+                    <span>Paired</span>
+                </div>
+                <div class="filter-option" onclick="togglePairdnessFilter(this, 'trips')">
+                    <div class="circle-selector"></div>
+                    <span>Trips</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- CONNECTIVITY -->
+        <div class="filter-section">
+            <div class="filter-header" onclick="toggleFilterSection(this)">
+                CONNECTIVITY
+                <span class="collapse-icon">▼</span>
+            </div>
+            <div class="filter-content">
+                <div class="filter-option" onclick="toggleConnectivityFilter(this, 'all')">
+                    <div class="circle-selector"></div>
+                    <span>All</span>
+                </div>
+                <div class="filter-option" onclick="toggleConnectivityFilter(this, 'straight-possible')">
+                    <div class="circle-selector"></div>
+                    <span>Straight possible</span>
+                </div>
+                <div class="filter-option" onclick="toggleConnectivityFilter(this, 'no-straight-possible')">
+                    <div class="circle-selector"></div>
+                    <span>No straight possible</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- CLEAR FILTERS -->
+        <button class="clear-filters-btn" onclick="clearAllFilters()">Clear All Filters</button>
     </div>
 
     <!-- MODALS -->
@@ -1824,20 +2178,28 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                 const tree = b.tree;
                 if (!tree || tree.length < 6) return false;
                 const flop = tree.substring(0, 6);
-                return matchesFlopFilter(flop, filter1) && boardMatchesTextFilter(flop, boardFilterText);
+                if (!matchesFlopFilter(flop, filter1)) return false;
+                if (!boardMatchesTextFilter(flop, boardFilterText)) return false;
+                if (sidebarFilters.pairdness && !boardMatchesPairdnessFilter(flop)) return false;
+                if (sidebarFilters.connectivity && !matchesConnectivityFilter(flop, sidebarFilters.connectivity)) return false;
+                return true;
             });
             
             const boards2 = currentData.filter(b => {
                 const tree = b.tree;
                 if (!tree || tree.length < 6) return false;
                 const flop = tree.substring(0, 6);
-                return matchesFlopFilter(flop, filter2) && boardMatchesTextFilter(flop, boardFilterText);
+                if (!matchesFlopFilter(flop, filter2)) return false;
+                if (!boardMatchesTextFilter(flop, boardFilterText)) return false;
+                if (sidebarFilters.pairdness && !boardMatchesPairdnessFilter(flop)) return false;
+                if (sidebarFilters.connectivity && !matchesConnectivityFilter(flop, sidebarFilters.connectivity)) return false;
+                return true;
             });
             
             console.log('🔴 VS mode - boards1:', boards1.length, 'boards2:', boards2.length);
             console.log('🔴 VS mode - boards1[0].bet:', boards1[0]?.bet, 'boards1[0].check:', boards1[0]?.check);
             console.log('🔴 VS mode - boards1[0].actions:', boards1[0]?.actions);
-           
+        
             displayVsCharts(filter1, boards1, filter2, boards2);
         }
 
@@ -2160,7 +2522,6 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
             const ranks = [board[0], board[2], board[4]].map(r => r.toUpperCase());
             return ranks.includes(term.toUpperCase());
         }
-
 
         function openTrainer() {
             let boardName = selectedBoardName;
@@ -2928,7 +3289,33 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
             displayReport(currentReport.id);
         }
 
-        function filterFlopBoard(filter) {
+        function matchesPairdnessFilter(flop, filter) {
+            const ranks = [flop[0], flop[2], flop[4]];
+            const rankCounts = {};
+            ranks.forEach(r => rankCounts[r] = (rankCounts[r] || 0) + 1);
+            const maxRankCount = Math.max(...Object.values(rankCounts));
+            
+            switch (filter) {
+                case 'no-pair': return maxRankCount === 1;
+                case 'paired': return maxRankCount === 2;
+                case 'trips': return maxRankCount === 3;
+                default: return true;
+            }
+        }
+
+        function matchesConnectivityFilter(flop, filter) {
+            const ranks = [flop[0], flop[2], flop[4]];
+            const hasStraight = hasStraightPotential(ranks);
+            
+            switch (filter) {
+                case 'straight-possible': return hasStraight;
+                case 'no-straight-possible': return !hasStraight;
+                default: return true;
+            }
+        }
+
+        function filterFlopBoard(filter, fromSidebar = false) {
+            console.log('filterFlopBoard CALLED with:', filter, 'boardFilterText:', boardFilterText);
             if (window.isFilteringFlop) return;
             window.isFilteringFlop = true;
 
@@ -2938,12 +3325,18 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                 window.savedBoardFilterText = boardInput.value;
             }
 
-            currentFlopFilter = filter;
+            // Only update currentFlopFilter if NOT from sidebar
+            if (!fromSidebar) {
+                currentFlopFilter = filter;
+                // Update button styles
+                document.querySelectorAll('.flop-cat-btn').forEach(btn => {
+                    btn.style.background = btn.dataset.category === filter ? '#3b82f6' : '#2a2a2a';
+                });
+            }
             
-            // Update button styles
-            document.querySelectorAll('.flop-cat-btn').forEach(btn => {
-                btn.style.background = btn.dataset.category === filter ? '#3b82f6' : '#2a2a2a';
-            });
+            // ... rest stays the same
+            
+            // ... rest of function stays the same
             
             // Get current perspective data
             const actionNumber = actionHistory.length + 1;
@@ -2953,22 +3346,29 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
             const perspectiveData = currentReport.perspectives[currentPerspective];
             const fullData = perspectiveData[actionKey]?.data || perspectiveData.data || [];
             
-            if (filter === 'all') {
-                flopFilteredData = fullData.filter(hand => {
-                    const tree = hand.tree;
-                    if (!tree || tree.length < 6) return false;
-                    const flop = tree.substring(0, 6);
-                    return boardMatchesTextFilter(flop, boardFilterText);
-                });
-            } else {
-                flopFilteredData = fullData.filter(hand => {
-                    const tree = hand.tree;
-                    if (!tree || tree.length < 6) return false;
-                    const flop = tree.substring(0, 6);
-                    return matchesFlopFilter(flop, filter) && boardMatchesTextFilter(flop, boardFilterText);
-                });
-                console.log('Filter:', filter, 'Matches:', flopFilteredData.length, 'of', fullData.length);
-            }
+            flopFilteredData = fullData.filter(hand => {
+                const tree = hand.tree;
+                if (!tree || tree.length < 6) return false;
+                const flop = tree.substring(0, 6);
+                
+                // Category filter (rainbow, monotone, etc.)
+                if (filter !== 'all' && !matchesFlopFilter(flop, filter)) return false;
+                
+                // Text filter (yes/no cards from input + sidebar)
+                if (!boardMatchesTextFilter(flop, boardFilterText)) return false;
+                
+                // Sidebar pairdness filter
+                if (sidebarFilters.pairdness && !boardMatchesPairdnessFilter(flop)) return false;
+                
+                // Sidebar connectivity filter
+                if (sidebarFilters.connectivity && !matchesConnectivityFilter(flop, sidebarFilters.connectivity)) return false;
+                
+                // All-except-monotone special case
+                if (sidebarFilters.suit === 'all-except-monotone' && matchesFlopFilter(flop, 'monotone')) return false;
+                
+                return true;
+            });
+            console.log('Filter:', filter, 'Matches:', flopFilteredData.length, 'of', fullData.length);
             
             // Handle no matches
             if (flopFilteredData.length === 0) {
@@ -2989,12 +3389,417 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
             }
             
             window.isFilteringFlop = false;
+            const savedFilter = boardFilterText;
+            console.log('BEFORE displayReport, savedFilter:', savedFilter);
             displayReport(currentReport.id);
+            console.log('AFTER displayReport, boardFilterText:', boardFilterText);
+            boardFilterText = savedFilter;
+            console.log('RESTORED boardFilterText:', boardFilterText);
         }
 
+       // ===== SIDEBAR FILTER STATE =====
+        const sidebarFilters = {
+            cards: {
+                yes: new Set(),  // Cards that MUST be on board
+                no: new Set()    // Cards that must NOT be on board
+            },
+            suit: null,          // 'all', 'all-except-monotone', '3-tone', '2-tone', 'monotone'
+            pairdness: null,     // 'no-pair', 'paired', 'trips'
+            connectivity: null   // 'all', 'straight-possible', 'no-straight-possible'
+        };
+
+        const CARD_RANKS = ['A', 'K', 'Q', 'J', 'T', '9', '8', '7', '6', '5', '4', '3', '2'];
+
+        // ===== INITIALIZE CARD GRID =====
+        function initCardSelectionGrid() {
+            const grid = document.getElementById('cardSelectionGrid');
+            if (!grid) return;
+            
+            grid.innerHTML = CARD_RANKS.map(card => `
+                <div class="card-row">
+                    <span class="card-label">${card}</span>
+                    <div class="circle-selector" onclick="toggleCardFilter('${card}', 'yes', this)"></div>
+                    <div class="circle-selector" onclick="toggleCardFilter('${card}', 'no', this)"></div>
+                </div>
+            `).join('');
+        }
+
+        // ===== TOGGLE FUNCTIONS =====
+        function toggleFilterSection(header) {
+            const icon = header.querySelector('.collapse-icon');
+            const content = header.nextElementSibling;
+            
+            icon.classList.toggle('collapsed');
+            content.classList.toggle('collapsed');
+        }
+
+        function toggleCardFilter(card, type, element) {
+            const oppositeType = type === 'yes' ? 'no' : 'yes';
+            const row = element.parentElement;
+            const circles = row.querySelectorAll('.circle-selector');
+            const yesCircle = circles[0];
+            const noCircle = circles[1];
+            
+            // If already selected, deselect
+            if (sidebarFilters.cards[type].has(card)) {
+                sidebarFilters.cards[type].delete(card);
+                element.classList.remove('selected');
+            } else {
+                // Select this one, deselect opposite if selected
+                sidebarFilters.cards[type].add(card);
+                sidebarFilters.cards[oppositeType].delete(card);
+                element.classList.add('selected');
+                
+                // Remove selected from opposite
+                if (type === 'yes') {
+                    noCircle.classList.remove('selected');
+                } else {
+                    yesCircle.classList.remove('selected');
+                }
+            }
+            
+            applyFilters();
+        }
+
+        function toggleSuitFilter(element, value) {
+            const wasSelected = element.classList.contains('selected');
+            
+            // Clear all suit selections in THIS section
+            element.closest('.filter-content').querySelectorAll('.filter-option').forEach(opt => {
+                opt.classList.remove('selected');
+                opt.querySelector('.circle-selector').classList.remove('selected');
+            });
+            
+            if (!wasSelected) {
+                element.classList.add('selected');
+                element.querySelector('.circle-selector').classList.add('selected');
+                sidebarFilters.suit = value;
+            } else {
+                sidebarFilters.suit = null;
+            }
+            
+            applyFilters();
+        }
+
+        function togglePairdnessFilter(element, value) {
+            const wasSelected = element.classList.contains('selected');
+            
+            // Clear all pairdness selections in THIS section
+            element.closest('.filter-content').querySelectorAll('.filter-option').forEach(opt => {
+                opt.classList.remove('selected');
+                opt.querySelector('.circle-selector').classList.remove('selected');
+            });
+            
+            if (!wasSelected) {
+                element.classList.add('selected');
+                element.querySelector('.circle-selector').classList.add('selected');
+                sidebarFilters.pairdness = value;
+            } else {
+                sidebarFilters.pairdness = null;
+            }
+            
+            applyFilters();
+        }
+
+        function toggleConnectivityFilter(element, value) {
+            const wasSelected = element.classList.contains('selected');
+            
+            // Clear all connectivity selections in THIS section
+            element.closest('.filter-content').querySelectorAll('.filter-option').forEach(opt => {
+                opt.classList.remove('selected');
+                opt.querySelector('.circle-selector').classList.remove('selected');
+            });
+            
+            if (!wasSelected) {
+                element.classList.add('selected');
+                element.querySelector('.circle-selector').classList.add('selected');
+                sidebarFilters.connectivity = value;
+            } else {
+                sidebarFilters.connectivity = null;
+            }
+            
+            applyFilters();
+        }
+
+        function clearAllFilters() {
+            // Clear state
+            sidebarFilters.cards.yes.clear();
+            sidebarFilters.cards.no.clear();
+            sidebarFilters.suit = null;
+            sidebarFilters.pairdness = null;
+            sidebarFilters.connectivity = null;
+            
+            // Clear UI
+            document.querySelectorAll('.sidebar .circle-selector').forEach(el => {
+                el.classList.remove('selected');
+            });
+            document.querySelectorAll('.sidebar .filter-option').forEach(el => {
+                el.classList.remove('selected');
+            });
+            
+            // Clear board filter text input
+            boardFilterText = '';
+            const boardInput = document.getElementById('boardFilterInput');
+            if (boardInput) {
+                boardInput.value = '';
+                boardInput.style.border = '1px solid #444';
+            }
+            
+            // If in VS mode, keep VS mode active but refresh with cleared filters
+            if (vsMode && vsFirstFilter && vsSecondFilter) {
+                showVsComparison(vsFirstFilter, vsSecondFilter);
+                // Keep VS button highlights
+                document.querySelectorAll('.flop-cat-btn').forEach(btn => {
+                    if (btn.dataset.category === vsFirstFilter || btn.dataset.category === vsSecondFilter) {
+                        btn.style.background = '#f97316';
+                    } else {
+                        btn.style.background = '#2a2a2a';
+                    }
+                });
+            } else if (!vsMode) {
+                applyFilters();
+                document.querySelectorAll('.flop-cat-btn').forEach(btn => {
+                    btn.style.background = btn.dataset.category === 'all' ? '#3b82f6' : '#2a2a2a';
+                });
+            }
+        }
+
+        // ===== APPLY FILTERS =====
+        function applyFilters() {
+            console.log('Applying sidebar filters:', {
+                cardsYes: Array.from(sidebarFilters.cards.yes),
+                cardsNo: Array.from(sidebarFilters.cards.no),
+                suit: sidebarFilters.suit,
+                pairdness: sidebarFilters.pairdness,
+                connectivity: sidebarFilters.connectivity
+            });
+            
+            // Build text filter from card selections (merges with existing text input)
+            let textParts = [];
+            
+            // Add YES cards
+            sidebarFilters.cards.yes.forEach(card => {
+                textParts.push('yes ' + card);
+            });
+            
+            // Add NO cards
+            sidebarFilters.cards.no.forEach(card => {
+                textParts.push('no ' + card);
+            });
+            
+            // Set the text filter (combine with manual input if exists)
+            const manualInput = document.getElementById('boardFilterInput');
+            const manualText = manualInput ? manualInput.value.trim() : '';
+            
+            // Combine sidebar card filters with manual text
+            const sidebarCardText = textParts.join(', ');
+            if (sidebarCardText && manualText) {
+                boardFilterText = manualText + ', ' + sidebarCardText;
+            } else {
+                boardFilterText = manualText || sidebarCardText;
+            }
+            
+            // Map sidebar suit filter to main filter categories
+            let categoryFilter = 'all';  // Always default to 'all'
+            if (sidebarFilters.suit) {
+                const suitMap = {
+                    '3-tone': 'rainbow',
+                    '2-tone': 'flushdraw', 
+                    'monotone': 'monotone',
+                    'all': 'all',
+                    'all-except-monotone': 'all-except-monotone'
+                };
+                categoryFilter = suitMap[sidebarFilters.suit] || 'all';
+            }
+            
+            // Trigger the main filter (only if we have a report loaded)
+            if (currentReport) {
+                if (vsMode && vsFirstFilter && vsSecondFilter) {
+                    showVsComparison(vsFirstFilter, vsSecondFilter);
+                    // Re-highlight VS selections after filtering
+                    document.querySelectorAll('.flop-cat-btn').forEach(btn => {
+                        if (btn.dataset.category === vsFirstFilter || btn.dataset.category === vsSecondFilter) {
+                            btn.style.background = '#f97316';
+                        } else {
+                            btn.style.background = '#2a2a2a';
+                        }
+                    });
+                } else if (vsMode) {
+                    // In VS mode but selections not complete - don't clear buttons
+                    return;
+                } else {
+                    console.log('Calling filterFlopBoard with:', categoryFilter, 'boardFilterText:', boardFilterText);
+                    
+                    // Clear main category button highlights when using sidebar filters
+                    document.querySelectorAll('.flop-cat-btn').forEach(btn => {
+                        btn.style.background = '#2a2a2a';
+                    });
+                    
+                    filterFlopBoard(categoryFilter, true);
+                    
+                    // FORCE clear main buttons after everything completes (only when NOT in VS mode)
+                    setTimeout(() => {
+                        document.querySelectorAll('.flop-cat-btn').forEach(btn => {
+                            btn.style.background = '#2a2a2a';
+                        });
+                    }, 100);
+                }
+            }
+            }
+        
+        // ===== BOARD MATCHING HELPERS =====
+        function boardMatchesCardFilter(boardName) {
+            // Extract cards from board name (e.g., "Ks9h2d" → ['K', '9', '2'])
+            const boardCards = extractCardsFromBoard(boardName);
+            
+            // Check YES filters (board must have these cards)
+            for (const card of sidebarFilters.cards.yes) {
+                if (!boardCards.includes(card)) {
+                    return false;
+                }
+            }
+            
+            // Check NO filters (board must NOT have these cards)
+            for (const card of sidebarFilters.cards.no) {
+                if (boardCards.includes(card)) {
+                    return false;
+                }
+            }
+            
+            return true;
+        }
+
+        function extractCardsFromBoard(boardName) {
+            // Handles formats like "Ks9h2d", "AKQ", "As Kh 2d"
+            const ranks = [];
+            const normalized = boardName.replace(/\s/g, '').toUpperCase();
+            
+            for (let i = 0; i < normalized.length; i++) {
+                const char = normalized[i];
+                if (CARD_RANKS.includes(char)) {
+                    ranks.push(char);
+                }
+            }
+            
+            return ranks;
+        }
+
+        function boardMatchesSuitFilter(boardName) {
+            if (!sidebarFilters.suit || sidebarFilters.suit === 'all') return true;
+            
+            const suits = extractSuitsFromBoard(boardName);
+            const uniqueSuits = new Set(suits).size;
+            
+            switch (sidebarFilters.suit) {
+                case 'monotone':
+                    return uniqueSuits === 1;
+                case '2-tone':
+                    return uniqueSuits === 2;
+                case '3-tone':
+                    return uniqueSuits === 3;
+                case 'all-except-monotone':
+                    return uniqueSuits > 1;
+                default:
+                    return true;
+            }
+        }
+
+        function extractSuitsFromBoard(boardName) {
+            const suits = [];
+            const normalized = boardName.toLowerCase();
+            
+            for (const char of normalized) {
+                if (['h', 'd', 'c', 's'].includes(char)) {
+                    suits.push(char);
+                }
+            }
+            
+            return suits;
+        }
+
+        function boardMatchesPairdnessFilter(boardName) {
+            if (!sidebarFilters.pairdness) return true;
+            
+            const ranks = extractCardsFromBoard(boardName);
+            const uniqueRanks = new Set(ranks).size;
+            
+            switch (sidebarFilters.pairdness) {
+                case 'no-pair':
+                    return uniqueRanks === ranks.length; // All unique
+                case 'paired':
+                    return uniqueRanks === ranks.length - 1; // One pair
+                case 'trips':
+                    return uniqueRanks === 1; // All same
+                default:
+                    return true;
+            }
+        }
+
+        function boardMatchesConnectivityFilter(boardName) {
+            if (!sidebarFilters.connectivity || sidebarFilters.connectivity === 'all') return true;
+            
+            const ranks = extractCardsFromBoard(boardName);
+            const hasStraightPossible = checkStraightPossible(ranks);
+            
+            switch (sidebarFilters.connectivity) {
+                case 'straight-possible':
+                    return hasStraightPossible;
+                case 'no-straight-possible':
+                    return !hasStraightPossible;
+                default:
+                    return true;
+            }
+        }
+
+        function checkStraightPossible(ranks) {
+            // Convert ranks to numeric values
+            const rankValues = {
+                'A': 14, 'K': 13, 'Q': 12, 'J': 11, 'T': 10,
+                '9': 9, '8': 8, '7': 7, '6': 6, '5': 5, '4': 4, '3': 3, '2': 2
+            };
+            
+            const values = ranks.map(r => rankValues[r]).sort((a, b) => a - b);
+            
+            // Check if any 5-card straight is possible using these 3 cards
+            // A straight is possible if max - min <= 4 (with wheel consideration)
+            const maxGap = values[values.length - 1] - values[0];
+            
+            // Normal straight check
+            if (maxGap <= 4) return true;
+            
+            // Wheel straight check (A-2-3-4-5)
+            if (ranks.includes('A')) {
+                const lowValues = values.filter(v => v <= 5 || v === 14).map(v => v === 14 ? 1 : v);
+                if (lowValues.length >= 2) {
+                    const sortedLow = lowValues.sort((a, b) => a - b);
+                    if (sortedLow[sortedLow.length - 1] - sortedLow[0] <= 4) return true;
+                }
+            }
+            
+            return false;
+        }
+
+        // Combined filter check
+        function boardMatchesAllFilters(boardName) {
+            return boardMatchesCardFilter(boardName) &&
+                boardMatchesSuitFilter(boardName) &&
+                boardMatchesPairdnessFilter(boardName) &&
+                boardMatchesConnectivityFilter(boardName);
+        }
+
+        // Initialize on load
+        document.addEventListener('DOMContentLoaded', function() {
+            initCardSelectionGrid();
+        });
+       
         // ===== PUT THIS IMMEDIATELY AFTER filterFlopBoard =====
         const originalFilterFlopBoard = filterFlopBoard;
         filterFlopBoard = function(filter) {
+            const boardInput = document.getElementById('boardFilterInput');
+            if (boardInput && boardInput.value.trim()) {
+                boardFilterText = boardInput.value.trim().toLowerCase();
+            }
+            
             console.log('filterFlopBoard called:', filter, 'vsMode:', vsMode, 'vsFirstFilter:', vsFirstFilter);
 
             if (vsMode) {
@@ -3008,7 +3813,7 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                         }
                     });
                 } else {
-                    vsSecondFilter = filter;  // <-- ADD THIS LINE
+                    vsSecondFilter = filter;
                     console.log('VS Compare:', vsFirstFilter, 'vs', vsSecondFilter);
                     console.log('boardDetailData keys:', Object.keys(boardDetailData).length);
                     showVsComparison(vsFirstFilter, vsSecondFilter);
@@ -3024,7 +3829,7 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
             } else {
                 originalFilterFlopBoard(filter);
             }
-            };
+        };
 
         function matchesFlopFilter(flop, filter) {
             // Extract just the board part after underscore
@@ -3895,8 +4700,7 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                 alert('Error saving report: ' + error.message);
             }
         }
-
-        
+  
         function getPlayerPositionInfo(positionString, player) {
             // positionString examples: "BB vs SB", "BB vs BU", "SB vs BU", "CO vs BU"
             // player: "BB", "SB", "BU", or "CO"
@@ -4651,14 +5455,6 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                             <button class="flop-cat-btn" data-category="paired" onclick="filterFlopBoard('paired')" style="background: ${currentFlopFilter === 'paired' ? '#3b82f6' : '#2a2a2a'}; color: #fff; border: none; border-radius: 4px; padding: 4px 10px; font-size: 11px; cursor: pointer;">Paired</button>
                             <button id="vsBtn" onclick="toggleVsMode()" style="background: #2a2a2a; color: #f97316; border: 1px solid #f97316; border-radius: 4px; padding: 4px 10px; font-size: 11px; cursor: pointer; margin-left: 10px;">VS</button>
                         </div>
-                        <!-- Board filter input -->
-                        <div style="margin-top: 10px;">
-                            <input type="text" id="boardFilterInput" placeholder="e.g. no straight, yes Q, no 8" 
-                                style="background: #2a2a2a; color: #fff; border: 1px solid #444; border-radius: 4px; padding: 6px 10px; font-size: 11px; width: 220px;"
-                                onkeyup="if(event.key === 'Enter') applyBoardFilter()">
-                            <button onclick="applyBoardFilter()" style="background: #3b82f6; color: #fff; border: none; border-radius: 4px; padding: 6px 10px; font-size: 11px; cursor: pointer; margin-left: 4px;">Apply</button>
-                            <button onclick="clearBoardFilter()" style="background: #444; color: #fff; border: none; border-radius: 4px; padding: 6px 10px; font-size: 11px; cursor: pointer; margin-left: 4px;">Clear</button>
-                        </div>
                     </div>
 
                     <div id="flopChartContainer" style="margin-top: 15px;"></div>
@@ -5102,8 +5898,7 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                 window.mainChartInstance.update();
             }
         }
-
-        
+       
         function displayBoardDetailChart(boardName, parsedData) {
             const boardDetailContainer = document.getElementById('boardDetailContainer');
             const boardDetailTitle = document.getElementById('boardDetailTitle');
