@@ -1488,15 +1488,6 @@
                     <button class="flop-cat-btn" data-category="paired" onclick="filterFlopBoard('paired')" style="background: #2a2a2a; color: #fff; border: none; border-radius: 4px; padding: 4px 8px; font-size: 10px; cursor: pointer;">Paired</button>
                     <button id="vsBtn" onclick="toggleVsMode()" style="background: #2a2a2a; color: #f97316; border: 1px solid #f97316; border-radius: 4px; padding: 4px 8px; font-size: 10px; cursor: pointer;">VS</button>
                 </div>
-                <div style="margin-top: 8px;">
-                    <input type="text" id="boardFilterInput" placeholder="e.g. yes Q, no 8" 
-                        style="background: #2a2a2a; color: #fff; border: 1px solid #444; border-radius: 4px; padding: 5px 8px; font-size: 10px; width: 100%; box-sizing: border-box;"
-                        onkeyup="if(event.key === 'Enter') applyBoardFilter()">
-                    <div style="display: flex; gap: 4px; margin-top: 6px;">
-                        <button onclick="applyBoardFilter()" style="background: #3b82f6; color: #fff; border: none; border-radius: 4px; padding: 4px 10px; font-size: 10px; cursor: pointer; flex: 1;">Apply</button>
-                        <button onclick="clearBoardFilter()" style="background: #444; color: #fff; border: none; border-radius: 4px; padding: 4px 10px; font-size: 10px; cursor: pointer; flex: 1;">Clear</button>
-                    </div>
-                </div>
             </div>
 
             <!-- Board Text Filter -->
@@ -1530,7 +1521,7 @@
         <!-- SUIT -->
         <div class="filter-section">
             <div class="filter-header" onclick="toggleFilterSection(this)">
-                SUIT
+                WETNESS
                 <span class="collapse-icon">▼</span>
             </div>
             <div class="filter-content">
@@ -2450,7 +2441,11 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
         let boardFilterText = '';
 
         function applyBoardFilter() {
-            const input = document.getElementById('boardFilterInput');
+            // Check both inputs - use whichever has a value
+            const input1 = document.getElementById('boardFilterInput');
+            const input2 = document.getElementById('boardFilterInputSidebar');
+            const input = (input2 && input2.value.trim()) ? input2 : input1;
+            
             if (!input) return;
             
             boardFilterText = input.value.trim().toLowerCase();
@@ -2474,53 +2469,84 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
         }
 
         function clearBoardFilter() {
-            const input = document.getElementById('boardFilterInput');
-            if (input) {
-                input.value = '';
-                input.style.border = '1px solid #444';
-            }
+            const input1 = document.getElementById('boardFilterInput');
+            const input2 = document.getElementById('boardFilterInputSidebar');
+            
+            [input1, input2].forEach(input => {
+                if (input) {
+                    input.value = '';
+                    input.style.border = '1px solid #444';
+                }
+            });
+            
             boardFilterText = '';
             window.savedBoardFilterText = '';
             filterFlopBoard(currentFlopFilter || 'all');
         }
 
         function boardMatchesTextFilter(board, filterText) {
+            console.log('boardMatchesTextFilter called:', board, filterText);
             if (!filterText) return true;
             
-            const filters = filterText.split(',').map(f => f.trim());
+            const text = filterText.trim().toUpperCase();
             
-            for (const filter of filters) {
-                if (filter.startsWith('no ')) {
-                    const term = filter.substring(3).trim();
-                    if (shouldExcludeBoard(board, term)) return false;
-                } else if (filter.startsWith('yes ')) {
-                    const term = filter.substring(4).trim();
-                    if (!shouldIncludeBoard(board, term)) return false;
+            // Check for "no" exclusions first
+            const noParts = text.split(/\s*,\s*/).filter(p => p.toLowerCase().startsWith('no '));
+            const includeText = text.split(/\s*,\s*/).filter(p => !p.toLowerCase().startsWith('no ')).join('');
+            
+            // Get board ranks
+            const boardRanks = [board[0], board[2], board[4]].map(r => r.toUpperCase());
+            
+            // Process exclusions (no X)
+            for (const part of noParts) {
+                const term = part.substring(3).trim().toUpperCase();
+                for (const char of term) {
+                    if (char === 'B') {
+                        if (boardRanks.some(r => ['A', 'K', 'Q', 'J', 'T'].includes(r))) return false;
+                    } else if (char === 'L') {
+                        if (boardRanks.some(r => ['9', '8', '7', '6', '5', '4', '3', '2'].includes(r))) return false;
+                    } else {
+                        if (boardRanks.includes(char)) return false;
+                    }
                 }
             }
+            
+            // Collect explicit ranks specified
+            const explicitRanks = [];
+            for (const char of includeText) {
+                if (['A', 'K', 'Q', 'J', 'T', '9', '8', '7', '6', '5', '4', '3', '2'].includes(char)) {
+                    explicitRanks.push(char);
+                }
+            }
+            
+            // Count B's and L's
+            const bCount = (includeText.match(/B/g) || []).length;
+            const lCount = (includeText.match(/L/g) || []).length;
+            
+            // Check Broadway requirement - count how many board cards are Broadway (excluding explicit)
+            if (bCount > 0) {
+                const broadwaySet = ['A', 'K', 'Q', 'J', 'T'].filter(r => !explicitRanks.includes(r));
+                const broadwayOnBoard = boardRanks.filter(r => broadwaySet.includes(r)).length;
+                if (broadwayOnBoard < bCount) return false;
+            }
+            
+            // Check Low requirement - count how many board cards are Low (excluding explicit)
+            if (lCount > 0) {
+                const lowSet = ['9', '8', '7', '6', '5', '4', '3', '2'].filter(r => !explicitRanks.includes(r));
+                const lowOnBoard = boardRanks.filter(r => lowSet.includes(r)).length;
+                if (lowOnBoard < lCount) return false;
+            }
+            
+            // Check explicit ranks
+            for (const char of includeText) {
+                if (char === ' ' || char === ',' || char === 'B' || char === 'L') continue;
+                
+                if (['A', 'K', 'Q', 'J', 'T', '9', '8', '7', '6', '5', '4', '3', '2'].includes(char)) {
+                    if (!boardRanks.includes(char)) return false;
+                }
+            }
+            
             return true;
-        }
-
-        function shouldExcludeBoard(board, term) {
-            // Check if term is a filter type
-            if (['rainbow', 'flushdraw', 'flush draw', 'monotone', 'straight', 'paired'].includes(term)) {
-                const filterKey = term.replace(' ', '');
-                return matchesFlopFilter(board, filterKey);
-            }
-            // Check if term is a rank (A, K, Q, J, T, 9, 8, etc.)
-            const ranks = [board[0], board[2], board[4]].map(r => r.toUpperCase());
-            return ranks.includes(term.toUpperCase());
-        }
-
-        function shouldIncludeBoard(board, term) {
-            // Check if term is a filter type
-            if (['rainbow', 'flushdraw', 'flush draw', 'monotone', 'straight', 'paired'].includes(term)) {
-                const filterKey = term.replace(' ', '');
-                return matchesFlopFilter(board, filterKey);
-            }
-            // Check if term is a rank
-            const ranks = [board[0], board[2], board[4]].map(r => r.toUpperCase());
-            return ranks.includes(term.toUpperCase());
         }
 
         function openTrainer() {
@@ -3794,12 +3820,19 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
        
         // ===== PUT THIS IMMEDIATELY AFTER filterFlopBoard =====
         const originalFilterFlopBoard = filterFlopBoard;
-        filterFlopBoard = function(filter) {
-            const boardInput = document.getElementById('boardFilterInput');
+        filterFlopBoard = function(filter, fromSidebar = false) {
+            // Check both inputs
+            const input1 = document.getElementById('boardFilterInput');
+            const input2 = document.getElementById('boardFilterInputSidebar');
+            const boardInput = (input2 && input2.value.trim()) ? input2 : input1;
+            
             if (boardInput && boardInput.value.trim()) {
                 boardFilterText = boardInput.value.trim().toLowerCase();
             }
             
+            // ... rest of wrapper unchanged
+            
+            console.log('filterFlopBoard wrapper - boardFilterText set to:', boardFilterText);
             console.log('filterFlopBoard called:', filter, 'vsMode:', vsMode, 'vsFirstFilter:', vsFirstFilter);
 
             if (vsMode) {
@@ -3827,7 +3860,7 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                     });
                 }
             } else {
-                originalFilterFlopBoard(filter);
+                originalFilterFlopBoard(filter, fromSidebar);
             }
         };
 
@@ -6995,4 +7028,5 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
 
     </body>
 </html>
+
 
