@@ -476,35 +476,40 @@
             background-color: #444;
         }
 
-        /* BREADCRUMB + AGGREGATE SECTION */
-        .breadcrumb-aggregate-section {
-            background-color: #0d0d0d;
-            padding: 16px 20px;
-            border-bottom: 1px solid #333;
-        }
+       /* BREADCRUMB + AGGREGATE SECTION */
+            .breadcrumb-aggregate-section {
+                background-color: #0d0d0d;
+                padding: 8px 12px;
+                border-bottom: 1px solid #333;
+            }
 
-        .breadcrumb-path {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 13px;
-            color: #888;
-            margin-bottom: 12px;
-        }
+            .breadcrumb-path {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                font-size: 13px;
+                color: #888;
+                margin-bottom: 6px;
+            }
 
-        .breadcrumb-item {
-            color: #e0e0e0;
-            font-weight: 500;
-        }
+            .breadcrumb-item {
+                color: #e0e0e0;
+                font-weight: 500;
+            }
 
-        .breadcrumb-separator {
-            color: #555;
-        }
+            .breadcrumb-separator {
+                color: #555;
+            }
 
-        .breadcrumb-current {
-            color: #4a9eff;
-            font-weight: 600;
-        }
+            .breadcrumb-current {
+                color: #4a9eff;
+                font-weight: 600;
+            }
+
+            #breadcrumbSection {
+                padding: 8px 12px !important;
+                margin: 0px 0px 10px !important;
+            }
 
         .aggregate-section {
             background-color: #1a1a1a;
@@ -594,13 +599,13 @@
         }
 
         .action-btn {
-            padding: 8px 16px;
-            border-radius: 4px;
-            font-weight: 600;
+            padding: 0.5rem 1rem;
+            border-radius: 0.375rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            border: none;
             cursor: pointer;
             transition: all 0.2s;
-            font-size: 14px;
-            border: none;
             color: white;
         }
 
@@ -640,20 +645,24 @@
         }
     
         .edit-report-btn {
-            background: #1f2937;
-            color: #f3f4f6;
-            border: 1px solid #374151;
-            padding: 0.5rem 1rem;
-            border-radius: 0.375rem;
+            display: inline-block;
+            color: #fff;
+            font-weight: 600;
+            min-width: 45px;
+            background-color: #000;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            text-align: center;
             cursor: pointer;
-            font-size: 0.875rem;
-            font-weight: 500;
-            transition: all 0.2s;
+            border: none;
+            position: absolute;
+            top: 8px;
+            right: 12px;
         }
 
         .edit-report-btn:hover {
-            background: #374151;
-            border-color: #4b5563;
+            background-color: #333;
         }
 
         .header {
@@ -1294,14 +1303,14 @@
         }
 
         #linkReportModal .btn-primary {
-            background-color: #4a9eff;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 4px;
+            background-color: rgb(74, 158, 255);
+            color: rgb(255, 255, 255);
+            border: 0px none;
+            padding: 8px 14px;
+            border-radius: 6px;
             cursor: pointer;
             font-size: 14px;
-            font-weight: bold;
+            font-weight: 700;
         }
 
         #linkReportModal .btn-primary:hover {
@@ -1309,17 +1318,17 @@
         }
 
         #linkReportModal .btn-secondary {
-            background-color: transparent;
-            color: #e0e0e0;
-            border: 1px solid #444;
-            padding: 10px 20px;
-            border-radius: 4px;
+            background-color: rgb(51, 51, 51);
+            color: rgb(255, 255, 255);
+            border: 0px none;
+            padding: 8px 14px;
+            border-radius: 6px;
             cursor: pointer;
             font-size: 14px;
         }
 
         #linkReportModal .btn-secondary:hover {
-            background-color: #2a2a2a;
+            background-color: #555;
         }
 
         /* Board Import Modal Styling */
@@ -1395,7 +1404,7 @@
                     <path d="M7 11l5 5 5-5"/>
                     <path d="M12 4v12"/>
                 </svg>
-                Import Data
+                Import Report
             </button>
             <button onclick="exportAllData()" style="background: #333; color: white; border: 1px solid #555; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 12px; display: flex; align-items: center; gap: 6px;">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
@@ -1403,7 +1412,7 @@
                     <path d="M7 9l5-5 5 5"/>
                     <path d="M12 4v12"/>
                 </svg>
-                Export Report
+                Export Data
             </button>
             <button onclick="document.getElementById('importFileInput').click()" style="background: #333; color: white; border: 1px solid #555; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 12px; display: flex; align-items: center; gap: 6px;">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
@@ -1735,9 +1744,11 @@
                 </div>
             </div>
             
-            <div class="modal-actions">
-                <button id="linkSaveBtn" class="btn-primary">Import & Link</button>
-                <button id="linkCancelBtn" class="btn-secondary" onclick="document.getElementById('linkReportModal').classList.remove('active')">Cancel</button>
+            <div style="display: flex; gap: 10px; margin-top: 20px;">
+                <button id="linkSaveBtn" class="btn btn-primary">Import & Link</button>
+                <button id="linkCancelBtn" class="btn btn-secondary" onclick="document.getElementById('linkReportModal').classList.remove('active')">Cancel</button>
+                <input type="file" id="linkPioFileInput" accept=".csv" style="display: none;" onchange="importLinkPioCSV(this.files[0])">
+                <button type="button" class="btn btn-secondary" onclick="document.getElementById('linkPioFileInput').click()" style="margin-left: auto;">Pio CSV</button>
             </div>
         </div>
     </div>
@@ -1745,7 +1756,7 @@
     <!-- Board Import Modal -->
     <div id="boardImportModal" class="modal">
         <div class="modal-content">
-            <div class="modal-header">
+            <div class="modal-header">`
                 <h3 class="modal-title" id="boardImportTitle">Import Board Data</h3>
                 <button class="close-btn" onclick="closeBoardImportModal()">&times;</button>
             </div>
@@ -2301,6 +2312,10 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                 return html;
             };
 
+            const barHeight = 25;
+            const chart1Height = Math.max(boards1.length * barHeight, 200);
+            const chart2Height = Math.max(boards2.length * barHeight, 200);
+
             container.innerHTML = `
                 <div style="display: flex; gap: 20px; justify-content: center; width: max-content; margin: 0 auto;">
                     <div style="overflow: visible;">
@@ -2308,7 +2323,7 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                         <div style="display: flex; gap: 8px; margin-bottom: 15px; justify-content: center; flex-wrap: nowrap;">
                             ${generateStatBoxes(stats1)}
                         </div>
-                        <div style="height: 430px; position: relative; overflow: visible; z-index: 2; width: 320px;">
+                        <div style="height: ${chart1Height}px; position: relative; overflow: visible; z-index: 2; width: 320px;">
                             <canvas id="vsChart1"></canvas>
                         </div>
                     </div>
@@ -2317,7 +2332,7 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                         <div style="display: flex; gap: 8px; margin-bottom: 15px; justify-content: center; flex-wrap: nowrap;">
                             ${generateStatBoxes(stats2)}
                         </div>
-                        <div style="height: 430px; position: relative; overflow: visible; z-index: 2; width: 320px;">
+                        <div style="height: ${chart2Height}px; position: relative; overflow: visible; z-index: 2; width: 320px;">
                             <canvas id="vsChart2"></canvas>
                         </div>
                     </div>
@@ -2362,6 +2377,66 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
             
             const avgBet = boards.reduce((sum, b) => sum + (b.bet || 0), 0) / boards.length;
             
+            // VS Mode suit labels plugin
+            const vsSuitLabelsPlugin = {
+                id: 'vsSuitLabelsPlugin',
+                afterDraw: (chart) => {
+                    const ctx = chart.ctx;
+                    const meta = chart.getDatasetMeta(0);
+                    if (!meta.data.length) return;
+                    
+                    const suitSymbols = { 'h': '♥', 'd': '♦', 'c': '♣', 's': '♠' };
+                    const suitColors = { 'h': '#ef4444', 'd': '#3b82f6', 'c': '#22c55e', 's': '#888888' };
+                    
+                    meta.data.forEach((bar, index) => {
+                        const boardName = chart.data.labels[index];
+                        const y = bar.y;
+                        const fontSize = 12;
+                        
+                        ctx.textBaseline = 'middle';
+                        ctx.textAlign = 'right';
+                        
+                        // Calculate total width first
+                        let totalWidth = 0;
+                        for (let i = 0; i < boardName.length; i++) {
+                            const char = boardName[i];
+                            const lowerChar = char.toLowerCase();
+                            ctx.font = suitSymbols[lowerChar] ? `500 ${fontSize + 4}px sans-serif` : `500 ${fontSize}px sans-serif`;
+                            const displayChar = suitSymbols[lowerChar] || char;
+                            totalWidth += ctx.measureText(displayChar).width + (suitSymbols[lowerChar] ? 1 : 0);
+                        }
+                        
+                        // Draw from right-aligned position
+                        let currentX = chart.chartArea.left - totalWidth - 5;
+                        
+                        for (let i = 0; i < boardName.length; i++) {
+                            const char = boardName[i];
+                            const lowerChar = char.toLowerCase();
+                            
+                            if (char === '-') {
+                                ctx.font = `500 ${fontSize}px sans-serif`;
+                                ctx.fillStyle = '#888';
+                                ctx.textAlign = 'left';
+                                ctx.fillText('-', currentX, y);
+                                currentX += ctx.measureText('-').width;
+                            } else if (suitSymbols[lowerChar]) {
+                                ctx.font = `500 ${fontSize + 4}px sans-serif`;
+                                ctx.fillStyle = suitColors[lowerChar];
+                                ctx.textAlign = 'left';
+                                ctx.fillText(suitSymbols[lowerChar], currentX, y);
+                                currentX += ctx.measureText(suitSymbols[lowerChar]).width + 1;
+                            } else {
+                                ctx.font = `500 ${fontSize}px sans-serif`;
+                                ctx.fillStyle = '#e0e0e0';
+                                ctx.textAlign = 'left';
+                                ctx.fillText(char, currentX, y);
+                                currentX += ctx.measureText(char).width;
+                            }
+                        }
+                    });
+                }
+            };
+            
             new Chart(ctx, {
                 type: 'bar',
                 data: {
@@ -2373,7 +2448,7 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                     responsive: true,
                     maintainAspectRatio: false,
                     layout: {
-                        padding: { top: 30 }
+                        padding: { top: 30, left: 80 }
                     },
                     scales: {
                         x: {
@@ -2385,9 +2460,7 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                         y: {
                             stacked: true,
                             ticks: { 
-                                color: '#ddd', 
-                                font: { size: 12 },
-                                padding: 10
+                                display: false
                             },
                             grid: { display: false }
                         }
@@ -2406,7 +2479,8 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                             }
                         }
                     }
-                }
+                },
+                plugins: [vsSuitLabelsPlugin]
             });
         }
 
@@ -2439,6 +2513,48 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
 
         // Board filter variables
         let boardFilterText = '';
+
+        function formatBoardWithSuits(ctx, boardName, x, y, fontSize = 13, fontWeight = '500', isSelected = false) {
+            const suitColors = {
+                'h': '#ef4444', // red
+                'd': '#3b82f6', // blue
+                'c': '#22c55e', // green
+                's': '#888888'  // grey
+            };
+            const suitSymbols = {
+                'h': '♥',
+                'd': '♦',
+                'c': '♣',
+                's': '♠'
+            };
+            
+            ctx.textBaseline = 'middle';
+                let currentX = x;
+
+                for (let i = 0; i < boardName.length; i++) {
+                    const char = boardName[i];
+                    const lowerChar = char.toLowerCase();
+                    
+                    if (char === '-') {
+                        ctx.font = `${fontWeight} ${fontSize}px sans-serif`;
+                        ctx.fillStyle = '#888';
+                        ctx.fillText('-', currentX, y);
+                        currentX += ctx.measureText('-').width;
+                    } else if (suitSymbols[lowerChar]) {
+                        ctx.font = `${fontWeight} ${fontSize + 4}px sans-serif`;
+                        ctx.fillStyle = suitColors[lowerChar];
+                        ctx.fillText(suitSymbols[lowerChar], currentX, y);
+                        currentX += ctx.measureText(suitSymbols[lowerChar]).width + 1;
+                    } else {
+                        ctx.font = `${fontWeight} ${fontSize}px sans-serif`;
+                        ctx.fillStyle = '#e0e0e0';
+                        ctx.fillText(char, currentX, y);
+                        currentX += ctx.measureText(char).width;
+                    }
+                }
+
+                return currentX - x;
+        }
 
         function applyBoardFilter() {
             // Check both inputs - use whichever has a value
@@ -4396,6 +4512,93 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
             pendingLinkReport = null;
         }
 
+        function importLinkPioCSV(file) {
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const text = e.target.result;
+                const lines = text.split('\n').map(line => line.trim()).filter(line => line);
+                
+                // Find column headers
+                let headerIndex = lines.findIndex(line => line.startsWith('Flop,'));
+                if (headerIndex === -1) {
+                    alert('Invalid PioSOLVER CSV: Could not find column headers');
+                    return;
+                }
+                
+                const headers = parseCSVLine(lines[headerIndex]);
+                const dataRows = lines.slice(headerIndex + 1);
+                
+                // Extract actions from headers
+                const actions = [];
+                for (let i = 8; i < headers.length; i += 2) {
+                    const freqHeader = headers[i];
+                    if (freqHeader && freqHeader.includes(' freq')) {
+                        const rawAction = freqHeader.replace(' freq', '').trim();
+                        actions.push(normalizePioAction(rawAction));
+                    }
+                }
+                
+                // Parse board data
+                const data = [];
+                for (const row of dataRows) {
+                    const cols = parseCSVLine(row);
+                    if (cols.length < 8) continue;
+                    
+                    const flop = cols[0].trim();
+                    if (!flop) continue;
+                    
+                    const boardData = {
+                        tree: flop.replace(/\s+/g, ''),
+                        equity: parseFloat(cols[2]) || 0,
+                        actions: {}
+                    };
+                    
+                    for (const action of actions) {
+                        const colIndex = 8 + actions.indexOf(action) * 2;
+                        const freq = parseFloat(cols[colIndex]) || 0;
+                        boardData.actions[action] = freq;
+                    }
+                    
+                    // Set bet/check for chart compatibility
+                    let totalBet = 0;
+                    for (const [key, value] of Object.entries(boardData.actions)) {
+                        if (key.startsWith('b') && key !== 'check') {
+                            totalBet += value;
+                        }
+                    }
+                    boardData.bet = totalBet;
+                    boardData.check = boardData.actions['check'] || 0;
+                    
+                    data.push(boardData);
+                }
+                
+                if (data.length === 0) {
+                    alert('No valid board data found in CSV');
+                    return;
+                }
+                
+                // Convert to format expected by saveLinkReport
+                // Build text format that saveLinkReport can parse
+                let textOutput = 'Tree(*)\tEquity\t' + actions.join('\t') + '\n';
+                for (const board of data) {
+                    let line = board.tree + '\t' + board.equity;
+                    for (const action of actions) {
+                        line += '\t' + (board.actions[action] || 0);
+                    }
+                    textOutput += line + '\n';
+                }
+                
+                // Put it in the textarea
+                document.getElementById('linkDataInput').value = textOutput;
+                
+                alert(`✓ Loaded ${data.length} boards from CSV. Now click "Import & Link" to save.`);
+            };
+            
+            reader.readAsText(file);
+        }
+
         function getPlayerPosition(position, player, potType, initiative) {
             // Parse position string (e.g., "BB vs SB" means BB is OOP, SB is IP)
             const [oop, ip] = position.split(' vs ');
@@ -5513,7 +5716,7 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                 
                 <div id="boardDetailContainer" style="display: none; margin-top: 20px; position: relative;">
                     <!-- Aggregate Button (top-left corner) -->
-                    <button onclick="showAggregateDetails()" style="position: absolute; top: 0; left: 0; width: 40px; height: 40px; background-color: #8b5cf6; border: none; border-radius: 6px; cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 0; z-index: 10;">
+                    <button onclick="showAggregateDetails()" style="position: absolute; top: 0; left: 0; width: 40px; height: 40px; background-color: #4a4a4a; border: none; border-radius: 6px; cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 0; z-index: 10;">
                         <svg width="24" height="24" viewBox="0 0 100 100" fill="none" stroke="white" stroke-width="3">
                             <circle cx="50" cy="30" r="25"/>
                             <circle cx="30" cy="65" r="25"/>
@@ -5603,9 +5806,9 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
 
         const canvas = document.getElementById('strengthChart');
 
-        canvas.width = 300;
+        canvas.width = 450;
         canvas.height = canvasHeight;
-        canvas.style.width = '300px';
+        canvas.style.width = '450px';
         canvas.style.height = canvasHeight + 'px';
 
         const ctx = canvas.getContext('2d');
@@ -5616,6 +5819,41 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
         console.log('limited[0].actions:', limited[0].actions);
         console.log('perspectiveData.availableActions:', perspectiveData.availableActions);
         console.log('=== END DEBUG ===');
+
+        const suitLabelsPlugin = {
+            id: 'suitLabels',
+            afterDraw: function(chart) {
+                const ctx = chart.ctx;
+                const yScale = chart.scales.y;
+                const labels = chart.data.labels;
+                
+                for (let i = 0; i < labels.length; i++) {
+                    const label = labels[i];
+                    const tickY = yScale.getPixelForTick(i);
+                    
+                    const cleanLabel = label.replace('-', '');
+                    const isSelected = cleanLabel === selectedBoardName || label === selectedBoardName;
+                    const fontSize = isSelected ? 18 : 13;
+                    const fontWeight = isSelected ? '900' : '500';
+                    
+                    ctx.font = `${fontWeight} ${fontSize}px sans-serif`;
+                    let totalWidth = 0;
+                    for (let j = 0; j < label.length; j++) {
+                        const char = label[j];
+                        if (char === '-') {
+                            totalWidth += ctx.measureText('-').width;
+                        } else if (['h','d','c','s'].includes(char.toLowerCase())) {
+                            totalWidth += ctx.measureText('♥').width + 1;
+                        } else {
+                            totalWidth += ctx.measureText(char).width;
+                        }
+                    }
+                    
+                    const x = chart.chartArea.left - totalWidth - 15;
+                    formatBoardWithSuits(ctx, label, x, tickY, fontSize, fontWeight, isSelected);
+                }
+            }
+        };
 
         const labelClickPlugin = {
             id: 'labelClick',
@@ -5706,7 +5944,7 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                             };
                         })
                     },
-                    plugins: [labelClickPlugin],
+                    plugins: [labelClickPlugin, suitLabelsPlugin],
                     options: {
                         indexAxis: 'y',
                         responsive: false,
@@ -5741,7 +5979,7 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                                 top: 40,
                                 right: 10,
                                 bottom: 10,
-                                left: 10
+                                left: 80
                             }
                         },
                         scales: {
@@ -5762,18 +6000,7 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                                 stacked: true,
                                 grid: { display: false },
                                 ticks: {
-                                    align: 'center',
-                                    color: function(context) {
-                                        const label = limited[context.index]?.tree;
-                                        return label === selectedBoardName ? '#f97316' : '#e0e0e0';
-                                    },
-                                    font: function(context) {
-                                        const label = limited[context.index]?.tree;
-                                        return label === selectedBoardName 
-                                            ? { size: 15, weight: 'bold' }
-                                            : { size: 13, weight: '500' };
-                                    },
-                                    showLabelBackdrop: false
+                                    display: false
                                 }
                             }
                         }
@@ -7028,5 +7255,4 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
 
     </body>
 </html>
-
 
