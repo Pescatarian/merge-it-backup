@@ -7126,7 +7126,15 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
         let currentUser = null;
 
         function openAuthModal() {
-            document.getElementById('authModal').classList.add('active');
+            const modal = document.getElementById('authModal');
+            // The modal markup is nested inside a container that forms its own
+            // stacking context, so its z-index can't beat the body-level
+            // .auth-required-overlay. Reparent it to <body> so it truly sits
+            // above the overlay and stays clickable.
+            if (modal.parentElement !== document.body) {
+                document.body.appendChild(modal);
+            }
+            modal.classList.add('active');
             document.getElementById('authError').style.display = 'none';
         }
 
@@ -7213,18 +7221,27 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
         });
         }
 
-        supabaseClient.auth.getSession().then(({ data: { session } }) => {
-            if (session) {
-                currentUser = session.user;
-                updateAuthUI();
-                document.getElementById('appContent').classList.remove('app-hidden');
-                document.querySelector('.auth-required-overlay').style.display = 'none';
-            } else {
-                document.getElementById('appContent').classList.add('app-hidden');
-                document.querySelector('.auth-required-overlay').style.display = 'flex';
-                openAuthModal();
-            }
-        });
+        function initAuthGate() {
+            supabaseClient.auth.getSession().then(({ data: { session } }) => {
+                if (session) {
+                    currentUser = session.user;
+                    updateAuthUI();
+                    document.getElementById('appContent').classList.remove('app-hidden');
+                    document.querySelector('.auth-required-overlay').style.display = 'none';
+                } else {
+                    document.getElementById('appContent').classList.add('app-hidden');
+                    document.querySelector('.auth-required-overlay').style.display = 'flex';
+                    openAuthModal();
+                }
+            });
+        }
+        // Run only after the full DOM (incl. the body-level #authModal) is parsed,
+        // otherwise openAuthModal() can fire before the modal element exists and throw.
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initAuthGate);
+        } else {
+            initAuthGate();
+        }
 
         
         </script>
