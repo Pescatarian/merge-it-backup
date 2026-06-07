@@ -3434,6 +3434,14 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
 
         function filterFlopBoard(filter, fromSidebar = false) {
             console.log('filterFlopBoard CALLED with:', filter, 'boardFilterText:', boardFilterText);
+            // Guard: no report loaded (e.g. a fresh user with zero imported reports clicking
+            // the Board Filter "Apply"). Without this, currentReport.perspectives below throws
+            // "Cannot read properties of null (reading 'perspectives')". Nothing to filter -> show empty state.
+            if (!currentReport || !currentReport.perspectives) {
+                window.isFilteringFlop = false;
+                displayNoData();
+                return;
+            }
             if (window.isFilteringFlop) return;
             window.isFilteringFlop = true;
 
