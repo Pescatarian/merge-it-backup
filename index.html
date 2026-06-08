@@ -3466,18 +3466,34 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
             });
             console.log('Filter:', filter, 'Matches:', flopFilteredData.length, 'of', fullData.length);
             
-            // Handle no matches
+            // Handle no matches.
+            // CRITICAL: the live flop control (#flopFilterBox: texture toggles + "All" + rank box)
+            // is rendered INSIDE #dataDisplay. Overwriting dataDisplay's innerHTML here would
+            // destroy that control, leaving the user with no in-place way to reverse an empty
+            // selection. Instead, show the message in the CHART AREA only and keep the control
+            // visible, re-syncing its toggle states so the user can always click a toggle off / "All".
             if (flopFilteredData.length === 0) {
                 if (window.mainChartInstance) {
                     window.mainChartInstance.destroy();
                     window.mainChartInstance = null;
                 }
-                document.getElementById('dataDisplay').innerHTML = `
+                const noMatchMsg = `
                     <div style="text-align: center; padding: 60px 20px; color: #fff;">
                         <div style="font-size: 18px;">No boards match this filter</div>
                     </div>
                 `;
-                document.getElementById('dataDisplay').style.display = 'block';
+                const chartCanvas = document.getElementById('strengthChart');
+                const flopBox = document.getElementById('flopFilterBox');
+                // If a report is already rendered (flop control present), replace ONLY the chart
+                // area (the canvas's wrapper), preserving #flopFilterBox so its buttons stay usable.
+                if (chartCanvas && chartCanvas.parentElement && flopBox) {
+                    chartCanvas.parentElement.innerHTML = noMatchMsg;
+                    updateFlopTextureButtonStyles();
+                } else {
+                    // Fallback (no report rendered yet): no control to preserve, use full message.
+                    document.getElementById('dataDisplay').innerHTML = noMatchMsg;
+                    document.getElementById('dataDisplay').style.display = 'block';
+                }
                 showBreadcrumbSection();
                 updateActionButtons();
                 window.isFilteringFlop = false;
@@ -3624,7 +3640,12 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
             sidebarFilters.suit = null;
             sidebarFilters.pairdness = null;
             sidebarFilters.connectivity = null;
-            
+
+            // Clear the flop tri-state texture toggles too. clearAllFilters() predates the
+            // tri-state model and otherwise leaves flopTextureToggles set (e.g. FD='include'),
+            // which kept the chart restricted while the button visuals reset — a misleading desync.
+            for (const k in flopTextureToggles) flopTextureToggles[k] = 'off';
+
             // Clear UI
             document.querySelectorAll('.sidebar .circle-selector').forEach(el => {
                 el.classList.remove('selected');
@@ -3654,9 +3675,9 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                 });
             } else if (!vsMode) {
                 applyFilters();
-                document.querySelectorAll('.flop-cat-btn').forEach(btn => {
-                    btn.style.background = btn.dataset.category === 'all' ? '#3b82f6' : '#2a2a2a';
-                });
+                // Re-sync tri-state texture button visuals (background + ✓/✗ labels) after the
+                // re-render so the buttons match the now-cleared flopTextureToggles state.
+                updateFlopTextureButtonStyles();
             }
         }
 
@@ -5427,10 +5448,15 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
             
             searchFilters.situation = null;
             searchFilters.flop = null;
-            
+
+            // Reset the flop tri-state texture toggles so the next loaded report starts unfiltered
+            // (clearSearch predates the tri-state model and otherwise left them set).
+            for (const k in flopTextureToggles) flopTextureToggles[k] = 'off';
+            updateFlopTextureButtonStyles();
+
             // Clear the spot display box
             document.getElementById('spotDisplayBox').textContent = '';
-            
+
             displayNoData();
             hideBreadcrumbSection();
         }
