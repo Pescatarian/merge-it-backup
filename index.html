@@ -3962,7 +3962,7 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
         function flopToggleBtnStyle(state) {
             if (state === 'include') return 'background: #157D3C; color: #fff; border: 1px solid #1f9d4d;';
             if (state === 'exclude') return 'background: #b91c1c; color: #fff; border: 1px solid #ef4444;';
-            return 'background: #2a2a2a; color: #fff; border: none;';
+            return 'background: #2a2a2a; color: #fff; border: 1px solid transparent;';
         }
 
         // Button label with state icon (✓ include, ✗ exclude)
@@ -3977,12 +3977,12 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
         function updateFlopTextureButtonStyles() {
             document.querySelectorAll('.flop-cat-btn').forEach(btn => {
                 const cat = btn.dataset.category;
-                if (cat === 'all') { btn.style.background = '#2a2a2a'; btn.style.border = 'none'; return; }
+                if (cat === 'all') { btn.style.background = '#2a2a2a'; btn.style.border = '1px solid transparent'; return; }
                 if (!(cat in flopTextureToggles)) return;
                 const state = flopTextureToggles[cat];
                 if (state === 'include') { btn.style.background = '#157D3C'; btn.style.border = '1px solid #1f9d4d'; }
                 else if (state === 'exclude') { btn.style.background = '#b91c1c'; btn.style.border = '1px solid #ef4444'; }
-                else { btn.style.background = '#2a2a2a'; btn.style.border = 'none'; }
+                else { btn.style.background = '#2a2a2a'; btn.style.border = '1px solid transparent'; }
                 btn.textContent = flopToggleLabel(cat, state);
             });
         }
@@ -5730,12 +5730,12 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                    <!-- Flop Filter Box -->
                     <div id="flopFilterBox" style="display: none; background: #1a1a1a; border: 1px solid #333; border-radius: 6px; padding: 12px; margin-bottom: 10px; width: fit-content;">
                         <div style="display: flex; gap: 6px; flex-wrap: nowrap; align-items: center;">
-                            <button class="flop-cat-btn" data-category="all" onclick="resetFlopTextures()" style="background: #2a2a2a; color: #fff; border: none; border-radius: 4px; padding: 4px 10px; font-size: 11px; cursor: pointer;">All</button>
-                            <button class="flop-cat-btn" data-category="rainbow" onclick="cycleFlopTexture('rainbow')" style="${flopToggleBtnStyle(flopTextureToggles.rainbow)} border-radius: 4px; padding: 4px 10px; font-size: 11px; cursor: pointer;">${flopToggleLabel('rainbow', flopTextureToggles.rainbow)}</button>
-                            <button class="flop-cat-btn" data-category="flushdraw" title="Flush Draw" onclick="cycleFlopTexture('flushdraw')" style="${flopToggleBtnStyle(flopTextureToggles.flushdraw)} border-radius: 4px; padding: 4px 10px; font-size: 11px; cursor: pointer;">${flopToggleLabel('flushdraw', flopTextureToggles.flushdraw)}</button>
-                            <button class="flop-cat-btn" data-category="monotone" title="Monotone" onclick="cycleFlopTexture('monotone')" style="${flopToggleBtnStyle(flopTextureToggles.monotone)} border-radius: 4px; padding: 4px 10px; font-size: 11px; cursor: pointer;">${flopToggleLabel('monotone', flopTextureToggles.monotone)}</button>
-                            <button class="flop-cat-btn" data-category="straight" onclick="cycleFlopTexture('straight')" style="${flopToggleBtnStyle(flopTextureToggles.straight)} border-radius: 4px; padding: 4px 10px; font-size: 11px; cursor: pointer;">${flopToggleLabel('straight', flopTextureToggles.straight)}</button>
-                            <button class="flop-cat-btn" data-category="paired" onclick="cycleFlopTexture('paired')" style="${flopToggleBtnStyle(flopTextureToggles.paired)} border-radius: 4px; padding: 4px 10px; font-size: 11px; cursor: pointer;">${flopToggleLabel('paired', flopTextureToggles.paired)}</button>
+                            <button class="flop-cat-btn" data-category="all" onclick="resetFlopTextures()" style="background: #2a2a2a; color: #fff; border: 1px solid transparent; border-radius: 4px; padding: 4px 10px; font-size: 11px; cursor: pointer; white-space: nowrap; flex-shrink: 0;">All</button>
+                            <button class="flop-cat-btn" data-category="rainbow" onclick="cycleFlopTexture('rainbow')" style="${flopToggleBtnStyle(flopTextureToggles.rainbow)} border-radius: 4px; padding: 4px 10px; font-size: 11px; cursor: pointer; white-space: nowrap; flex-shrink: 0;">${flopToggleLabel('rainbow', flopTextureToggles.rainbow)}</button>
+                            <button class="flop-cat-btn" data-category="flushdraw" title="Flush Draw" onclick="cycleFlopTexture('flushdraw')" style="${flopToggleBtnStyle(flopTextureToggles.flushdraw)} border-radius: 4px; padding: 4px 10px; font-size: 11px; cursor: pointer; white-space: nowrap; flex-shrink: 0;">${flopToggleLabel('flushdraw', flopTextureToggles.flushdraw)}</button>
+                            <button class="flop-cat-btn" data-category="monotone" title="Monotone" onclick="cycleFlopTexture('monotone')" style="${flopToggleBtnStyle(flopTextureToggles.monotone)} border-radius: 4px; padding: 4px 10px; font-size: 11px; cursor: pointer; white-space: nowrap; flex-shrink: 0;">${flopToggleLabel('monotone', flopTextureToggles.monotone)}</button>
+                            <button class="flop-cat-btn" data-category="straight" onclick="cycleFlopTexture('straight')" style="${flopToggleBtnStyle(flopTextureToggles.straight)} border-radius: 4px; padding: 4px 10px; font-size: 11px; cursor: pointer; white-space: nowrap; flex-shrink: 0;">${flopToggleLabel('straight', flopTextureToggles.straight)}</button>
+                            <button class="flop-cat-btn" data-category="paired" onclick="cycleFlopTexture('paired')" style="${flopToggleBtnStyle(flopTextureToggles.paired)} border-radius: 4px; padding: 4px 10px; font-size: 11px; cursor: pointer; white-space: nowrap; flex-shrink: 0;">${flopToggleLabel('paired', flopTextureToggles.paired)}</button>
                             <button id="vsBtn" onclick="toggleVsMode()" style="background: #2a2a2a; color: #f97316; border: 1px solid #f97316; border-radius: 4px; padding: 4px 10px; font-size: 11px; cursor: pointer; margin-left: 10px;">VS</button>
                             <input type="text" id="boardFilterInput" value="${savedFlopFilterInput}" placeholder="e.g. yes 8, no a" oninput="liveBoardFilter()" style="background: #2a2a2a; color: #fff; border: ${savedFlopFilterInput ? '2px solid #f97316' : '1px solid #444'}; border-radius: 4px; padding: 4px 8px; font-size: 12px; width: 120px; margin-left: 10px;">
                         </div>
