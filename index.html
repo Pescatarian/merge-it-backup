@@ -1849,6 +1849,9 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
         let selectedBoardName = null;
         let flopFilteredData = [];
         let currentFlopFilter = 'all';
+        // Tri-state flop texture toggles: each is 'off' | 'include' | 'exclude'.
+        // Combined meaning (AND): board must match ALL 'include' textures and NONE of the 'exclude' textures.
+        const flopTextureToggles = { rainbow: 'off', flushdraw: 'off', monotone: 'off', straight: 'off', paired: 'off' };
         let turnFilteredData = null;
         let currentTurnFilter = 'all';
         let currentCategory = null;
@@ -3084,7 +3087,8 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
             flopFilteredData = null;
             boardFilterText = '';
             window.savedBoardFilterText = '';
-            
+            for (const k in flopTextureToggles) flopTextureToggles[k] = 'off';
+
             // Reset filter button styles
             document.querySelectorAll('.flop-cat-btn').forEach(btn => {
                 btn.style.background = btn.dataset.category === 'all' ? '#3b82f6' : '#2a2a2a';
@@ -3418,10 +3422,8 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
             // Only update currentFlopFilter if NOT from sidebar
             if (!fromSidebar) {
                 currentFlopFilter = filter;
-                // Update button styles
-                document.querySelectorAll('.flop-cat-btn').forEach(btn => {
-                    btn.style.background = btn.dataset.category === filter ? '#3b82f6' : '#2a2a2a';
-                });
+                // Reflect tri-state texture toggle styles (green=include ✓, red=exclude ✗, neutral=off)
+                updateFlopTextureButtonStyles();
             }
             
             // ... rest stays the same
@@ -3441,9 +3443,13 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                 if (!tree || tree.length < 6) return false;
                 const flop = tree.substring(0, 6);
                 
-                // Category filter (rainbow, monotone, etc.)
-                if (filter !== 'all' && !matchesFlopFilter(flop, filter)) return false;
-                
+                // Tri-state texture toggles (AND logic): all 'include' must hold, no 'exclude' may hold
+                for (const tex in flopTextureToggles) {
+                    const state = flopTextureToggles[tex];
+                    if (state === 'include' && !matchesFlopFilter(flop, tex)) return false;
+                    if (state === 'exclude' && matchesFlopFilter(flop, tex)) return false;
+                }
+
                 // Text filter (yes/no cards from input + sidebar)
                 if (!boardMatchesTextFilter(flop, boardFilterText)) return false;
                 
@@ -3927,6 +3933,67 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                 originalFilterFlopBoard(filter, fromSidebar);
             }
         };
+
+        // ===== FLOP TRI-STATE TEXTURE TOGGLES =====
+        const FLOP_TEXTURE_LABELS = { rainbow: 'Rainbow', flushdraw: 'FD', monotone: 'Mono', straight: 'Straight', paired: 'Paired' };
+
+        // Inline style string for a toggle button given its state (used by the displayReport template)
+        function flopToggleBtnStyle(state) {
+            if (state === 'include') return 'background: #157D3C; color: #fff; border: 1px solid #1f9d4d;';
+            if (state === 'exclude') return 'background: #b91c1c; color: #fff; border: 1px solid #ef4444;';
+            return 'background: #2a2a2a; color: #fff; border: none;';
+        }
+
+        // Button label with state icon (✓ include, ✗ exclude)
+        function flopToggleLabel(category, state) {
+            const base = FLOP_TEXTURE_LABELS[category] || category;
+            if (state === 'include') return base + ' ✓';
+            if (state === 'exclude') return base + ' ✗';
+            return base;
+        }
+
+        // Apply current toggle state to the live DOM buttons (used between re-renders / on the no-match path)
+        function updateFlopTextureButtonStyles() {
+            document.querySelectorAll('.flop-cat-btn').forEach(btn => {
+                const cat = btn.dataset.category;
+                if (cat === 'all') { btn.style.background = '#2a2a2a'; btn.style.border = 'none'; return; }
+                if (!(cat in flopTextureToggles)) return;
+                const state = flopTextureToggles[cat];
+                if (state === 'include') { btn.style.background = '#157D3C'; btn.style.border = '1px solid #1f9d4d'; }
+                else if (state === 'exclude') { btn.style.background = '#b91c1c'; btn.style.border = '1px solid #ef4444'; }
+                else { btn.style.background = '#2a2a2a'; btn.style.border = 'none'; }
+                btn.textContent = flopToggleLabel(cat, state);
+            });
+        }
+
+        // Texture button click: cycle OFF -> INCLUDE -> EXCLUDE -> OFF, then re-filter.
+        // In VS mode, defer to the legacy compare behavior (unchanged).
+        function cycleFlopTexture(category) {
+            if (vsMode) { filterFlopBoard(category); return; }
+            const next = { off: 'include', include: 'exclude', exclude: 'off' };
+            flopTextureToggles[category] = next[flopTextureToggles[category] || 'off'];
+            updateFlopTextureButtonStyles();
+            filterFlopBoard('all');
+        }
+
+        // "All" button: reset every texture toggle to OFF (show everything).
+        function resetFlopTextures() {
+            if (vsMode) { filterFlopBoard('all'); return; }
+            for (const k in flopTextureToggles) flopTextureToggles[k] = 'off';
+            updateFlopTextureButtonStyles();
+            filterFlopBoard('all');
+        }
+
+        // Inline rank text box: live filter on every keystroke (Turn-style, no Apply/Clear).
+        function liveBoardFilter() {
+            const input = document.getElementById('boardFilterInput');
+            if (!input) return;
+            boardFilterText = input.value.trim().toLowerCase();
+            window.savedBoardFilterText = input.value;
+            input.style.border = boardFilterText ? '2px solid #f97316' : '1px solid #444';
+            if (vsMode && vsFirstFilter && vsSecondFilter) { showVsComparison(vsFirstFilter, vsSecondFilter); return; }
+            filterFlopBoard('all');
+        }
 
         function matchesFlopFilter(flop, filter) {
             // Extract just the board part after underscore
@@ -5409,6 +5476,12 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
 
             const savedSearchInput = document.getElementById('turnCardSearchInput')?.value || '';
 
+            // Preserve the flop rank box value + caret across this full re-render (live typing)
+            const _flopInputEl = document.getElementById('boardFilterInput');
+            const savedFlopFilterInput = _flopInputEl?.value || '';
+            const flopInputWasFocused = !!_flopInputEl && document.activeElement === _flopInputEl;
+            const flopInputCaret = _flopInputEl ? _flopInputEl.selectionStart : null;
+
             const report = allReports.find(r => r.id === reportId);
             if (!report) {
                 console.error('Report not found:', reportId);
@@ -5630,22 +5703,15 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
 
                    <!-- Flop Filter Box -->
                     <div id="flopFilterBox" style="display: none; background: #1a1a1a; border: 1px solid #333; border-radius: 6px; padding: 12px; margin-bottom: 10px; width: fit-content;">
-                        <div style="display: flex; gap: 6px; flex-wrap: wrap; align-items: center;">
-                            <button class="flop-cat-btn" data-category="all" onclick="filterFlopBoard('all')" style="background: ${currentFlopFilter === 'all' ? '#3b82f6' : '#2a2a2a'}; color: #fff; border: none; border-radius: 4px; padding: 4px 10px; font-size: 11px; cursor: pointer;">All</button>
-                            <button class="flop-cat-btn" data-category="rainbow" onclick="filterFlopBoard('rainbow')" style="background: ${currentFlopFilter === 'rainbow' ? '#3b82f6' : '#2a2a2a'}; color: #fff; border: none; border-radius: 4px; padding: 4px 10px; font-size: 11px; cursor: pointer;">Rainbow</button>
-                            <button class="flop-cat-btn" data-category="flushdraw" title="Flush Draw" onclick="filterFlopBoard('flushdraw')" style="background: ${currentFlopFilter === 'flushdraw' ? '#3b82f6' : '#2a2a2a'}; color: #fff; border: none; border-radius: 4px; padding: 4px 10px; font-size: 11px; cursor: pointer;">FD</button>
-                            <button class="flop-cat-btn" data-category="monotone" title="Monotone" onclick="filterFlopBoard('monotone')" style="background: ${currentFlopFilter === 'monotone' ? '#3b82f6' : '#2a2a2a'}; color: #fff; border: none; border-radius: 4px; padding: 4px 10px; font-size: 11px; cursor: pointer;">Mono</button>
-                            <button class="flop-cat-btn" data-category="straight" onclick="filterFlopBoard('straight')" style="background: ${currentFlopFilter === 'straight' ? '#3b82f6' : '#2a2a2a'}; color: #fff; border: none; border-radius: 4px; padding: 4px 10px; font-size: 11px; cursor: pointer;">Straight</button>
-                            <button class="flop-cat-btn" data-category="paired" onclick="filterFlopBoard('paired')" style="background: ${currentFlopFilter === 'paired' ? '#3b82f6' : '#2a2a2a'}; color: #fff; border: none; border-radius: 4px; padding: 4px 10px; font-size: 11px; cursor: pointer;">Paired</button>
+                        <div style="display: flex; gap: 6px; flex-wrap: nowrap; align-items: center;">
+                            <button class="flop-cat-btn" data-category="all" onclick="resetFlopTextures()" style="background: #2a2a2a; color: #fff; border: none; border-radius: 4px; padding: 4px 10px; font-size: 11px; cursor: pointer;">All</button>
+                            <button class="flop-cat-btn" data-category="rainbow" onclick="cycleFlopTexture('rainbow')" style="${flopToggleBtnStyle(flopTextureToggles.rainbow)} border-radius: 4px; padding: 4px 10px; font-size: 11px; cursor: pointer;">${flopToggleLabel('rainbow', flopTextureToggles.rainbow)}</button>
+                            <button class="flop-cat-btn" data-category="flushdraw" title="Flush Draw" onclick="cycleFlopTexture('flushdraw')" style="${flopToggleBtnStyle(flopTextureToggles.flushdraw)} border-radius: 4px; padding: 4px 10px; font-size: 11px; cursor: pointer;">${flopToggleLabel('flushdraw', flopTextureToggles.flushdraw)}</button>
+                            <button class="flop-cat-btn" data-category="monotone" title="Monotone" onclick="cycleFlopTexture('monotone')" style="${flopToggleBtnStyle(flopTextureToggles.monotone)} border-radius: 4px; padding: 4px 10px; font-size: 11px; cursor: pointer;">${flopToggleLabel('monotone', flopTextureToggles.monotone)}</button>
+                            <button class="flop-cat-btn" data-category="straight" onclick="cycleFlopTexture('straight')" style="${flopToggleBtnStyle(flopTextureToggles.straight)} border-radius: 4px; padding: 4px 10px; font-size: 11px; cursor: pointer;">${flopToggleLabel('straight', flopTextureToggles.straight)}</button>
+                            <button class="flop-cat-btn" data-category="paired" onclick="cycleFlopTexture('paired')" style="${flopToggleBtnStyle(flopTextureToggles.paired)} border-radius: 4px; padding: 4px 10px; font-size: 11px; cursor: pointer;">${flopToggleLabel('paired', flopTextureToggles.paired)}</button>
                             <button id="vsBtn" onclick="toggleVsMode()" style="background: #2a2a2a; color: #f97316; border: 1px solid #f97316; border-radius: 4px; padding: 4px 10px; font-size: 11px; cursor: pointer; margin-left: 10px;">VS</button>
-                        </div>
-                        <!-- Board filter input -->
-                        <div style="margin-top: 10px;">
-                            <input type="text" id="boardFilterInput" placeholder="e.g. no straight, yes Q, no 8"
-                                style="background: #2a2a2a; color: #fff; border: 1px solid #444; border-radius: 4px; padding: 6px 10px; font-size: 11px; width: 220px;"
-                                onkeyup="if(event.key === 'Enter') applyBoardFilter()">
-                            <button onclick="applyBoardFilter()" style="background: #3b82f6; color: #fff; border: none; border-radius: 4px; padding: 6px 10px; font-size: 11px; cursor: pointer; margin-left: 4px;">Apply</button>
-                            <button onclick="clearBoardFilter()" style="background: #444; color: #fff; border: none; border-radius: 4px; padding: 6px 10px; font-size: 11px; cursor: pointer; margin-left: 4px;">Clear</button>
+                            <input type="text" id="boardFilterInput" value="${savedFlopFilterInput}" placeholder="e.g. yes 8, no a" oninput="liveBoardFilter()" style="background: #2a2a2a; color: #fff; border: ${savedFlopFilterInput ? '2px solid #f97316' : '1px solid #444'}; border-radius: 4px; padding: 4px 8px; font-size: 12px; width: 120px; margin-left: 10px;">
                         </div>
                     </div>
 
@@ -6040,6 +6106,19 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                 console.log('Restoring:', window.savedBoardFilterText, 'Input found:', !!input);
                 if (input) input.value = window.savedBoardFilterText;
             }, 50);
+        }
+
+        // Restore focus + caret to the flop rank box so live typing isn't interrupted by re-render
+        // (mirrors the Turn box's 10ms refocus so fast keystrokes are not dropped)
+        if (currentStreet === 'FLOP' && flopInputWasFocused) {
+            setTimeout(() => {
+                const input = document.getElementById('boardFilterInput');
+                if (input) {
+                    input.focus();
+                    const pos = (flopInputCaret == null) ? input.value.length : flopInputCaret;
+                    input.setSelectionRange(pos, pos);
+                }
+            }, 10);
         }
 
         }
