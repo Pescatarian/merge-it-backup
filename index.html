@@ -1488,19 +1488,6 @@
         <div class="sidebar-header">FILTERS SECTION</div>
         <div class="filter-sections-wrapper">
 
-            <!-- Flop Filter Box -->
-            <div id="flopFilterBox" style="display: none; background: #1a1a1a; border: 1px solid #333; border-radius: 6px; padding: 12px; margin-bottom: 10px; width: 100%;">
-                <div style="display: flex; gap: 4px; flex-wrap: wrap;">
-                    <button class="flop-cat-btn" data-category="all" onclick="filterFlopBoard('all')" style="background: #2a2a2a; color: #fff; border: none; border-radius: 4px; padding: 4px 8px; font-size: 10px; cursor: pointer;">All</button>
-                    <button class="flop-cat-btn" data-category="rainbow" onclick="filterFlopBoard('rainbow')" style="background: #2a2a2a; color: #fff; border: none; border-radius: 4px; padding: 4px 8px; font-size: 10px; cursor: pointer;">Rainbow</button>
-                    <button class="flop-cat-btn" data-category="flushdraw" title="Flush Draw" onclick="filterFlopBoard('flushdraw')" style="background: #2a2a2a; color: #fff; border: none; border-radius: 4px; padding: 4px 8px; font-size: 10px; cursor: pointer;">FD</button>
-                    <button class="flop-cat-btn" data-category="monotone" title="Monotone" onclick="filterFlopBoard('monotone')" style="background: #2a2a2a; color: #fff; border: none; border-radius: 4px; padding: 4px 8px; font-size: 10px; cursor: pointer;">Mono</button>
-                    <button class="flop-cat-btn" data-category="straight" onclick="filterFlopBoard('straight')" style="background: #2a2a2a; color: #fff; border: none; border-radius: 4px; padding: 4px 8px; font-size: 10px; cursor: pointer;">Straight</button>
-                    <button class="flop-cat-btn" data-category="paired" onclick="filterFlopBoard('paired')" style="background: #2a2a2a; color: #fff; border: none; border-radius: 4px; padding: 4px 8px; font-size: 10px; cursor: pointer;">Paired</button>
-                    <button id="vsBtn" onclick="toggleVsMode()" style="background: #2a2a2a; color: #f97316; border: 1px solid #f97316; border-radius: 4px; padding: 4px 8px; font-size: 10px; cursor: pointer;">VS</button>
-                </div>
-            </div>
-
             <!-- CARD SELECTION -->
             <div class="filter-section">
                 <div class="filter-header" onclick="toggleFilterSection(this)">
@@ -2550,7 +2537,6 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
             }
             
             filterFlopBoard(currentFlopFilter || 'all');
-            console.log('Saved board filter:', window.savedBoardFilterText);
         }
 
         function clearBoardFilter() {
@@ -3393,7 +3379,6 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
         }
 
         function filterFlopBoard(filter, fromSidebar = false) {
-            console.log('filterFlopBoard CALLED with:', filter, 'boardFilterText:', boardFilterText);
             // Guard: no report loaded (e.g. a fresh user with zero imported reports clicking
             // the Board Filter "Apply"). Without this, currentReport.perspectives below throws
             // "Cannot read properties of null (reading 'perspectives')". Nothing to filter -> show empty state.
@@ -3456,8 +3441,7 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                 
                 return true;
             });
-            console.log('Filter:', filter, 'Matches:', flopFilteredData.length, 'of', fullData.length);
-            
+
             // Handle no matches.
             // CRITICAL: the live flop control (#flopFilterBox: texture toggles + "All" + rank box)
             // is rendered INSIDE #dataDisplay. Overwriting dataDisplay's innerHTML here would
@@ -3687,13 +3671,6 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
 
         // ===== APPLY FILTERS =====
         function applyFilters() {
-            console.log('Applying sidebar filters:', {
-                cardsYes: Array.from(sidebarFilters.cards.yes),
-                cardsNo: Array.from(sidebarFilters.cards.no),
-                suit: sidebarFilters.suit,
-                pairdness: sidebarFilters.pairdness,
-                connectivity: sidebarFilters.connectivity
-            });
             
             // Build text filter from card selections (merges with existing text input)
             let textParts = [];
@@ -3749,8 +3726,6 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                     // In VS mode but selections not complete - don't clear buttons
                     return;
                 } else {
-                    console.log('Calling filterFlopBoard with:', categoryFilter, 'boardFilterText:', boardFilterText);
-                    
                     // Clear main category button highlights when using sidebar filters
                     document.querySelectorAll('.flop-cat-btn').forEach(btn => {
                         btn.style.background = '#2a2a2a';
@@ -3926,9 +3901,6 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
             }
             
             // ... rest of wrapper unchanged
-            
-            console.log('filterFlopBoard wrapper - boardFilterText set to:', boardFilterText);
-            console.log('filterFlopBoard called:', filter, 'vsMode:', vsMode, 'vsFirstFilter:', vsFirstFilter);
 
             if (vsMode) {
                 if (!vsFirstFilter) {
@@ -3942,8 +3914,6 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                     });
                 } else {
                     vsSecondFilter = filter;
-                    console.log('VS Compare:', vsFirstFilter, 'vs', vsSecondFilter);
-                    console.log('boardDetailData keys:', Object.keys(boardDetailData).length);
                     showVsComparison(vsFirstFilter, vsSecondFilter);
                     
                     document.querySelectorAll('.flop-cat-btn').forEach(btn => {
@@ -4025,9 +3995,7 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
             if (flop.includes('_')) {
                 flop = flop.split('_').pop();
             }
-            
-            console.log('matchesFlopFilter:', flop, 'filter:', filter, 'length:', flop.length);
-            
+
             // Parse flop cards: "KcJh9d" -> ...
             
             const cards = [
@@ -4234,7 +4202,6 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
             });
 
             window.isFilteringTurn = false;
-            console.log('turnFilteredData.length:', turnFilteredData.length);
 
             // Empty-result safe handling — mirrors the Flop redesign. The live Turn control
             // (#turnFilterBox: toggles + search box) is rendered INSIDE #dataDisplay; overwriting
