@@ -2587,23 +2587,15 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
         }
 
         function shouldExcludeBoard(board, term) {
-            // Check if term is a texture filter type
-            if (['rainbow', 'flushdraw', 'flush draw', 'monotone', 'straight', 'paired'].includes(term)) {
-                const filterKey = term.replace(' ', '');
-                return matchesFlopFilter(board, filterKey);
-            }
-            // Check if term is a rank (A, K, Q, J, T, 9, 8, etc.)
+            // Texture words (rainbow/flushdraw/monotone/straight/paired) are NO LONGER handled
+            // here — texture filtering is owned exclusively by the tri-state texture toggles.
+            // This box does ONLY card/rank search. Term is treated as a rank (A, K, Q, ... 2).
             const ranks = [board[0], board[2], board[4]].map(r => r.toUpperCase());
             return ranks.includes(term.toUpperCase());
         }
 
         function shouldIncludeBoard(board, term) {
-            // Check if term is a texture filter type
-            if (['rainbow', 'flushdraw', 'flush draw', 'monotone', 'straight', 'paired'].includes(term)) {
-                const filterKey = term.replace(' ', '');
-                return matchesFlopFilter(board, filterKey);
-            }
-            // Check if term is a rank
+            // Texture words are NO LONGER handled here (see shouldExcludeBoard). Rank-only search.
             const ranks = [board[0], board[2], board[4]].map(r => r.toUpperCase());
             return ranks.includes(term.toUpperCase());
         }
@@ -4098,149 +4090,178 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
             return false;
         }
 
-        function filterTurnCard(filter) {
-            console.log('filterTurnCard called with:', filter);
+        // ===== TURN TRI-STATE TEXTURE TOGGLES (mirrors the Flop tri-state model) =====
+        // Each texture cycles OFF -> INCLUDE (green ✓) -> EXCLUDE (red ✗) -> OFF.
+        // Multiple active toggles combine with AND. They also AND-combine with the search box.
+        const turnTextureToggles = { flush: 'off', pairing: 'off', straight: 'off', broadway: 'off', blank: 'off' };
+        const TURN_TEXTURE_LABELS = { flush: 'Flush', pairing: 'Pairing', straight: 'Straight', broadway: 'Broadway', blank: 'Blank' };
+
+        // Inline style string for a toggle button given its state (used by the displayReport template).
+        function turnToggleBtnStyle(state) {
+            if (state === 'include') return 'background: #157D3C; color: #fff; border: 1px solid #1f9d4d;';
+            if (state === 'exclude') return 'background: #b91c1c; color: #fff; border: 1px solid #ef4444;';
+            return 'background: #2a2a2a; color: #fff; border: 1px solid transparent;';
+        }
+
+        // Button label with state icon (✓ include, ✗ exclude).
+        function turnToggleLabel(category, state) {
+            const base = TURN_TEXTURE_LABELS[category] || category;
+            if (state === 'include') return base + ' ✓';
+            if (state === 'exclude') return base + ' ✗';
+            return base;
+        }
+
+        // Apply current toggle state to the live DOM buttons (used on the no-match path where
+        // displayReport is intentionally NOT re-run, so the template can't re-render them).
+        function updateTurnTextureButtonStyles() {
+            document.querySelectorAll('.turn-cat-btn').forEach(btn => {
+                const cat = btn.dataset.category;
+                if (cat === 'all') { btn.style.background = '#2a2a2a'; btn.style.border = '1px solid transparent'; return; }
+                if (!(cat in turnTextureToggles)) return;
+                const state = turnTextureToggles[cat];
+                if (state === 'include') { btn.style.background = '#157D3C'; btn.style.border = '1px solid #1f9d4d'; }
+                else if (state === 'exclude') { btn.style.background = '#b91c1c'; btn.style.border = '1px solid #ef4444'; }
+                else { btn.style.background = '#2a2a2a'; btn.style.border = '1px solid transparent'; }
+                btn.textContent = turnToggleLabel(cat, state);
+            });
+        }
+
+        // Texture button click: cycle OFF -> INCLUDE -> EXCLUDE -> OFF, then re-filter live.
+        function cycleTurnTexture(category) {
+            const next = { off: 'include', include: 'exclude', exclude: 'off' };
+            turnTextureToggles[category] = next[turnTextureToggles[category] || 'off'];
+            updateTurnTextureButtonStyles();
+            applyTurnFilter();
+        }
+
+        // "All" button: reset every texture toggle to OFF (search text is left untouched).
+        function resetTurnTextures() {
+            for (const k in turnTextureToggles) turnTextureToggles[k] = 'off';
+            updateTurnTextureButtonStyles();
+            applyTurnFilter();
+        }
+
+        // Does one fullData item's board match the typed Turn search text?
+        // PRESERVED grammars: dashed combined flop-rank+turn-rank "KQ6-A"; dashed full board
+        // "Ks9h5d-Ac"; 3-char flop ranks "KQ6" (all turns of that flop); 6-char full flop
+        // "Ks9h5d"; bare card/rank OR-list "A", "Ah+Kd", "T+6".
+        // ADDED (Flop parity): comma-separated yes/no include/exclude tokens — "no A", "yes Ah",
+        // "no A, no K". Texture WORDS (flush/pairing/...) are intentionally NOT handled here —
+        // texture is owned by the tri-state toggles.
+        function turnItemMatchesSearch(item, input) {
+            const tree = item.tree?.toUpperCase();
+            if (!tree || tree.length < 8) return false;
+            const flopRanks = tree[0] + tree[2] + tree[4];
+            const flopFull = tree.substring(0, 6);
+            const turnCard = tree.substring(6, 8);
+            const turnRank = turnCard[0];
+
+            // Dashed: combined flop-rank+turn-rank (KQ6-A) or full board (Ks9h5d-Ac)
+            if (input.includes('-')) {
+                const [flopPart, turnPart] = input.split('-');
+                if (flopPart.length === 3 && turnPart.length === 1) {
+                    return flopRanks === flopPart && turnRank === turnPart;
+                }
+                return tree === (flopPart + turnPart);
+            }
+            // Plain 3-char flop ranks: show all turns for that flop
+            if (input.length === 3 && /^[AKQJT98765432]{3}$/.test(input)) {
+                return flopRanks === input;
+            }
+            // Plain 6-char full flop: show all turns for that flop
+            if (input.length === 6 && /^([AKQJT98765432][SHDC]){3}$/.test(input)) {
+                return flopFull === input;
+            }
+            // Token grammar: yes/no (include/exclude) + plain OR-list
+            const termMatches = (t) => t.length === 1 ? turnRank === t : (t.length === 2 ? turnCard === t : false);
+            const plain = [], yes = [], no = [];
+            input.split(',').map(s => s.trim()).filter(Boolean).forEach(seg => {
+                if (seg.startsWith('NO ')) seg.substring(3).split(/[+\s]+/).filter(Boolean).forEach(t => no.push(t));
+                else if (seg.startsWith('YES ')) seg.substring(4).split(/[+\s]+/).filter(Boolean).forEach(t => yes.push(t));
+                else seg.split(/[+\s]+/).filter(Boolean).forEach(t => plain.push(t));
+            });
+            for (const t of no) if (termMatches(t)) return false;          // exclude wins
+            for (const t of yes) if (!termMatches(t)) return false;        // every yes must hold
+            if (plain.length > 0 && !plain.some(termMatches)) return false; // OR over plain tokens
+            return true;
+        }
+
+        // Unified Turn filter: applies the tri-state texture toggles (AND) AND the search box text,
+        // live, on every toggle click / keystroke. Single entry point for both controls.
+        function applyTurnFilter() {
+            if (!currentReport || !currentReport.perspectives) { displayNoData(); return; }
             if (window.isFilteringTurn) return;
             window.isFilteringTurn = true;
 
-            currentTurnFilter = filter;
-            
-            // Update button styles
-            document.querySelectorAll('.turn-cat-btn').forEach(btn => {
-                btn.style.background = btn.dataset.category === filter ? '#3b82f6' : '#2a2a2a';
-            });
-            
-            // Clear search input if using category button
-            if (['all', 'flush', 'pairing', 'straight', 'broadway', 'blank'].includes(filter)) {
-                document.getElementById('turnCardSearchInput').value = '';
-            }
-            
-            // Get current perspective data
-            const perspectiveData = currentReport.perspectives[currentPerspective];
-            const actionNumber = actionHistory.length + 1;
-            const prevAction = actionHistory.length > 0 ? actionHistory[actionHistory.length - 1].action : '';
-            const actionKey = 'action' + actionNumber + (prevAction ? '_' + prevAction : '');
-            
-            const fullData = perspectiveData[actionKey]?.data || perspectiveData.data || [];
-            
-            if (filter === 'all') {
-                turnFilteredData = fullData;
-            } else {
-                turnFilteredData = fullData.filter(hand => {
-                    const tree = hand.tree;
-                    if (!tree || tree.length < 8) return false;
-                    const flop = tree.substring(0, 6);
-                    const turnCard = tree.substring(6, 8);
-                    return matchesTurnFilter(flop, turnCard, filter);
-                });
-            }
-            
-            window.isFilteringTurn = false;
-
-            displayReport(currentReport.id);
-        }
-
-        function searchTurnCards() {
-            const input = document.getElementById('turnCardSearchInput').value.trim().toUpperCase();
-            
             const inputEl = document.getElementById('turnCardSearchInput');
-            if (input) {
-                inputEl.style.background = '#3b82f6';
-                inputEl.style.color = '#fff';
-            } else {
-                inputEl.style.background = '#2a2a2a';
-            }
-            
-            // Reset category buttons
-            document.querySelectorAll('.turn-cat-btn').forEach(btn => {
-                btn.style.background = '#444';
-            });
-            
-            // Get current perspective data
+            const input = inputEl ? inputEl.value.trim().toUpperCase() : '';
+            savedSearchInput = inputEl ? inputEl.value.trim() : '';
+
             const perspectiveData = currentReport.perspectives[currentPerspective];
             const actionNumber = actionHistory.length + 1;
             const prevAction = actionHistory.length > 0 ? actionHistory[actionHistory.length - 1].action : '';
             const actionKey = 'action' + actionNumber + (prevAction ? '_' + prevAction : '');
-            
             const fullData = perspectiveData[actionKey]?.data || perspectiveData.data || [];
-            
-            if (!input) {
-                turnFilteredData = fullData;
-                document.querySelector('.turn-cat-btn[data-category="all"]').style.background = '#3b82f6';
-            } else {
-                // Check for exact board match (e.g., "K95-A" or "Ks9h5d-Ac")
-                if (input.includes('-')) {
-                    const [flopPart, turnPart] = input.split('-');
-                    
-                    if (flopPart.length === 3 && turnPart.length === 1) {
-                        // Ranks only: K95-A
-                        turnFilteredData = fullData.filter(item => {
-                            const tree = item.tree?.toUpperCase();
-                            if (!tree || tree.length < 8) return false;
-                            const flopRanks = tree[0] + tree[2] + tree[4];
-                            const turnRank = tree[6];
-                            return flopRanks === flopPart && turnRank === turnPart;
-                        });
-                    } else {
-                        // Full cards: Ks9h5d-Ac
-                        const searchTree = (flopPart + turnPart).toUpperCase();
-                        turnFilteredData = fullData.filter(item => 
-                            item.tree?.toUpperCase() === searchTree
-                        );
-                    }
-                } else if (input.length === 3 && /^[AKQJT98765432]{3}$/i.test(input)) {
-                    // Flop ranks only: K95 - show all turns for that flop
-                    turnFilteredData = fullData.filter(item => {
-                        const tree = item.tree?.toUpperCase();
-                        if (!tree || tree.length < 8) return false;
-                        const flopRanks = tree[0] + tree[2] + tree[4];
-                        return flopRanks === input;
-                    });
-                } else if (input.length === 6 && /^[AKQJT98765432][SHDC]{1}[AKQJT98765432][SHDC]{1}[AKQJT98765432][SHDC]{1}$/i.test(input)) {
-                    // Full flop cards: Ks9h5d - show all turns for that flop
-                    turnFilteredData = fullData.filter(item => 
-                        item.tree?.toUpperCase().startsWith(input)
-                    );
-                } else {
-                    // Parse input: split by + for combinations, or by comma/space
-                    const cards = input.split(/[+,\s]+/).map(c => c.trim()).filter(c => c);
-                    
-                    turnFilteredData = fullData.filter(item => {
-                        const tree = item.tree;
-                        if (!tree || tree.length < 8) return false;
-                        const turnCard = tree.substring(6, 8).toUpperCase();
-                        const turnRank = turnCard[0];
-                        
-                        return cards.some(searchCard => {
-                            if (searchCard.length === 1) {
-                                return turnRank === searchCard;
-                            } else if (searchCard.length === 2) {
-                                return turnCard === searchCard;
-                            }
-                            return false;
-                        });
-                    });
-                }
-            }
-            
-            savedSearchInput = input;
 
+            const anyToggleOn = Object.values(turnTextureToggles).some(s => s !== 'off');
+
+            turnFilteredData = fullData.filter(item => {
+                const tree = item.tree;
+                if (!tree || tree.length < 8) return false;
+                const flop = tree.substring(0, 6);
+                const turnCard = tree.substring(6, 8);
+                // Tri-state texture toggles (AND): every 'include' must hold, no 'exclude' may hold
+                for (const tex in turnTextureToggles) {
+                    const state = turnTextureToggles[tex];
+                    if (state === 'include' && !matchesTurnFilter(flop, turnCard, tex)) return false;
+                    if (state === 'exclude' && matchesTurnFilter(flop, turnCard, tex)) return false;
+                }
+                // Typed search text
+                if (input && !turnItemMatchesSearch(item, input)) return false;
+                return true;
+            });
+
+            window.isFilteringTurn = false;
             console.log('turnFilteredData.length:', turnFilteredData.length);
 
+            // Empty-result safe handling — mirrors the Flop redesign. The live Turn control
+            // (#turnFilterBox: toggles + search box) is rendered INSIDE #dataDisplay; overwriting
+            // dataDisplay here would destroy it and leave the user no way to reverse an empty
+            // filter. So replace ONLY the chart area, keep #turnFilterBox usable, re-sync toggles.
+            if (turnFilteredData.length === 0 && (anyToggleOn || input)) {
+                if (window.mainChartInstance) { window.mainChartInstance.destroy(); window.mainChartInstance = null; }
+                const noMatchMsg = `
+                    <div style="text-align: center; padding: 60px 20px; color: #fff;">
+                        <div style="font-size: 18px;">No turns match this filter</div>
+                    </div>
+                `;
+                const chartCanvas = document.getElementById('strengthChart');
+                const turnBox = document.getElementById('turnFilterBox');
+                if (chartCanvas && chartCanvas.parentElement && turnBox) {
+                    chartCanvas.parentElement.innerHTML = noMatchMsg;
+                    updateTurnTextureButtonStyles();
+                } else {
+                    document.getElementById('dataDisplay').innerHTML = noMatchMsg;
+                    document.getElementById('dataDisplay').style.display = 'block';
+                }
+                if (inputEl) inputEl.style.background = input ? '#ef4444' : '#2a2a2a';
+                return;
+            }
+
             displayReport(currentReport.id);
 
-            // Style input based on results - delayed to run after displayReport's setTimeouts
+            // Style search input based on results — delayed to run after displayReport's setTimeouts.
             setTimeout(() => {
-                const inputEl = document.getElementById('turnCardSearchInput');
-                if (input && turnFilteredData.length === 0) {
-                    inputEl.style.background = '#ef4444'; // Red - no matches
-                } else if (input) {
-                    inputEl.style.background = '#3b82f6'; // Blue - has matches
-                } else {
-                    inputEl.style.background = '#2a2a2a'; // Dark - empty
-                }
+                const el = document.getElementById('turnCardSearchInput');
+                if (!el) return;
+                if (input && turnFilteredData.length === 0) el.style.background = '#ef4444';
+                else if (input) el.style.background = '#3b82f6';
+                else el.style.background = '#2a2a2a';
             }, 50);
         }
+
+        // oninput handler for the Turn search box — delegates to the unified filter.
+        function searchTurnCards() { applyTurnFilter(); }
 
         function matchesTurnFilter(flop, turnCard, filter) {
             const turnRank = turnCard[0];
@@ -5746,13 +5767,13 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                    <!-- Turn Filter Box -->
                             <div id="turnFilterBox" style="display: none; background: #1a1a1a; border: 1px solid #333; border-radius: 6px; padding: 12px; margin-bottom: 10px; width: fit-content;">
                                 <div style="display: flex; gap: 6px; flex-wrap: wrap; align-items: center;">
-                                    <button class="turn-cat-btn" data-category="all" onclick="filterTurnCard('all')" style="background: ${savedSearchInput ? '#2a2a2a' : (currentTurnFilter === 'all' ? '#3b82f6' : '#2a2a2a')}; color: #fff; border: none; border-radius: 4px; padding: 4px 10px; font-size: 11px; cursor: pointer;">All</button>
-                                    <button class="turn-cat-btn" data-category="flush" onclick="filterTurnCard('flush')" style="background: ${savedSearchInput ? '#2a2a2a' : (currentTurnFilter === 'flush' ? '#3b82f6' : '#2a2a2a')}; color: #fff; border: none; border-radius: 4px; padding: 4px 10px; font-size: 11px; cursor: pointer;">Flush</button>
-                                    <button class="turn-cat-btn" data-category="pairing" onclick="filterTurnCard('pairing')" style="background: ${savedSearchInput ? '#2a2a2a' : (currentTurnFilter === 'pairing' ? '#3b82f6' : '#2a2a2a')}; color: #fff; border: none; border-radius: 4px; padding: 4px 10px; font-size: 11px; cursor: pointer;">Pairing</button>
-                                    <button class="turn-cat-btn" data-category="straight" onclick="filterTurnCard('straight')" style="background: ${savedSearchInput ? '#2a2a2a' : (currentTurnFilter === 'straight' ? '#3b82f6' : '#2a2a2a')}; color: #fff; border: none; border-radius: 4px; padding: 4px 10px; font-size: 11px; cursor: pointer;">Straight</button>
-                                    <button class="turn-cat-btn" data-category="broadway" onclick="filterTurnCard('broadway')" style="background: ${savedSearchInput ? '#2a2a2a' : (currentTurnFilter === 'broadway' ? '#3b82f6' : '#2a2a2a')}; color: #fff; border: none; border-radius: 4px; padding: 4px 10px; font-size: 11px; cursor: pointer;">Broadway</button>
-                                    <button class="turn-cat-btn" data-category="blank" onclick="filterTurnCard('blank')" style="background: ${savedSearchInput ? '#2a2a2a' : (currentTurnFilter === 'blank' ? '#3b82f6' : '#2a2a2a')}; color: #fff; border: none; border-radius: 4px; padding: 4px 10px; font-size: 11px; cursor: pointer;">Blank</button>
-                                    <input type="text" id="turnCardSearchInput" value="${savedSearchInput}" placeholder="e.g., A, Ah+Kd, T+6" oninput="searchTurnCards()" style="background: ${savedSearchInput ? '#3b82f6' : '#2a2a2a'}; color: #fff; border: 1px solid #444; border-radius: 4px; padding: 4px 8px; font-size: 12px; width: 120px; margin-left: 10px;">
+                                    <button class="turn-cat-btn" data-category="all" onclick="resetTurnTextures()" style="background: #2a2a2a; color: #fff; border: 1px solid transparent; border-radius: 4px; padding: 4px 10px; font-size: 11px; cursor: pointer; white-space: nowrap; flex-shrink: 0;">All</button>
+                                    <button class="turn-cat-btn" data-category="flush" onclick="cycleTurnTexture('flush')" style="${turnToggleBtnStyle(turnTextureToggles.flush)} border-radius: 4px; padding: 4px 10px; font-size: 11px; cursor: pointer; white-space: nowrap; flex-shrink: 0;">${turnToggleLabel('flush', turnTextureToggles.flush)}</button>
+                                    <button class="turn-cat-btn" data-category="pairing" onclick="cycleTurnTexture('pairing')" style="${turnToggleBtnStyle(turnTextureToggles.pairing)} border-radius: 4px; padding: 4px 10px; font-size: 11px; cursor: pointer; white-space: nowrap; flex-shrink: 0;">${turnToggleLabel('pairing', turnTextureToggles.pairing)}</button>
+                                    <button class="turn-cat-btn" data-category="straight" onclick="cycleTurnTexture('straight')" style="${turnToggleBtnStyle(turnTextureToggles.straight)} border-radius: 4px; padding: 4px 10px; font-size: 11px; cursor: pointer; white-space: nowrap; flex-shrink: 0;">${turnToggleLabel('straight', turnTextureToggles.straight)}</button>
+                                    <button class="turn-cat-btn" data-category="broadway" onclick="cycleTurnTexture('broadway')" style="${turnToggleBtnStyle(turnTextureToggles.broadway)} border-radius: 4px; padding: 4px 10px; font-size: 11px; cursor: pointer; white-space: nowrap; flex-shrink: 0;">${turnToggleLabel('broadway', turnTextureToggles.broadway)}</button>
+                                    <button class="turn-cat-btn" data-category="blank" onclick="cycleTurnTexture('blank')" style="${turnToggleBtnStyle(turnTextureToggles.blank)} border-radius: 4px; padding: 4px 10px; font-size: 11px; cursor: pointer; white-space: nowrap; flex-shrink: 0;">${turnToggleLabel('blank', turnTextureToggles.blank)}</button>
+                                    <input type="text" id="turnCardSearchInput" value="${savedSearchInput}" placeholder="e.g. A, KQ6-A, no A" oninput="searchTurnCards()" style="background: ${savedSearchInput ? '#3b82f6' : '#2a2a2a'}; color: #fff; border: 1px solid #444; border-radius: 4px; padding: 4px 8px; font-size: 12px; width: 140px; margin-left: 10px;">
                                 </div>
                             </div>
 
