@@ -30,7 +30,6 @@
             display: flex;
             flex-direction: column;
             overflow: hidden;
-            margin-left: 180px;
         }
 
         .app-hidden {
@@ -623,9 +622,7 @@
                 
 
         .action-btn:hover {
-            background-color: #252525;
-            border-color: #4a9eff;
-            color: #4a9eff;
+            filter: brightness(1.12);
         }
 
         .back-btn {
@@ -650,15 +647,14 @@
             font-weight: 600;
             min-width: 45px;
             background-color: #000;
-            padding: 5px 10px;
-            border-radius: 4px;
+            padding: 7px 14px;
+            border-radius: 6px;
             font-size: 12px;
             text-align: center;
             cursor: pointer;
             border: none;
-            position: absolute;
-            top: 8px;
-            right: 12px;
+            flex-shrink: 0;
+            margin-left: auto;
         }
 
         .edit-report-btn:hover {
@@ -1483,104 +1479,6 @@
         </div>
     </div>
 
-    <!-- SIDEBAR FILTERS -->
-    <div class="sidebar">
-        <div class="sidebar-header">FILTERS SECTION</div>
-        <div class="filter-sections-wrapper">
-
-            <!-- CARD SELECTION -->
-            <div class="filter-section">
-                <div class="filter-header" onclick="toggleFilterSection(this)">
-                    CARD SELECTION
-                    <span class="collapse-icon">▼</span>
-                </div>
-                <div class="filter-content">
-                    <div class="card-grid-header">
-                        <span></span>
-                        <span>YES</span>
-                        <span>NO</span>
-                    </div>
-                    <div id="cardSelectionGrid"></div>
-                </div>
-            </div>
-      
-        <!-- SUIT -->
-        <div class="filter-section">
-            <div class="filter-header" onclick="toggleFilterSection(this)">
-                WETNESS
-                <span class="collapse-icon">▼</span>
-            </div>
-            <div class="filter-content">
-                <div class="filter-option" onclick="toggleSuitFilter(this, 'all')">
-                    <div class="circle-selector"></div>
-                    <span>All</span>
-                </div>
-                <div class="filter-option" onclick="toggleSuitFilter(this, 'all-except-monotone')">
-                    <div class="circle-selector"></div>
-                    <span>All except monotone</span>
-                </div>
-                <div class="filter-option" onclick="toggleSuitFilter(this, '3-tone')">
-                    <div class="circle-selector"></div>
-                    <span>3-tone</span>
-                </div>
-                <div class="filter-option" onclick="toggleSuitFilter(this, '2-tone')">
-                    <div class="circle-selector"></div>
-                    <span>2-tone</span>
-                </div>
-                <div class="filter-option" onclick="toggleSuitFilter(this, 'monotone')">
-                    <div class="circle-selector"></div>
-                    <span>Monotone</span>
-                </div>
-            </div>
-        </div>
-
-        <!-- PAIRDNESS -->
-        <div class="filter-section">
-            <div class="filter-header" onclick="toggleFilterSection(this)">
-                PAIRDNESS
-                <span class="collapse-icon">▼</span>
-            </div>
-            <div class="filter-content">
-                <div class="filter-option" onclick="togglePairdnessFilter(this, 'no-pair')">
-                    <div class="circle-selector"></div>
-                    <span>No pair</span>
-                </div>
-                <div class="filter-option" onclick="togglePairdnessFilter(this, 'paired')">
-                    <div class="circle-selector"></div>
-                    <span>Paired</span>
-                </div>
-                <div class="filter-option" onclick="togglePairdnessFilter(this, 'trips')">
-                    <div class="circle-selector"></div>
-                    <span>Trips</span>
-                </div>
-            </div>
-        </div>
-
-        <!-- CONNECTIVITY -->
-        <div class="filter-section">
-            <div class="filter-header" onclick="toggleFilterSection(this)">
-                CONNECTIVITY
-                <span class="collapse-icon">▼</span>
-            </div>
-            <div class="filter-content">
-                <div class="filter-option" onclick="toggleConnectivityFilter(this, 'all')">
-                    <div class="circle-selector"></div>
-                    <span>All</span>
-                </div>
-                <div class="filter-option" onclick="toggleConnectivityFilter(this, 'straight-possible')">
-                    <div class="circle-selector"></div>
-                    <span>Straight possible</span>
-                </div>
-                <div class="filter-option" onclick="toggleConnectivityFilter(this, 'no-straight-possible')">
-                    <div class="circle-selector"></div>
-                    <span>No straight possible</span>
-                </div>
-            </div>
-        </div>
-
-        <!-- CLEAR FILTERS -->
-        <button class="clear-filters-btn" onclick="clearAllFilters()">Clear All Filters</button>
-    </div>
 
     <!-- MODALS -->
     <div id="importModal" class="modal">
@@ -1838,7 +1736,7 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
         let currentFlopFilter = 'all';
         // Tri-state flop texture toggles: each is 'off' | 'include' | 'exclude'.
         // Combined meaning (AND): board must match ALL 'include' textures and NONE of the 'exclude' textures.
-        const flopTextureToggles = { rainbow: 'off', flushdraw: 'off', monotone: 'off', straight: 'off', paired: 'off' };
+        const flopTextureToggles = { rainbow: 'off', flushdraw: 'off', monotone: 'off', straight: 'off', paired: 'off', trips: 'off' };
         let turnFilteredData = null;
         let currentTurnFilter = 'all';
         let currentCategory = null;
@@ -2972,28 +2870,30 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
             const turnActions = actionHistory.filter(a => a.street === 'TURN');
             const riverActions = actionHistory.filter(a => a.street === 'RIVER');
             
-           // Render section
+           // Render section.
+           // Each street is ONE horizontal flex row: [street label] [taken-action pills] [live
+           // to-act strip] ... [Edit pill pinned far right via margin-left:auto, appended below].
+           // The active street's label gets the green "to act" accent (GTOw language).
+           const lineStyle = 'display: flex; align-items: center; gap: 8px; min-width: 0; flex-wrap: nowrap;';
+           const stripStyle = 'display: flex; align-items: center; gap: 6px; flex-wrap: nowrap; overflow-x: auto; min-width: 0; flex: 0 1 auto;';
+           const labelStyle = (street) => `display: inline-block; color: #fff; font-weight: ${currentStreet === street ? '700' : '600'}; min-width: 45px; background-color: ${currentStreet === street ? '#157D3C' : '#000'}; padding: 6px 10px; border-radius: 4px; font-size: 12px; text-align: center; cursor: pointer; flex-shrink: 0;`;
             section.innerHTML = `
                 <div style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 15px;">
-                    <div id="flopLine" style="display: flex; align-items: flex-start; gap: 8px;">
-                        <span onclick="goToStreet('FLOP')" style="display: inline-block; color: #fff; font-weight: 600; min-width: 45px; background-color: #000; padding: 5px 10px; border-radius: 4px; font-size: 12px; text-align: center; cursor: pointer;">Flop</span>
-                        <div id="flopHistory" style="display: flex; align-items: center; gap: 8px;"></div>
-                        <div id="flopButtons" style="display: flex; flex-direction: column; gap: 4px;"></div>
+                    <div id="flopLine" style="${lineStyle}">
+                        <span onclick="goToStreet('FLOP')" style="${labelStyle('FLOP')}">Flop</span>
+                        <div id="flopHistory" style="display: flex; align-items: center; gap: 6px; flex-shrink: 0;"></div>
+                        <div id="flopButtons" style="${stripStyle}"></div>
                     </div>
-                    <div id="turnLine" style="display: none; align-items: flex-start; gap: 8px;">
-                        <span onclick="goToStreet('TURN')" style="display: inline-block; color: #fff; font-weight: 600; min-width: 45px; background-color: #000; padding: 5px 10px; border-radius: 4px; font-size: 12px; text-align: center; cursor: pointer;">Turn</span>
-                        <div id="turnHistory" style="display: flex; align-items: center; gap: 8px;"></div>
-                        <div id="turnButtons" style="display: flex; flex-direction: column; gap: 4px;"></div>
+                    <div id="turnLine" style="display: none; align-items: center; gap: 8px; min-width: 0; flex-wrap: nowrap;">
+                        <span onclick="goToStreet('TURN')" style="${labelStyle('TURN')}">Turn</span>
+                        <div id="turnHistory" style="display: flex; align-items: center; gap: 6px; flex-shrink: 0;"></div>
+                        <div id="turnButtons" style="${stripStyle}"></div>
                     </div>
-                    <div id="riverLine" style="display: none; align-items: flex-start; gap: 8px;">
-                        <span onclick="goToStreet('RIVER')" style="display: inline-block; color: #fff; font-weight: 600; min-width: 45px; background-color: #000; padding: 5px 10px; border-radius: 4px; font-size: 12px; text-align: center; cursor: pointer;">River</span>
-                        <div id="riverHistory" style="display: flex; align-items: center; gap: 8px;"></div>
-                        <div id="riverButtons" style="display: flex; flex-direction: column; gap: 4px;"></div>
+                    <div id="riverLine" style="display: none; align-items: center; gap: 8px; min-width: 0; flex-wrap: nowrap;">
+                        <span onclick="goToStreet('RIVER')" style="${labelStyle('RIVER')}">River</span>
+                        <div id="riverHistory" style="display: flex; align-items: center; gap: 6px; flex-shrink: 0;"></div>
+                        <div id="riverButtons" style="${stripStyle}"></div>
                     </div>
-                </div>
-                
-                <div style="display: flex; justify-content: flex-end; gap: 10px;">
-                    <button id="editReportBtn" class="edit-report-btn" onclick="console.log('✅ Edit button clicked!'); editCurrentReport();" style="background-color: #374151; padding: 8px 16px; border: none; border-radius: 6px; color: #e0e0e0; cursor: pointer;">Edit</button>
                 </div>
             `;
             
@@ -3012,6 +2912,21 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
             
             // Call updateActionButtons to populate current decision buttons
             updateActionButtons();
+
+            // Re-home the Edit pill as a real flex item at the FAR RIGHT of the active street row
+            // (margin-left:auto, no position:absolute) so it sits beside the horizontal action
+            // strip and can never slide under / cover the buttons. editCurrentReport() is unchanged;
+            // the displayReport wiring also (re)applies show/onclick, but we wire it here too because
+            // showBreadcrumbSection is reached from filter / breadcrumb-navigation paths as well.
+            const activeLineEl = document.getElementById((currentStreet || 'FLOP').toLowerCase() + 'Line');
+            if (activeLineEl && currentReport) {
+                const editBtn = document.createElement('button');
+                editBtn.id = 'editReportBtn';
+                editBtn.className = 'edit-report-btn';
+                editBtn.textContent = 'Edit';
+                editBtn.onclick = editCurrentReport;
+                activeLineEl.appendChild(editBtn);
+            }
         }
 
         function populateStreetHistory(street, actions) {
@@ -3023,8 +2938,7 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
             actions.forEach((action, index) => {
                 const btn = document.createElement('span');
                 btn.textContent = formatActionText(action.action);
-                const bgColor = getActionColor(action.action);
-                btn.style.cssText = `background-color: ${bgColor}; color: #fff; padding: 5px 10px; border: none; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: 500;`;
+                btn.style.cssText = takenActionPillStyle();
                 
                 // Calculate the global index of this action in actionHistory
                 const globalIndex = getGlobalIndex(street, index);
@@ -3930,7 +3844,7 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
         };
 
         // ===== FLOP TRI-STATE TEXTURE TOGGLES =====
-        const FLOP_TEXTURE_LABELS = { rainbow: 'Rainbow', flushdraw: 'FD', monotone: 'Mono', straight: 'Straight', paired: 'Paired' };
+        const FLOP_TEXTURE_LABELS = { rainbow: 'Rainbow', flushdraw: 'FD', monotone: 'Mono', straight: 'Straight', paired: 'Paired', trips: 'Trips' };
 
         // Inline style string for a toggle button given its state (used by the displayReport template)
         function flopToggleBtnStyle(state) {
@@ -4043,6 +3957,9 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                     return isStraightDraw;
                 case 'paired':
                     return isPaired;
+                case 'trips':
+                    // Exactly three-of-a-kind flop (e.g. 888, KKK): all three ranks identical.
+                    return maxRankCount === 3;
                 default:
                     return true;
             }
@@ -5283,28 +5200,77 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
         }
 
         function getActionColor(action) {
-            const actionLower = action.toLowerCase();
-            
+            const raw = String(action == null ? '' : action).trim();
+            const actionLower = raw.toLowerCase();
+
             if (actionLower === 'fold') return '#9ca3af';
             if (actionLower === 'check') return '#888888';
             if (actionLower === 'call') return '#059669';
-            if (actionLower === 'ai' || actionLower === 'allin') return '#a855f7';
-            
+            if (actionLower === 'ai' || actionLower === 'allin' ||
+                actionLower === 'all-in' || actionLower === 'all in') return '#a855f7';
+
+            // Bet sizes arrive in two label formats: normalized CSV ("b30", "b75") and
+            // raw pasted/linked headers ("Bet 30", "Bet 5.4", "Bet"). The old code did
+            // parseInt(action.substring(1)) which produced NaN for the spaced form ("et 30")
+            // and a transparent/invalid background. Pull the first number from anywhere in
+            // the label so every bet gets a correct, visible color; a sizeless "Bet" gets a mid color.
             if (actionLower.startsWith('b')) {
-                const percentage = parseInt(action.substring(1));
+                const m = raw.match(/(\d+(?:\.\d+)?)/);
+                const percentage = m ? parseFloat(m[1]) : 50;
                 return interpolateColor(percentage, 100);
             }
-            
+
+            // Raises: "r25", "Raise", "Raise 3.5x". A bare "Raise" (no digits) previously fell
+            // through to grey; give it a distinct warm color. Numeric raises keep the original
+            // 2x->0% .. 5x->100% multiplier mapping.
             if (actionLower.startsWith('r')) {
-                const multiplierMatch = action.match(/r(\d+\.?\d*)x?/i);
-                if (multiplierMatch) {
-                    const multiplier = parseFloat(multiplierMatch[1]);
-                    const percentage = Math.min(((multiplier - 2) / 3) * 100, 100);
+                const m = raw.match(/(\d+(?:\.\d+)?)/);
+                if (m) {
+                    const multiplier = parseFloat(m[1]);
+                    const percentage = Math.min(Math.max(((multiplier - 2) / 3) * 100, 0), 100);
                     return interpolateColor(percentage, 100);
                 }
+                return interpolateColor(60, 100);
             }
-            
+
             return '#888888';
+        }
+
+        // Pick black or white text for a given background so the action label always clears
+        // WCAG AA (>=4.5:1). Accepts "#rrggbb" or "rgb(r, g, b)" (interpolateColor output).
+        function getActionTextColor(bg) {
+            let r = 0, g = 0, b = 0;
+            const hex = /^#?([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})$/i.exec(bg);
+            if (hex) {
+                r = parseInt(hex[1], 16); g = parseInt(hex[2], 16); b = parseInt(hex[3], 16);
+            } else {
+                const rgb = /rgb\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)/i.exec(bg);
+                if (rgb) { r = +rgb[1]; g = +rgb[2]; b = +rgb[3]; }
+            }
+            const lin = c => { c /= 255; return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4); };
+            const L = 0.2126 * lin(r) + 0.7152 * lin(g) + 0.0722 * lin(b);
+            // White text passes 4.5:1 when L <= ~0.179; otherwise black gives more contrast.
+            return L > 0.179 ? '#111' : '#fff';
+        }
+
+        // Inline style for a "to act" available-action button in the horizontal strip.
+        // Semantic background (getActionColor) + auto-contrast label text (>=4.5:1),
+        // comfortable >=32px tap target, single line, never shrinks (so the strip never
+        // collapses into a broken stack — overflow scrolls on the container instead).
+        function actionBtnStyle(bg) {
+            return `background-color: ${bg}; color: ${getActionTextColor(bg)}; ` +
+                `padding: 7px 14px; min-height: 32px; border: none; border-radius: 6px; ` +
+                `cursor: pointer; font-size: 13px; font-weight: 700; white-space: nowrap; ` +
+                `flex-shrink: 0; line-height: 1.1; transition: filter 0.12s ease;`;
+        }
+
+        // Subtle locked "pill" for an action already TAKEN in a street's line (GTOw language:
+        // taken = muted grey pill, not the bright semantic color of the live to-act buttons).
+        function takenActionPillStyle() {
+            return `background-color: #303034; color: #c9c9cf; padding: 6px 12px; ` +
+                `min-height: 30px; border: 1px solid #3f3f46; border-radius: 6px; ` +
+                `cursor: pointer; font-size: 12px; font-weight: 600; white-space: nowrap; ` +
+                `flex-shrink: 0; line-height: 1.1;`;
         }
 
         // ===== END SHARED COLOR FUNCTIONS =====
@@ -5353,17 +5319,17 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                 checkBtn.className = 'action-btn check';
                 checkBtn.textContent = 'Check';
                 checkBtn.onclick = () => selectAction('Check');
-                checkBtn.style.cssText = `background-color: #888888; color: #fff; padding: 5px 10px; border: none; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: 500;`;
+                checkBtn.style.cssText = actionBtnStyle('#888888');
                 container.appendChild(checkBtn);
             } else {
                 availableActions.forEach(action => {
                     const btn = document.createElement('button');
                     btn.className = 'action-btn';
                     btn.textContent = formatActionText(action);
-                    
+
                     const bgColor = getActionColor(action);
-                    btn.style.cssText = `background-color: ${bgColor}; color: #fff; padding: 5px 10px; border: none; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: 500;`;
-                    
+                    btn.style.cssText = actionBtnStyle(bgColor);
+
                     btn.onclick = () => selectAction(action);
                     container.appendChild(btn);
                 });
@@ -5741,6 +5707,7 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                             <button class="flop-cat-btn" data-category="monotone" title="Monotone" onclick="cycleFlopTexture('monotone')" style="${flopToggleBtnStyle(flopTextureToggles.monotone)} border-radius: 4px; padding: 4px 10px; font-size: 11px; cursor: pointer; white-space: nowrap; flex-shrink: 0;">${flopToggleLabel('monotone', flopTextureToggles.monotone)}</button>
                             <button class="flop-cat-btn" data-category="straight" onclick="cycleFlopTexture('straight')" style="${flopToggleBtnStyle(flopTextureToggles.straight)} border-radius: 4px; padding: 4px 10px; font-size: 11px; cursor: pointer; white-space: nowrap; flex-shrink: 0;">${flopToggleLabel('straight', flopTextureToggles.straight)}</button>
                             <button class="flop-cat-btn" data-category="paired" onclick="cycleFlopTexture('paired')" style="${flopToggleBtnStyle(flopTextureToggles.paired)} border-radius: 4px; padding: 4px 10px; font-size: 11px; cursor: pointer; white-space: nowrap; flex-shrink: 0;">${flopToggleLabel('paired', flopTextureToggles.paired)}</button>
+                            <button class="flop-cat-btn" data-category="trips" title="Three-of-a-kind flop" onclick="cycleFlopTexture('trips')" style="${flopToggleBtnStyle(flopTextureToggles.trips)} border-radius: 4px; padding: 4px 10px; font-size: 11px; cursor: pointer; white-space: nowrap; flex-shrink: 0;">${flopToggleLabel('trips', flopTextureToggles.trips)}</button>
                             <button id="vsBtn" onclick="toggleVsMode()" style="background: #2a2a2a; color: #f97316; border: 1px solid #f97316; border-radius: 4px; padding: 4px 10px; font-size: 11px; cursor: pointer; margin-left: 10px;">VS</button>
                             <input type="text" id="boardFilterInput" value="${savedFlopFilterInput}" placeholder="e.g. yes 8, no a" oninput="liveBoardFilter()" style="background: #2a2a2a; color: #fff; border: ${savedFlopFilterInput ? '2px solid #f97316' : '1px solid #444'}; border-radius: 4px; padding: 4px 8px; font-size: 12px; width: 120px; margin-left: 10px;">
                         </div>
