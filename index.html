@@ -3474,13 +3474,16 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                         <div style="font-size: 18px;">No boards match this filter</div>
                     </div>
                 `;
-                const chartCanvas = document.getElementById('strengthChart');
-                const flopBox = document.getElementById('flopFilterBox');
-                // If a report is already rendered (flop control present), replace ONLY the chart
-                // area (the canvas's wrapper), preserving #flopFilterBox so its buttons stay usable.
-                if (chartCanvas && chartCanvas.parentElement && flopBox) {
-                    chartCanvas.parentElement.innerHTML = noMatchMsg;
+                // Target the PERSISTENT chart-area wrapper (#strengthChartArea), NOT the canvas.
+                // The canvas (#strengthChart) is destroyed by the first zero-match, so re-locating
+                // via the canvas fails on the 2nd consecutive zero-match and the old fallback wiped
+                // all of #dataDisplay (destroying the control). The wrapper survives every keystroke
+                // because we only replace its innerHTML, so the control stays usable indefinitely.
+                const chartArea = document.getElementById('strengthChartArea');
+                if (chartArea) {
+                    chartArea.innerHTML = noMatchMsg;
                     updateFlopTextureButtonStyles();
+                    clearBoardStatsHeader();
                 } else {
                     // Fallback (no report rendered yet): no control to preserve, use full message.
                     document.getElementById('dataDisplay').innerHTML = noMatchMsg;
@@ -3500,6 +3503,15 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
             boardFilterText = savedFilter;
             console.log('RESTORED boardFilterText:', boardFilterText);
         }
+
+       // Zero the stats header (Total Flops + Avg boxes) on a zero-match so it doesn't
+       // show the PREVIOUS filter's misleading counts above a "No ... match" message.
+       // Recovery (clearing the query) reruns displayReport which rebuilds fresh stats.
+       function clearBoardStatsHeader() {
+           const totalEl = document.getElementById('totalFlopsCount');
+           if (totalEl) totalEl.textContent = '0';
+           document.querySelectorAll('.avgStatValue').forEach(el => el.textContent = '0.0%');
+       }
 
        // ===== SIDEBAR FILTER STATE =====
         const sidebarFilters = {
@@ -4235,11 +4247,16 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                         <div style="font-size: 18px;">No turns match this filter</div>
                     </div>
                 `;
-                const chartCanvas = document.getElementById('strengthChart');
-                const turnBox = document.getElementById('turnFilterBox');
-                if (chartCanvas && chartCanvas.parentElement && turnBox) {
-                    chartCanvas.parentElement.innerHTML = noMatchMsg;
+                // Target the PERSISTENT chart-area wrapper (#strengthChartArea), NOT the canvas.
+                // The canvas is destroyed by the first zero-match, so re-locating via the canvas
+                // fails on the 2nd consecutive zero-match and the old fallback wiped all of
+                // #dataDisplay (destroying #turnFilterBox + search + toggles). The wrapper survives
+                // every keystroke because we only replace its innerHTML.
+                const chartArea = document.getElementById('strengthChartArea');
+                if (chartArea) {
+                    chartArea.innerHTML = noMatchMsg;
                     updateTurnTextureButtonStyles();
+                    clearBoardStatsHeader();
                 } else {
                     document.getElementById('dataDisplay').innerHTML = noMatchMsg;
                     document.getElementById('dataDisplay').style.display = 'block';
@@ -5729,7 +5746,7 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                        <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap; max-width: 600px;">
                             <div style="background-color: #1a1a1a; border: 1px solid #333; border-radius: 4px; padding: 10px; width: 70px; height: 70px; display: flex; flex-direction: column; justify-content: center; align-items: center;">
                                 <div style="font-size: 9px; color: #fff; margin-bottom: 3px;">Total Flops</div>
-                                <div style="font-size: 16px; color: #fff; font-weight: 600;">${data.length}</div>
+                                <div id="totalFlopsCount" style="font-size: 16px; color: #fff; font-weight: 600;">${data.length}</div>
                             </div>
                             ${perspectiveData.availableActions.map(action => {
                                 const actionKey = action.toLowerCase();
@@ -5741,7 +5758,7 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                                 return `
                                     <div style="background-color: #1a1a1a; border: 1px solid #333; border-radius: 4px; padding: 10px; width: 70px; height: 70px; display: flex; flex-direction: column; justify-content: center; align-items: center;">
                                         <div style="font-size: 9px; color: #fff; margin-bottom: 3px;">Avg. ${action}</div>
-                                        <div style="font-size: 16px; color: ${color}; font-weight: 600;">${avgValue.toFixed(1)}%</div>
+                                        <div class="avgStatValue" style="font-size: 16px; color: ${color}; font-weight: 600;">${avgValue.toFixed(1)}%</div>
                                     </div>
                                 `;
                             }).join('')}
@@ -5766,7 +5783,7 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                     
                    <!-- Turn Filter Box -->
                             <div id="turnFilterBox" style="display: none; background: #1a1a1a; border: 1px solid #333; border-radius: 6px; padding: 12px; margin-bottom: 10px; width: fit-content;">
-                                <div style="display: flex; gap: 6px; flex-wrap: wrap; align-items: center;">
+                                <div style="display: flex; gap: 6px; flex-wrap: nowrap; align-items: center;">
                                     <button class="turn-cat-btn" data-category="all" onclick="resetTurnTextures()" style="background: #2a2a2a; color: #fff; border: 1px solid transparent; border-radius: 4px; padding: 4px 10px; font-size: 11px; cursor: pointer; white-space: nowrap; flex-shrink: 0;">All</button>
                                     <button class="turn-cat-btn" data-category="flush" onclick="cycleTurnTexture('flush')" style="${turnToggleBtnStyle(turnTextureToggles.flush)} border-radius: 4px; padding: 4px 10px; font-size: 11px; cursor: pointer; white-space: nowrap; flex-shrink: 0;">${turnToggleLabel('flush', turnTextureToggles.flush)}</button>
                                     <button class="turn-cat-btn" data-category="pairing" onclick="cycleTurnTexture('pairing')" style="${turnToggleBtnStyle(turnTextureToggles.pairing)} border-radius: 4px; padding: 4px 10px; font-size: 11px; cursor: pointer; white-space: nowrap; flex-shrink: 0;">${turnToggleLabel('pairing', turnTextureToggles.pairing)}</button>
@@ -5777,7 +5794,7 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                                 </div>
                             </div>
 
-                        <div style="position: relative;">
+                        <div id="strengthChartArea" style="position: relative;">
                             <div id="avgLabel" style="position: absolute; left: 0; top: 15px; background-color: #fbbf24; color: #000; font-size: 10px; font-weight: bold; padding: 3px 6px; border-radius: 3px; transform: translateX(-50%); z-index: 100;">Avg</div>
                             <canvas id="strengthChart"></canvas>
                         </div>
