@@ -661,6 +661,115 @@
             background-color: #333;
         }
 
+        /* ============================================================
+           GTOw HAND-LINE (mockup v2) — restyle of the action-navigation
+           strip into a horizontal left->right sequence of cards:
+           report card + board cards (suit-tiles) + position cards
+           (vertical action list, taken highlighted / siblings dimmed) +
+           green-outlined active decision card. Dark theme; reuses the
+           app's 4-color suit map (h#ef4444 d#3b82f6 c#22c55e s#888888).
+           No stack/pot numbers (not in the user's data).
+           ============================================================ */
+        .gtow-handline {
+            display: flex; align-items: stretch; gap: 4px;
+            overflow-x: auto; padding-bottom: 6px;
+        }
+        .gtow-card {
+            flex: 0 0 auto; min-width: 84px; min-height: 108px;
+            background: #242427; border: 1px solid #34343a; border-radius: 7px;
+            padding: 8px 9px; display: flex; flex-direction: column;
+        }
+        .gtow-card-head {
+            display: flex; justify-content: center; align-items: baseline;
+            font-size: 12.5px; margin-bottom: 6px; white-space: nowrap;
+        }
+        .gtow-card-head .pos { font-weight: 700; color: #e9e9ec; letter-spacing: .3px; }
+        .gtow-card-head .street { font-weight: 700; color: #d8d8dc; letter-spacing: .4px; }
+        .gtow-actions { display: flex; flex-direction: column; gap: 3px; }
+        .gtow-act {
+            font-size: 12.5px; line-height: 1.15; padding: 3px 7px; border-radius: 5px;
+            white-space: nowrap; text-align: center;
+        }
+        .gtow-act.dim { color: #6e6f75; background: transparent; }
+        .gtow-act.taken {
+            color: #e6e6ea; font-weight: 700;
+            background: #303034; border: 1px solid #3f3f46;
+        }
+        /* clickable to-act options rendered into the active card by updateActionButtons */
+        .gtow-act-btn {
+            display: block; width: 100%; text-align: center; background: transparent;
+            color: #cfcfd4; border: 1px solid transparent; border-radius: 5px;
+            padding: 4px 8px; margin: 0; font-size: 12.5px; font-weight: 600;
+            line-height: 1.15; white-space: nowrap; cursor: pointer;
+        }
+        .gtow-act-btn:hover { background: #303034; color: #fff; border-color: #3f3f46; }
+        .gtow-card.board .gtow-tiles { display: flex; gap: 4px; align-items: center; justify-content: center; }
+        .gtow-tile {
+            width: 30px; height: 42px; border-radius: 5px;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            color: #fff; font-weight: 800; line-height: 1; position: relative;
+        }
+        .gtow-tile .rank { font-size: 19px; }
+        .gtow-tile .pip { font-size: 10px; margin-top: 1px; opacity: .95; }
+        .gtow-tile.h { background: #ef4444; }
+        .gtow-tile.d { background: #3b82f6; }
+        .gtow-tile.c { background: #22c55e; }
+        .gtow-tile.s { background: #888888; }
+        .gtow-board-hint { text-align: center; font-size: 12px; color: #8c8c92; font-weight: 700; letter-spacing: 1px; margin-top: auto; }
+        .gtow-card.active { border: 1.5px solid #5db85c; }
+        .gtow-card.active .pos { color: #74c96a; }
+        .gtow-pos-card { cursor: pointer; }
+        .gtow-pos-card:hover { border-color: #4a4a52; }
+        /* ---------- REPORT CARD (first card: picker + Clear + fields + Edit) ---------- */
+        .gtow-report-card {
+            flex: 0 0 auto; min-width: 184px; min-height: 108px;
+            background: #242427; border: 1px solid #34343a; border-radius: 7px;
+            padding: 9px 10px; display: flex; flex-direction: column; gap: 8px;
+            margin-right: 6px;
+        }
+        .gtow-report-card .rc-top { display: flex; align-items: center; gap: 6px; }
+        .gtow-report-card .rc-picker {
+            flex: 1 1 auto; position: relative;
+            background: #1f1f22; border: 1px solid #3a3a3f; color: #d4d4d9;
+            border-radius: 6px; padding: 6px 24px 6px 9px;
+            font-size: 12px; font-weight: 600; white-space: nowrap; overflow: visible;
+            text-overflow: ellipsis; cursor: pointer; min-width: 0;
+        }
+        .gtow-report-card .rc-picker::after {
+            content: "\25BE"; position: absolute; right: 8px; top: 50%;
+            transform: translateY(-50%); color: #8a8a90; font-size: 11px;
+        }
+        .gtow-report-card .rc-clear {
+            flex: 0 0 auto; background: #2a2a2e; border: 1px solid #3a3a3f;
+            color: #c9c9cf; border-radius: 6px; padding: 6px 11px;
+            font-size: 12px; font-weight: 600; cursor: pointer;
+        }
+        .gtow-report-card .rc-clear:hover { background: #34343a; }
+        .rc-pick-menu {
+            display: none; position: absolute; top: calc(100% + 4px); left: 0;
+            min-width: 100%; max-width: 280px; max-height: 260px; overflow-y: auto;
+            background: #1f1f22; border: 1px solid #3a3a3f; border-radius: 6px;
+            z-index: 200; box-shadow: 0 6px 20px rgba(0,0,0,.5);
+        }
+        .rc-pick-menu.open { display: block; }
+        .rc-pick-item {
+            padding: 8px 10px; font-size: 12px; font-weight: 600; color: #d4d4d9;
+            white-space: nowrap; cursor: pointer; border-bottom: 1px solid #2a2a2e;
+        }
+        .rc-pick-item:last-child { border-bottom: none; }
+        .rc-pick-item:hover { background: #303034; color: #fff; }
+        .rc-pick-empty { padding: 8px 10px; font-size: 12px; color: #6e6f75; }
+        .gtow-report-card .rc-fields { display: flex; flex-direction: column; gap: 4px; margin-top: 1px; }
+        .gtow-report-card .rc-row { font-size: 12.5px; line-height: 1.2; white-space: nowrap; }
+        .gtow-report-card .rc-row .k { color: #8c8c92; font-weight: 600; }
+        .gtow-report-card .rc-row .v { color: #ededf0; font-weight: 700; }
+        .gtow-report-card .rc-edit {
+            margin-top: auto; align-self: flex-start;
+            background: #2a2a2e; border: 1px solid #3a3a3f; color: #c9c9cf;
+            border-radius: 6px; padding: 7px 16px; font-size: 12.5px; font-weight: 600; cursor: pointer;
+        }
+        .gtow-report-card .rc-edit:hover { background: #34343a; }
+
         .header {
             background-color: #0d0d0d;
             padding: 12px 20px;
@@ -1378,10 +1487,12 @@
                 onkeypress="if(event.key === 'Enter') applySearch()"
             >
             <button class="btn-search-inline" onclick="applySearch()">Search</button>
-            <div class="spot-display-box" id="spotDisplayBox"></div>
-            <button class="btn-clear-inline" onclick="clearSearch()">Clear</button>
-        
-            <div class="saved-reports-dropdown">
+            <!-- spot box + Clear + Saved Reports picker relocated INTO the hand-line report card
+                 (mockup v2). Kept in the DOM (hidden) so existing JS handlers stay valid. -->
+            <div class="spot-display-box" id="spotDisplayBox" style="display:none;"></div>
+            <button class="btn-clear-inline" onclick="clearSearch()" style="display:none;">Clear</button>
+
+            <div class="saved-reports-dropdown" style="display:none;">
                 <button class="dropdown-btn" onclick="toggleReportsDropdown()">
                     Saved Reports ▼
                 </button>
@@ -2839,94 +2950,201 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
             // Now check if the deleted report was the current one
             if (currentReport && reportToDelete === currentReport) {
                 displayNoData();
-                hideBreadcrumbSection();
+                showBreadcrumbSection(); // keep the picker visible (re-render no-report state)
             }
         }
 
+        // ===== GTOw HAND-LINE (mockup v2) =====
+        // Renders the action-navigation as a horizontal left->right card sequence:
+        //   [report card] [FLOP board] [flop position cards] [active] [TURN board] ...
+        // It REUSES the existing data layer: updateActionButtons() still fills the active
+        // card's to-act options; goToAction()/selectAction()/editCurrentReport()/
+        // selectReportFromDropdown()/clearSearch() are unchanged. Only the OUTPUT is restyled
+        // into cards. The strip renders ONLY what the imported report has (no preflop cards,
+        // no stack/pot numbers — they are not in the user's data).
         function showBreadcrumbSection() {
             const section = document.getElementById('breadcrumbSection');
             if (!section) {
                 console.error('breadcrumbSection element not found');
                 return;
             }
-            
             section.style.display = 'block';
-            
-            if (!currentReport || !currentPerspective) {
-                section.innerHTML = '<div style="color: #888;">No report selected</div>';
-                return;
+
+            const hasNode = !!(currentReport && currentPerspective &&
+                               currentReport.perspectives[currentPerspective]);
+
+            let html = '<div class="gtow-handline">';
+            html += renderReportCard();
+            if (hasNode) {
+                html += buildHandlineActionCards();
             }
-            
-            const perspectiveData = currentReport.perspectives[currentPerspective];
-            
-            if (!perspectiveData) {
-                console.error('No perspective data found for:', currentPerspective);
-                section.innerHTML = '<div style="color: #888;">No perspective data</div>';
-                return;
+            html += '</div>';
+            section.innerHTML = html;
+
+            // Fill the active (green) card's to-act options via the existing generator.
+            if (hasNode) {
+                updateActionButtons();
             }
-            
-            // Group action history by street
+        }
+
+        // Report card = first card: Saved-Reports picker + Clear (relocated off the top bar),
+        // SPOT / Positions / Boards Category fields, and Edit (all from the loaded report).
+        function renderReportCard() {
+            const hasReport = !!currentReport;
+            const summary = hasReport
+                ? [currentReport.potType, currentReport.position, currentReport.flopTexture].filter(Boolean).join(' · ') || (currentReport.name || 'Report')
+                : 'Select a report';
+
+            const items = (allReports && allReports.length)
+                ? allReports.map((r, i) => `<div class="rc-pick-item" onclick="event.stopPropagation(); selectReportFromDropdown(${i}); toggleHandlinePicker(false);">${escapeHtml(r.name || ('Report ' + (i + 1)))}</div>`).join('')
+                : '<div class="rc-pick-empty">No saved reports yet</div>';
+
+            let fields = '';
+            if (hasReport) {
+                const rows = [];
+                if (currentReport.potType) rows.push(`<div class="rc-row"><span class="k">SPOT:</span> <span class="v">${escapeHtml(currentReport.potType)}</span></div>`);
+                if (currentReport.position) rows.push(`<div class="rc-row"><span class="k">Positions:</span> <span class="v">${escapeHtml(currentReport.position)}</span></div>`);
+                if (currentReport.flopTexture) rows.push(`<div class="rc-row"><span class="k">Boards Category:</span> <span class="v">${escapeHtml(currentReport.flopTexture)}</span></div>`);
+                if (rows.length) fields = `<div class="rc-fields">${rows.join('')}</div>`;
+            }
+
+            const edit = hasReport
+                ? `<button id="editReportBtn" class="rc-edit" onclick="editCurrentReport()">Edit</button>`
+                : '';
+
+            return `<div class="gtow-report-card">
+                <div class="rc-top">
+                    <div class="rc-picker" onclick="toggleHandlinePicker()">${escapeHtml(summary)}<div id="handlinePickerMenu" class="rc-pick-menu">${items}</div></div>
+                    <button class="rc-clear" onclick="clearSearch()">Clear</button>
+                </div>
+                ${fields}
+                ${edit}
+            </div>`;
+        }
+
+        function toggleHandlinePicker(force) {
+            const menu = document.getElementById('handlinePickerMenu');
+            if (!menu) return;
+            const show = (typeof force === 'boolean') ? force : !menu.classList.contains('open');
+            menu.classList.toggle('open', show);
+            if (show) {
+                // close on the next outside click
+                setTimeout(() => {
+                    document.addEventListener('click', function handler(e) {
+                        if (!e.target.closest('.rc-picker')) {
+                            const m = document.getElementById('handlinePickerMenu');
+                            if (m) m.classList.remove('open');
+                            document.removeEventListener('click', handler);
+                        }
+                    });
+                }, 0);
+            }
+        }
+
+        function escapeHtml(s) {
+            return String(s == null ? '' : s)
+                .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;');
+        }
+
+        // Build the board + position + active cards from the real action history.
+        function buildHandlineActionCards() {
             const flopActions = actionHistory.filter(a => a.street === 'FLOP');
             const turnActions = actionHistory.filter(a => a.street === 'TURN');
             const riverActions = actionHistory.filter(a => a.street === 'RIVER');
-            
-           // Render section.
-           // Each street is ONE horizontal flex row: [street label] [taken-action pills] [live
-           // to-act strip] ... [Edit pill pinned far right via margin-left:auto, appended below].
-           // The active street's label gets the green "to act" accent (GTOw language).
-           const lineStyle = 'display: flex; align-items: center; gap: 8px; min-width: 0; flex-wrap: nowrap;';
-           const stripStyle = 'display: flex; align-items: center; gap: 6px; flex-wrap: nowrap; overflow-x: auto; min-width: 0; flex: 0 1 auto;';
-           const labelStyle = (street) => `display: inline-block; color: #fff; font-weight: ${currentStreet === street ? '700' : '600'}; min-width: 45px; background-color: ${currentStreet === street ? '#157D3C' : '#000'}; padding: 6px 10px; border-radius: 4px; font-size: 12px; text-align: center; cursor: pointer; flex-shrink: 0;`;
-            section.innerHTML = `
-                <div style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 15px;">
-                    <div id="flopLine" style="${lineStyle}">
-                        <span onclick="goToStreet('FLOP')" style="${labelStyle('FLOP')}">Flop</span>
-                        <div id="flopHistory" style="display: flex; align-items: center; gap: 6px; flex-shrink: 0;"></div>
-                        <div id="flopButtons" style="${stripStyle}"></div>
-                    </div>
-                    <div id="turnLine" style="display: none; align-items: center; gap: 8px; min-width: 0; flex-wrap: nowrap;">
-                        <span onclick="goToStreet('TURN')" style="${labelStyle('TURN')}">Turn</span>
-                        <div id="turnHistory" style="display: flex; align-items: center; gap: 6px; flex-shrink: 0;"></div>
-                        <div id="turnButtons" style="${stripStyle}"></div>
-                    </div>
-                    <div id="riverLine" style="display: none; align-items: center; gap: 8px; min-width: 0; flex-wrap: nowrap;">
-                        <span onclick="goToStreet('RIVER')" style="${labelStyle('RIVER')}">River</span>
-                        <div id="riverHistory" style="display: flex; align-items: center; gap: 6px; flex-shrink: 0;"></div>
-                        <div id="riverButtons" style="${stripStyle}"></div>
-                    </div>
-                </div>
-            `;
-            
-            // Populate history for each street
-            populateStreetHistory('flop', flopActions);
-            populateStreetHistory('turn', turnActions);
-            populateStreetHistory('river', riverActions);
-            
-            // Show turn/river lines if we have actions there
-            if (turnActions.length > 0 || currentStreet === 'TURN' || currentStreet === 'RIVER') {
-                document.getElementById('turnLine').style.display = 'flex';
-            }
-            if (riverActions.length > 0 || currentStreet === 'RIVER') {
-                document.getElementById('riverLine').style.display = 'flex';
-            }
-            
-            // Call updateActionButtons to populate current decision buttons
-            updateActionButtons();
+            let out = '';
 
-            // Re-home the Edit pill as a real flex item at the FAR RIGHT of the active street row
-            // (margin-left:auto, no position:absolute) so it sits beside the horizontal action
-            // strip and can never slide under / cover the buttons. editCurrentReport() is unchanged;
-            // the displayReport wiring also (re)applies show/onclick, but we wire it here too because
-            // showBreadcrumbSection is reached from filter / breadcrumb-navigation paths as well.
-            const activeLineEl = document.getElementById((currentStreet || 'FLOP').toLowerCase() + 'Line');
-            if (activeLineEl && currentReport) {
-                const editBtn = document.createElement('button');
-                editBtn.id = 'editReportBtn';
-                editBtn.className = 'edit-report-btn';
-                editBtn.textContent = 'Edit';
-                editBtn.onclick = editCurrentReport;
-                activeLineEl.appendChild(editBtn);
+            // FLOP (board card always present once a report is loaded)
+            out += boardCardHTML('FLOP');
+            flopActions.forEach((a, k) => { out += positionCardHTML(getGlobalIndex('flop', k)); });
+            if (currentStreet === 'FLOP') out += activeCardHTML('FLOP');
+
+            // TURN
+            if (turnActions.length > 0 || currentStreet === 'TURN' || currentStreet === 'RIVER') {
+                out += boardCardHTML('TURN');
+                turnActions.forEach((a, k) => { out += positionCardHTML(getGlobalIndex('turn', k)); });
+                if (currentStreet === 'TURN') out += activeCardHTML('TURN');
             }
+
+            // RIVER
+            if (riverActions.length > 0 || currentStreet === 'RIVER') {
+                out += boardCardHTML('RIVER');
+                riverActions.forEach((a, k) => { out += positionCardHTML(getGlobalIndex('river', k)); });
+                if (currentStreet === 'RIVER') out += activeCardHTML('RIVER');
+            }
+            return out;
+        }
+
+        // Available actions for a PAST node (to show siblings dimmed around the taken action),
+        // reconstructed with the SAME key scheme the rest of the app uses.
+        function getNodeAvailableActions(globalIndex) {
+            const a = actionHistory[globalIndex];
+            if (!a) return [];
+            const actionNumber = globalIndex + 1;
+            const prevAction = globalIndex > 0 ? actionHistory[globalIndex - 1].action : '';
+            const key = 'action' + actionNumber + (prevAction ? '_' + prevAction : '');
+            const pd = currentReport.perspectives[a.player];
+            const list = pd && pd[key] && pd[key].availableActions;
+            return (list && list.length) ? list : [a.action];
+        }
+
+        function positionCardHTML(globalIndex) {
+            const a = actionHistory[globalIndex];
+            if (!a) return '';
+            const avail = getNodeAvailableActions(globalIndex);
+            const takenFmt = formatActionText(a.action);
+            const body = avail.map(act => {
+                const isTaken = formatActionText(act) === takenFmt;
+                return `<div class="gtow-act ${isTaken ? 'taken' : 'dim'}">${escapeHtml(formatActionText(act))}</div>`;
+            }).join('');
+            return `<div class="gtow-card gtow-pos-card" title="Go back to this decision" onclick="goToAction(${globalIndex})">
+                <div class="gtow-card-head"><span class="pos">${escapeHtml(a.player)}</span></div>
+                <div class="gtow-actions">${body}</div>
+            </div>`;
+        }
+
+        // Active (current decision) card — green outline. Body filled by updateActionButtons()
+        // into #<street>Buttons (unchanged generator), so the to-act options stay clickable.
+        function activeCardHTML(street) {
+            return `<div class="gtow-card active">
+                <div class="gtow-card-head"><span class="pos">${escapeHtml(currentPerspective)}</span></div>
+                <div id="${street.toLowerCase()}Buttons" class="gtow-actions"></div>
+            </div>`;
+        }
+
+        // Board card: street header + suit-colored tiles when a SPECIFIC board is drilled
+        // (selectedBoardName holds that board's tree). In aggregation view there is no single
+        // board, so the FLOP card shows the boards-category (e.g. K-L-L) as a muted hint.
+        function boardCardHTML(street) {
+            const tiles = boardTilesHTML(street);
+            let inner = tiles;
+            if (!inner && street === 'FLOP' && currentReport.flopTexture) {
+                inner = `<div class="gtow-board-hint">${escapeHtml(currentReport.flopTexture.split('').join('-'))}</div>`;
+            }
+            return `<div class="gtow-card board">
+                <div class="gtow-card-head"><span class="street">${street}</span></div>
+                ${inner || ''}
+            </div>`;
+        }
+
+        function boardTilesHTML(street) {
+            const t = selectedBoardName;
+            if (!t || typeof t !== 'string') return '';
+            let cards = [];
+            if (street === 'FLOP' && t.length >= 6) cards = [t.substring(0, 2), t.substring(2, 4), t.substring(4, 6)];
+            else if (street === 'TURN' && t.length >= 8) cards = [t.substring(6, 8)];
+            else if (street === 'RIVER' && t.length >= 10) cards = [t.substring(8, 10)];
+            if (!cards.length) return '';
+            return `<div class="gtow-tiles">${cards.map(tileHTML).join('')}</div>`;
+        }
+
+        function tileHTML(card) {
+            if (!card || card.length < 2) return '';
+            const rank = card[0].toUpperCase();
+            const suit = card[1].toLowerCase();
+            const sym = { h: '♥', d: '♦', c: '♣', s: '♠' };
+            const cls = (suit === 'h' || suit === 'd' || suit === 'c' || suit === 's') ? suit : 's';
+            return `<div class="gtow-tile ${cls}"><span class="rank">${escapeHtml(rank)}</span><span class="pip">${sym[suit] || ''}</span></div>`;
         }
 
         function populateStreetHistory(street, actions) {
@@ -5253,15 +5471,13 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
             return L > 0.179 ? '#111' : '#fff';
         }
 
-        // Inline style for a "to act" available-action button in the horizontal strip.
-        // Semantic background (getActionColor) + auto-contrast label text (>=4.5:1),
-        // comfortable >=32px tap target, single line, never shrinks (so the strip never
-        // collapses into a broken stack — overflow scrolls on the container instead).
-        function actionBtnStyle(bg) {
-            return `background-color: ${bg}; color: ${getActionTextColor(bg)}; ` +
-                `padding: 7px 14px; min-height: 32px; border: none; border-radius: 6px; ` +
-                `cursor: pointer; font-size: 13px; font-weight: 700; white-space: nowrap; ` +
-                `flex-shrink: 0; line-height: 1.1; transition: filter 0.12s ease;`;
+        // Inline fallback style for a "to act" option inside the green active card.
+        // The full look lives in the .gtow-act-btn CSS class (vertical list item, hover);
+        // this inline string is a minimal safety net so a button is always legible even if
+        // the class somehow doesn't apply. (No semantic colors — the rejected design used
+        // those; mockup v2 uses a neutral list with grey "taken" pills instead.)
+        function actionBtnStyle() {
+            return `display:block; width:100%; text-align:center; cursor:pointer;`;
         }
 
         // Subtle locked "pill" for an action already TAKEN in a street's line (GTOw language:
@@ -5316,20 +5532,17 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
             if (availableActions.length === 0) {
                 console.log('updateActionButtons: No available actions, creating default Check button');
                 const checkBtn = document.createElement('button');
-                checkBtn.className = 'action-btn check';
+                checkBtn.className = 'gtow-act-btn';
                 checkBtn.textContent = 'Check';
                 checkBtn.onclick = () => selectAction('Check');
-                checkBtn.style.cssText = actionBtnStyle('#888888');
+                checkBtn.style.cssText = actionBtnStyle();
                 container.appendChild(checkBtn);
             } else {
                 availableActions.forEach(action => {
                     const btn = document.createElement('button');
-                    btn.className = 'action-btn';
+                    btn.className = 'gtow-act-btn';
                     btn.textContent = formatActionText(action);
-
-                    const bgColor = getActionColor(action);
-                    btn.style.cssText = actionBtnStyle(bgColor);
-
+                    btn.style.cssText = actionBtnStyle();
                     btn.onclick = () => selectAction(action);
                     container.appendChild(btn);
                 });
@@ -5394,7 +5607,7 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
             if (matchingReports.length === 0) {
                 alert('No reports found matching this situation');
                 displayNoData();
-                hideBreadcrumbSection();
+                showBreadcrumbSection(); // keep the picker visible (re-render no-report state)
                 return;
             }
 
@@ -5429,7 +5642,9 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
             document.getElementById('spotDisplayBox').textContent = '';
 
             displayNoData();
-            hideBreadcrumbSection();
+            // Keep the hand-line report card (picker + Clear) visible so the user can pick
+            // another report; just re-render it in its no-report state instead of hiding it.
+            showBreadcrumbSection();
         }
 
         function displayNoData() {
@@ -7220,6 +7435,7 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                 closeAuthModal();
                 document.getElementById('appContent').classList.remove('app-hidden');
                 document.querySelector('.auth-required-overlay').style.display = 'none';
+                showBreadcrumbSection(); // render the hand-line report card (picker entry point)
             }
         }
 
@@ -7285,6 +7501,7 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                     updateAuthUI();
                     document.getElementById('appContent').classList.remove('app-hidden');
                     document.querySelector('.auth-required-overlay').style.display = 'none';
+                    showBreadcrumbSection(); // render the hand-line report card (picker entry point)
                 } else {
                     document.getElementById('appContent').classList.add('app-hidden');
                     document.querySelector('.auth-required-overlay').style.display = 'flex';
