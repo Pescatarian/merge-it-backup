@@ -3206,15 +3206,22 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                 const trigger = menu.closest('.rc-picker');
                 if (trigger) {
                     const r = trigger.getBoundingClientRect();
-                    // Panel is NO WIDER than the "Import data" box. Anchor the menu's left edge + width
-                    // to the .rc-import button (the Import data box) so it never exceeds it.
+                    // Anchor the menu's left edge + width to the report CARD (its full content box),
+                    // not just the narrow "Import data" button — the button width (~172px) clipped the
+                    // name column so "3BP SB vs BU" / "1755 flops" truncated. Track the card width so the
+                    // menu stays flush with the card, but enforce a floor (MIN_W) so the longest report
+                    // names + sublines always render in full even when the card is at its min width.
                     const card = menu.closest('.gtow-report-card');
-                    const importBtn = card ? card.querySelector('.rc-import') : null;
-                    const anchorR = importBtn ? importBtn.getBoundingClientRect() : r;
-                    const w = Math.round(anchorR.width);
+                    const anchorR = card ? card.getBoundingClientRect() : r;
+                    const MIN_W = 212; // measured: longest name+subline fit without truncation, no sprawl
+                    const w = Math.max(MIN_W, Math.round(anchorR.width));
+                    // keep the menu's left edge aligned to the card; nudge left if the floor pushed it
+                    // past the right edge of the viewport so it doesn't overflow off-screen.
+                    let left = Math.round(anchorR.left);
+                    if (left + w > window.innerWidth - 8) left = Math.max(8, window.innerWidth - 8 - w);
                     menu.style.position = 'fixed';
                     menu.style.top = Math.round(r.bottom + 4) + 'px';
-                    menu.style.left = Math.round(anchorR.left) + 'px';
+                    menu.style.left = left + 'px';
                     menu.style.width = w + 'px';
                     menu.style.minWidth = w + 'px';   // CSS min-width:100% resolves vs viewport under fixed
                     menu.style.maxWidth = w + 'px';
