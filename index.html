@@ -783,9 +783,31 @@
             display: flex; align-items: center; justify-content: space-between; gap: 8px;
         }
         .rc-pick-name {
-            flex: 1 1 auto; min-width: 0; padding: 8px 0 8px 10px; cursor: pointer;
+            flex: 1 1 auto; min-width: 0; padding: 7px 0 7px 10px; cursor: pointer;
+            display: flex; flex-direction: column; gap: 2px; overflow: hidden;
+        }
+        .rc-pick-title {
+            font-size: 12px; font-weight: 600; color: #d4d4d9;
             white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
         }
+        .rc-pick-sub {
+            font-size: 11px; font-weight: 500; color: #8a8a90;
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        }
+        /* ---- picker search box (top of menu) ---- */
+        .rc-pick-search {
+            position: sticky; top: 0; z-index: 1;
+            display: flex; align-items: center; gap: 7px;
+            padding: 8px 10px; background: #1f1f22;
+            border-bottom: 1px solid #2a2a2e;
+        }
+        .rc-pick-search svg { flex: 0 0 auto; color: #8a8a90; }
+        .rc-pick-search input {
+            flex: 1 1 auto; min-width: 0;
+            background: transparent; border: none; outline: none;
+            color: #d4d4d9; font-size: 12px; font-weight: 600;
+        }
+        .rc-pick-search input::placeholder { color: #6e6f75; font-weight: 500; }
         .rc-pick-export {
             flex: 0 0 auto; display: flex; align-items: center; gap: 4px;
             margin: 6px 8px 6px 0; padding: 4px 9px; font-size: 11.5px; font-weight: 600;
@@ -3000,7 +3022,16 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                 : 'Select a report';
 
             const items = (allReports && allReports.length)
-                ? allReports.map((r, i) => `<div class="rc-pick-item"><span class="rc-pick-name" onclick="event.stopPropagation(); selectReportFromDropdown(${i}); toggleHandlinePicker(false);">${escapeHtml(r.name || ('Report ' + (i + 1)))}</span><button class="rc-pick-export" title="Export this report to a JSON file" onclick="event.stopPropagation(); exportSingleReport(${i});"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 19V5"/><path d="M5 12l7-7 7 7"/></svg>Export</button></div>`).join('')
+                ? allReports.map((r, i) => {
+                    const nm = r.name || ('Report ' + (i + 1));
+                    // Flop count = the report's distinct flop set = the largest action1.data
+                    // length across its perspectives (each perspective analyses the same boards,
+                    // so MAX gives the distinct count and avoids double-counting on summing).
+                    const flopCount = Math.max(0, ...Object.values(r.perspectives || {})
+                        .map(p => (p && p.action1 && p.action1.data ? p.action1.data.length : 0)));
+                    const sub = flopCount + (flopCount === 1 ? ' flop' : ' flops');
+                    return `<div class="rc-pick-item" data-search="${escapeHtml(nm)}"><div class="rc-pick-name" onclick="event.stopPropagation(); selectReportFromDropdown(${i}); toggleHandlinePicker(false);"><div class="rc-pick-title">${escapeHtml(nm)}</div><div class="rc-pick-sub">${escapeHtml(sub)}</div></div><button class="rc-pick-export" title="Export this report to a JSON file" onclick="event.stopPropagation(); exportSingleReport(${i});"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 19V5"/><path d="M5 12l7-7 7 7"/></svg>Export</button></div>`;
+                }).join('')
                 : '<div class="rc-pick-empty">No saved reports yet</div>';
 
             // LOAD zone (always present, even with no reports) — loads ONE app-exported report JSON.
@@ -3039,7 +3070,7 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                     Import data
                 </button>
                 <div class="rc-top">
-                    <div class="rc-picker" onclick="toggleHandlinePicker()">${escapeHtml(summary)}<div id="handlinePickerMenu" class="rc-pick-menu">${items}${loadZone}</div></div>
+                    <div class="rc-picker" onclick="toggleHandlinePicker()">${escapeHtml(summary)}<div id="handlinePickerMenu" class="rc-pick-menu"><div class="rc-pick-search" onclick="event.stopPropagation();"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg><input id="rcPickSearch" type="text" placeholder="Search reports" autocomplete="off" oninput="filterReportRows(this.value)" onclick="event.stopPropagation();"></div>${items}<div class="rc-pick-noresults rc-pick-empty" style="display:none;">No matches</div>${loadZone}</div></div>
                     <button class="rc-clear" onclick="clearSearch()">Clear</button>
                 </div>
                 ${fields}
@@ -3068,6 +3099,9 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                     menu.style.maxWidth = w + 'px';
                     menu.style.maxHeight = Math.max(180, Math.round(window.innerHeight - r.bottom - 24)) + 'px';
                 }
+                // Fresh, unfiltered list each open + focus the search box.
+                const search = document.getElementById('rcPickSearch');
+                if (search) { search.value = ''; filterReportRows(''); setTimeout(() => search.focus(), 0); }
                 // close on the next outside click
                 setTimeout(() => {
                     document.addEventListener('click', function handler(e) {
@@ -3079,6 +3113,25 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                     });
                 }, 0);
             }
+        }
+
+        // Live-filter the saved-report rows in the picker menu as the user types.
+        // Matches the query against each row's report name (data-search). The search box,
+        // the "no matches" hint and the LOAD-a-report zone are never hidden.
+        function filterReportRows(q) {
+            const menu = document.getElementById('handlinePickerMenu');
+            if (!menu) return;
+            const query = (q || '').trim().toLowerCase();
+            const items = menu.querySelectorAll('.rc-pick-item');
+            let visible = 0;
+            items.forEach(it => {
+                const hay = (it.getAttribute('data-search') || it.textContent || '').toLowerCase();
+                const show = !query || hay.indexOf(query) !== -1;
+                it.style.display = show ? '' : 'none';
+                if (show) visible++;
+            });
+            const empty = menu.querySelector('.rc-pick-noresults');
+            if (empty) empty.style.display = (query && visible === 0 && items.length) ? 'block' : 'none';
         }
 
         function escapeHtml(s) {
