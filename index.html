@@ -3031,10 +3031,15 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
             currentReport = report;
             updateSpotDisplay();  // Add this line
             
-            // Clear action history and perspective when loading from dropdown
+            // Clear action history and perspective when loading from dropdown.
+            // currentStreet must reset to FLOP too: it is module state that otherwise keeps
+            // whatever street the previous report was drilled to (e.g. TURN). With an empty
+            // actionHistory the hand-line then renders a stuck active TURN bar and no clickable
+            // FLOP cards, so the user can't navigate back to the flop on a freshly loaded report.
             actionHistory = [];
             currentPerspective = null;
-            
+            currentStreet = 'FLOP';
+
             displayReport(report.id, true);  // Pass ID, not object
             showBreadcrumbSection();
             
@@ -5830,6 +5835,13 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
             // (clearSearch predates the tri-state model and otherwise left them set).
             for (const k in flopTextureToggles) flopTextureToggles[k] = 'off';
             updateFlopTextureButtonStyles();
+
+            // Reset the action-tree / street navigation state so a cleared report starts fresh.
+            // currentStreet is module state that otherwise stays on the street the user drilled
+            // to (e.g. TURN); leaving it set strands the next loaded report on that street.
+            actionHistory = [];
+            currentPerspective = null;
+            currentStreet = 'FLOP';
 
             // Clear the spot display box
             document.getElementById('spotDisplayBox').textContent = '';
