@@ -2640,7 +2640,7 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
             if (boardFilterText) {
                 input.style.border = '2px solid #f97316';
             } else {
-                input.style.border = '1px solid #444';
+                input.style.border = '1px solid #2a2a2a';
             }
             
             // If in VS mode with both filters, refresh comparison with text filter
@@ -2659,7 +2659,7 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
             [input1, input2].forEach(input => {
                 if (input) {
                     input.value = '';
-                    input.style.border = '1px solid #444';
+                    input.style.border = '1px solid #2a2a2a';
                 }
             });
             
@@ -4021,7 +4021,7 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
             const boardInput = document.getElementById('boardFilterInput');
             if (boardInput) {
                 boardInput.value = '';
-                boardInput.style.border = '1px solid #444';
+                boardInput.style.border = '1px solid #2a2a2a';
             }
             
             // If in VS mode, keep VS mode active but refresh with cleared filters
@@ -4359,7 +4359,7 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
             if (!input) return;
             boardFilterText = input.value.trim().toLowerCase();
             window.savedBoardFilterText = input.value;
-            input.style.border = boardFilterText ? '2px solid #f97316' : '1px solid #444';
+            input.style.border = boardFilterText ? '2px solid #f97316' : '1px solid #2a2a2a';
             if (vsMode && vsFirstFilter && vsSecondFilter) { showVsComparison(vsFirstFilter, vsSecondFilter); return; }
             filterFlopBoard('all');
         }
@@ -6129,7 +6129,7 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                             <button class="flop-cat-btn" data-category="paired" onclick="cycleFlopTexture('paired')" style="${flopToggleBtnStyle(flopTextureToggles.paired)} border-radius: 4px; padding: 4px 10px; font-size: 11px; cursor: pointer; white-space: nowrap; flex-shrink: 0;">${flopToggleLabel('paired', flopTextureToggles.paired)}</button>
                             <button class="flop-cat-btn" data-category="trips" title="Three-of-a-kind flop" onclick="cycleFlopTexture('trips')" style="${flopToggleBtnStyle(flopTextureToggles.trips)} border-radius: 4px; padding: 4px 10px; font-size: 11px; cursor: pointer; white-space: nowrap; flex-shrink: 0;">${flopToggleLabel('trips', flopTextureToggles.trips)}</button>
                             <button id="vsBtn" onclick="toggleVsMode()" style="background: #0d0d0d; color: #f97316; border: 1px solid #f97316; border-radius: 4px; padding: 4px 10px; font-size: 11px; cursor: pointer; margin-left: 10px;">VS</button>
-                            <input type="text" id="boardFilterInput" value="${savedFlopFilterInput}" placeholder="e.g. yes 8, no a" oninput="liveBoardFilter()" style="background: #0d0d0d; color: #fff; border: ${savedFlopFilterInput ? '2px solid #f97316' : '1px solid #444'}; border-radius: 4px; padding: 4px 8px; font-size: 12px; width: 120px; margin-left: 10px;">
+                            <input type="text" id="boardFilterInput" value="${savedFlopFilterInput}" placeholder="e.g. yes 8, no a" oninput="liveBoardFilter()" style="background: #0d0d0d; color: #fff; border: ${savedFlopFilterInput ? '2px solid #f97316' : '1px solid #2a2a2a'}; border-radius: 4px; padding: 4px 8px; font-size: 12px; width: 120px; margin-left: 10px;">
                         </div>
                     </div>
 
