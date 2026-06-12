@@ -672,9 +672,24 @@
            No stack/pot numbers (not in the user's data).
            ============================================================ */
         .gtow-handline {
-            display: flex; align-items: stretch; gap: 4px;
+            display: flex; align-items: flex-start; gap: 18px;
             overflow-x: auto; padding-bottom: 6px;
         }
+        /* ---------- STREET GROUPS: FLOP / TURN / RIVER, each a header bar + its cards ---------- */
+        .street-group { display: flex; flex-direction: column; gap: 6px; flex: 0 0 auto; }
+        .street-group.is-empty { min-width: 150px; }
+        /* the header bar uses the SAME visual language as the "Import data" bar (.rc-import) */
+        .street-bar {
+            display: flex; align-items: center; justify-content: center;
+            background: #2a2a2e; border: 1px solid #3a3a3f; color: #d4d4d9;
+            border-radius: 6px; padding: 8px 12px;
+            font-size: 12.5px; font-weight: 700; letter-spacing: .6px;
+            width: 100%; box-sizing: border-box;
+        }
+        /* ACTIVE street bar: exact green-outline token of the active action card (.gtow-card.active) */
+        .street-bar.active { border: 1.5px solid #5db85c; color: #74c96a; }
+        .street-bar.empty { color: #7a7a80; }
+        .street-cards { display: flex; align-items: stretch; gap: 4px; }
         .gtow-card {
             flex: 0 0 auto; min-width: 84px; min-height: 108px;
             background: #242427; border: 1px solid #34343a; border-radius: 7px;
@@ -770,10 +785,20 @@
         }
         .rc-pick-item.is-current .rc-pick-check { color: #4a9eff; }
         .rc-pick-empty { padding: 8px 10px; font-size: 12px; color: #6e6f75; }
-        .gtow-report-card .rc-fields { display: flex; flex-direction: column; gap: 4px; margin-top: 1px; }
-        .gtow-report-card .rc-row { font-size: 12.5px; line-height: 1.2; white-space: nowrap; }
-        .gtow-report-card .rc-row .k { color: #8c8c92; font-weight: 600; }
-        .gtow-report-card .rc-row .v { color: #ededf0; font-weight: 700; }
+        /* FIELD LIST as an aligned 2-column description list: labels col | values col.
+           Values share one left edge to scan down. Type tokens kept from the old .rc-row. */
+        .gtow-report-card .rc-fields {
+            display: grid; grid-template-columns: max-content 1fr;
+            column-gap: 10px; row-gap: 4px; margin: 1px 0 0; padding: 0;
+        }
+        .gtow-report-card .rc-fields dt {
+            color: #8c8c92; font-weight: 600; font-size: 12.5px; line-height: 1.2; white-space: nowrap;
+        }
+        .gtow-report-card .rc-fields dt::after { content: ":"; }
+        .gtow-report-card .rc-fields dd {
+            color: #ededf0; font-weight: 700; font-size: 12.5px; line-height: 1.2;
+            white-space: nowrap; margin: 0;
+        }
         .gtow-report-card .rc-edit {
             margin-top: auto; align-self: flex-start;
             background: #2a2a2e; border: 1px solid #3a3a3f; color: #c9c9cf;
@@ -793,8 +818,8 @@
             display: flex; align-items: center; justify-content: space-between; gap: 8px;
         }
         .rc-pick-name {
-            flex: 1 1 auto; min-width: 0; padding: 7px 0 7px 6px; cursor: pointer;
-            display: flex; flex-direction: column; gap: 2px; overflow: hidden;
+            flex: 1 1 auto; min-width: 0; padding: 3px 0 3px 6px; cursor: pointer;
+            display: flex; flex-direction: column; gap: 1px; overflow: hidden;
         }
         .rc-pick-title {
             font-size: 12px; font-weight: 600; color: #d4d4d9;
@@ -818,33 +843,36 @@
             color: #d4d4d9; font-size: 12px; font-weight: 600;
         }
         .rc-pick-search input::placeholder { color: #6e6f75; font-weight: 500; }
-        .rc-pick-export {
-            flex: 0 0 auto; display: flex; align-items: center; gap: 4px;
-            margin: 6px 8px 6px 0; padding: 4px 9px; font-size: 11.5px; font-weight: 600;
-            color: #c9c9cf; background: #2a2a2e; border: 1px solid #3a3a3f; border-radius: 6px;
-            cursor: pointer;
+        /* per-row actions: icon-only Export (arrow UP) + icon-only RED Delete */
+        .rc-pick-actions { flex: 0 0 auto; display: flex; align-items: center; gap: 4px; margin: 3px 8px 3px 0; }
+        .rc-pick-export, .rc-pick-delete {
+            flex: 0 0 auto; display: flex; align-items: center; justify-content: center;
+            padding: 5px; font-size: 11.5px; font-weight: 600;
+            background: #2a2a2e; border: 1px solid #3a3a3f; border-radius: 6px; cursor: pointer;
         }
+        .rc-pick-export { color: #c9c9cf; }
         .rc-pick-export:hover { background: #34343a; color: #fff; }
-        .rc-pick-export svg { display: block; }
-        /* ---- account control pill (top-right): avatar initial + email + caret ---- */
-        .acct-pill {
-            position: relative; display: inline-flex; align-items: center; gap: 9px;
-            max-width: 260px; padding: 5px 13px 5px 5px; cursor: pointer;
-            background: #1f1f22; border: 1px solid #3a3a3f; border-radius: 999px;
+        /* RED delete (app danger token #ef4444 / hover #dc2626) */
+        .rc-pick-delete { color: #ef4444; }
+        .rc-pick-delete:hover { background: #34343a; color: #dc2626; }
+        .rc-pick-export svg, .rc-pick-delete svg { display: block; }
+        /* ---- thin far-left vertical strip: holds ONLY the avatar ---- */
+        .left-strip {
+            flex: 0 0 auto; width: 52px; background-color: #0d0d0d;
+            border-right: 1px solid #333; display: flex; flex-direction: column;
+            align-items: center; padding-top: 14px;
         }
-        .acct-pill:hover { background: #26262a; }
+        /* ---- account control: avatar-only on the left strip ---- */
         .acct-avatar {
+            position: relative;
             flex: 0 0 auto; width: 32px; height: 32px; border-radius: 50%;
             background: #10b981; color: #fff; font-size: 14px; font-weight: 700;
-            display: flex; align-items: center; justify-content: center;
+            display: flex; align-items: center; justify-content: center; cursor: pointer;
         }
-        .acct-email {
-            flex: 0 1 auto; min-width: 0; font-size: 13px; font-weight: 600; color: #ededf0;
-            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-        }
-        .acct-caret { flex: 0 0 auto; color: #8a8a90; display: block; }
+        .acct-avatar:hover { filter: brightness(1.08); }
+        /* menu opens to the RIGHT of the avatar (it sits on the far-left strip) */
         .acct-menu {
-            display: none; position: absolute; right: 0; top: calc(100% + 8px);
+            display: none; position: absolute; left: calc(100% + 8px); top: 0;
             min-width: 170px; padding: 6px 0; z-index: 1000;
             background: #1f1f22; border: 1px solid #3a3a3f; border-radius: 10px;
             box-shadow: 0 8px 24px rgba(0,0,0,.5);
@@ -1231,7 +1259,8 @@
             letter-spacing: 0.3px;
         }
     
-        .tag-group select {
+        .tag-group select,
+        .tag-group input {
             width: 100%;
             background-color: #1a1a1a;
             border: 1px solid #333;
@@ -1240,6 +1269,7 @@
             color: #e0e0e0;
             font-size: 10px;
         }
+        .tag-group input::placeholder { color: #6e6f75; }
     
         #strengthChart {
             min-height: 0;
@@ -1573,18 +1603,22 @@
     <div class="auth-required-overlay" style="display:flex; position:fixed; top:0; left:0; width:100%; height:100%; background:#1a1a1a; justify-content:center; align-items:center; z-index:9999;">
         <h2 style="color:#e0e0e0;">Please log in to use this app</h2>
     </div>
+    <!-- ACCOUNT lives on a thin far-left vertical strip holding ONLY the avatar.
+         The old top pill is gone; #authStatus is rendered into this strip by updateAuthUI().
+         The strip is hidden alongside #appContent when logged out (both carry app-hidden). -->
+    <div class="left-strip app-hidden" id="leftStrip">
+        <div id="authStatus">
+            <button id="loginBtn" onclick="openAuthModal()" style="background: #4a9eff; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 11px;">Login</button>
+        </div>
+    </div>
     <div class="main-content app-hidden" id="appContent">
-        <!-- TOP BAR -->
-        <!-- Board/flop search REMOVED: flop filtering is covered by the report card's Boards
-             Category + the flop-texture toggles. Import / Export / full-restore buttons removed
-             from the top bar; report import lives on the report card ("Import data"), and
-             per-report Export + Load live in the report-card picker dropdown. Only the account
-             control remains here. spotDisplayBox + saved-reports-dropdown are kept hidden in the
-             DOM so existing JS handlers (updateSpotDisplay / toggleReportsDropdown) stay valid. -->
-        <div class="top-search-bar">
-            <div class="spot-display-box" id="spotDisplayBox" style="display:none;"></div>
-
-            <div class="saved-reports-dropdown" style="display:none;">
+        <!-- TOP BAR REMOVED: the account control moved to the far-left .left-strip, so the
+             old .top-search-bar is gone and content now starts at the very top (no dead gap).
+             spotDisplayBox + saved-reports-dropdown are kept hidden in the DOM so existing JS
+             handlers (updateSpotDisplay / toggleReportsDropdown) stay valid. -->
+        <div style="display:none;">
+            <div class="spot-display-box" id="spotDisplayBox"></div>
+            <div class="saved-reports-dropdown">
                 <button class="dropdown-btn" onclick="toggleReportsDropdown()">
                     Saved Reports ▼
                 </button>
@@ -1592,11 +1626,6 @@
                     <div class="dropdown-header">Saved Reports</div>
                     <div id="reportsDropdownList"></div>
                 </div>
-            </div>
-
-            <!-- Account control, pushed right -->
-            <div id="authStatus" style="display: flex; align-items: center; gap: 8px; margin-left: auto;">
-                <button id="loginBtn" onclick="openAuthModal()" style="background: #4a9eff; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 11px;">Login</button>
             </div>
         </div>
 
@@ -1729,6 +1758,11 @@
                             <option value="PFR">PFR</option>
                             <option value="PFC">PFC</option>
                         </select>
+                    </div>
+
+                    <div class="tag-group">
+                        <div class="tag-group-title">Boards Category</div>
+                        <input type="text" id="tagBoardsCategory" placeholder="e.g. KLL, Ace-high, paired…" autocomplete="off">
                     </div>
                 </div>
             </div>
@@ -1927,6 +1961,8 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
             const potType = document.getElementById('tagPotType').value;
             const player = document.getElementById('tagPlayer').value;
             const initiative = document.getElementById('tagInitiative').value;
+            const bcEl = document.getElementById('tagBoardsCategory');
+            const boardsCategory = bcEl ? bcEl.value.trim() : '';
 
             if (!position || !potType || !player || !initiative) {
                 alert('Please select POT TYPE, POSITION, PLAYER, and INITIATIVE first');
@@ -1938,7 +1974,7 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
             input.accept = '.csv';
             input.onchange = (e) => {
                 if (e.target.files[0]) {
-                    importPioCSV(e.target.files[0], { position, potType, player, initiative });
+                    importPioCSV(e.target.files[0], { position, potType, player, initiative, boardsCategory });
                 }
             };
             input.click();
@@ -2033,6 +2069,10 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                             rawData: text
                         }
                     };
+                    // Carry the typed Boards Category onto the report (only overwrite when typed;
+                    // seed the field if missing so the row always has a key to render).
+                    if (filters.boardsCategory) existingReport.flopTexture = filters.boardsCategory;
+                    else if (existingReport.flopTexture == null) existingReport.flopTexture = '';
                 } else {
                     const newReport = {
                         id: Date.now() + Math.random(),
@@ -2040,6 +2080,7 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                         date: new Date().toISOString(),
                         potType: filters.potType,
                         position: normalizedPosition,
+                        flopTexture: filters.boardsCategory || '',  // Boards Category, typed at import
                         perspectives: {
                             [filters.player]: {
                                 postflopPosition: posInfo.postflopPosition,
@@ -3017,6 +3058,31 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
             }
         }
 
+        // Delete from the hand-line report picker (per-row red trash button). Same confirm +
+        // removal as deleteReport, but always re-renders the hand-line so the row disappears.
+        function deleteReportFromDropdown(index) {
+            const report = allReports[index];
+            if (!report) return;
+            if (!confirm(`Delete "${report.name || 'this report'}"? This cannot be undone.`)) return;
+
+            const wasCurrent = currentReport && (report === currentReport ||
+                (report.id != null && currentReport.id === report.id));
+
+            allReports.splice(index, 1);
+            localStorage.setItem('gtoReports', JSON.stringify(allReports));
+            loadReportsDropdown(); // keep the hidden legacy list in sync
+
+            if (wasCurrent) {
+                // The loaded report was deleted: drop it and re-render the no-report picker state.
+                currentReport = null;
+                currentPerspective = null;
+                actionHistory = [];
+                if (typeof displayNoData === 'function') displayNoData();
+            }
+            // Re-render the hand-line picker so the deleted row is gone (and the menu reflows).
+            showBreadcrumbSection();
+        }
+
         // ===== GTOw HAND-LINE (mockup v2) =====
         // Renders the action-navigation as a horizontal left->right card sequence:
         //   [report card] [FLOP board] [flop position cards] [active] [TURN board] ...
@@ -3068,7 +3134,12 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                         .map(p => (p && p.action1 && p.action1.data ? p.action1.data.length : 0)));
                     const sub = flopCount + (flopCount === 1 ? ' flop' : ' flops');
                     const isCurrent = !!currentReport && (r === currentReport || (r.id != null && r.id === currentReport.id));
-                    return `<div class="rc-pick-item${isCurrent ? ' is-current' : ''}" data-search="${escapeHtml(nm)}"><span class="rc-pick-check" aria-hidden="true">${isCurrent ? '✓' : ''}</span><div class="rc-pick-name" onclick="event.stopPropagation(); selectReportFromDropdown(${i}); toggleHandlinePicker(false);"><div class="rc-pick-title">${escapeHtml(nm)}</div><div class="rc-pick-sub">${escapeHtml(sub)}</div></div><button class="rc-pick-export" title="Export this report to a JSON file" onclick="event.stopPropagation(); exportSingleReport(${i});"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 19V5"/><path d="M5 12l7-7 7 7"/></svg>Export</button></div>`;
+                    // Export = ICON-ONLY using the Import-data icon family (tray + line) but with
+                    // the arrow pointing UP (export = out). Delete = ICON-ONLY red trash (danger token),
+                    // behind an are-you-sure confirm.
+                    const exportSvg = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 17v2a2 2 0 002 2h12a2 2 0 002-2v-2"/><path d="M7 9l5-5 5 5"/><path d="M12 4v12"/></svg>`;
+                    const deleteSvg = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M8 6V4a1 1 0 011-1h6a1 1 0 011 1v2"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/></svg>`;
+                    return `<div class="rc-pick-item${isCurrent ? ' is-current' : ''}" data-search="${escapeHtml(nm)}"><span class="rc-pick-check" aria-hidden="true">${isCurrent ? '✓' : ''}</span><div class="rc-pick-name" onclick="event.stopPropagation(); selectReportFromDropdown(${i}); toggleHandlinePicker(false);"><div class="rc-pick-title">${escapeHtml(nm)}</div><div class="rc-pick-sub">${escapeHtml(sub)}</div></div><div class="rc-pick-actions"><button class="rc-pick-export" title="Export this report to a JSON file" onclick="event.stopPropagation(); exportSingleReport(${i});">${exportSvg}</button><button class="rc-pick-delete" title="Delete this report" onclick="event.stopPropagation(); deleteReportFromDropdown(${i});">${deleteSvg}</button></div></div>`;
                 }).join('')
                 : '<div class="rc-pick-empty">No saved reports yet</div>';
 
@@ -3089,13 +3160,20 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                 </div>
             </div>`;
 
+            // FIELD LIST as an aligned 2-column description list (<dl>/<dt>/<dd>):
+            // muted grey labels in col 1, emphasized values in a shared col 2.
+            // SPOT, Positions, and Boards Category ALWAYS render (Boards Category shows an
+            // em-dash until the report carries a typed category). The colon after each label
+            // is added by CSS (.rc-fields dt::after), so dt holds the bare label.
             let fields = '';
             if (hasReport) {
-                const rows = [];
-                if (currentReport.potType) rows.push(`<div class="rc-row"><span class="k">SPOT:</span> <span class="v">${escapeHtml(currentReport.potType)}</span></div>`);
-                if (currentReport.position) rows.push(`<div class="rc-row"><span class="k">Positions:</span> <span class="v">${escapeHtml(currentReport.position)}</span></div>`);
-                if (currentReport.flopTexture) rows.push(`<div class="rc-row"><span class="k">Boards Category:</span> <span class="v">${escapeHtml(currentReport.flopTexture)}</span></div>`);
-                if (rows.length) fields = `<div class="rc-fields">${rows.join('')}</div>`;
+                const boardCat = currentReport.flopTexture && String(currentReport.flopTexture).trim();
+                const rows = [
+                    `<dt>SPOT</dt><dd>${escapeHtml(currentReport.potType || '—')}</dd>`,
+                    `<dt>Positions</dt><dd>${escapeHtml(currentReport.position || '—')}</dd>`,
+                    `<dt>Boards Category</dt><dd>${boardCat ? escapeHtml(boardCat) : '—'}</dd>`
+                ];
+                fields = `<dl class="rc-fields">${rows.join('')}</dl>`;
             }
 
             const edit = hasReport
@@ -3128,10 +3206,15 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                 const trigger = menu.closest('.rc-picker');
                 if (trigger) {
                     const r = trigger.getBoundingClientRect();
+                    // Panel is NO WIDER than the "Import data" box. Anchor the menu's left edge + width
+                    // to the .rc-import button (the Import data box) so it never exceeds it.
+                    const card = menu.closest('.gtow-report-card');
+                    const importBtn = card ? card.querySelector('.rc-import') : null;
+                    const anchorR = importBtn ? importBtn.getBoundingClientRect() : r;
+                    const w = Math.round(anchorR.width);
                     menu.style.position = 'fixed';
                     menu.style.top = Math.round(r.bottom + 4) + 'px';
-                    menu.style.left = Math.round(r.left) + 'px';
-                    const w = Math.max(220, Math.round(r.width));
+                    menu.style.left = Math.round(anchorR.left) + 'px';
                     menu.style.width = w + 'px';
                     menu.style.minWidth = w + 'px';   // CSS min-width:100% resolves vs viewport under fixed
                     menu.style.maxWidth = w + 'px';
@@ -3178,31 +3261,46 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                 .replace(/"/g, '&quot;');
         }
 
-        // Build the board + position + active cards from the real action history.
+        // Build the hand-line as STREET GROUPS (FLOP / TURN / RIVER), each a header bar styled
+        // like the "Import data" bar with that street's real action cards laid out underneath.
+        // NO preflop, NO board-card tiles (the board data stays in the aggregated report below).
+        // The ACTIVE street's bar gets the green-outline token; inactive/empty streets stay grey.
+        // Street grouping is derived from the REAL action tree (actionHistory + currentStreet) —
+        // exactly the same source the flat builder used; only the layout changed.
+        //
+        // NOTE: boardCardHTML()/boardTilesHTML()/tileHTML() are intentionally preserved (now
+        // unused by the hand-line) — board drilling/detail itself lives in the aggregated report
+        // (selectedBoardName / filterFlopBoard), NOT in these hand-line tiles, so removing the
+        // tiles does not remove any board-drill functionality.
         function buildHandlineActionCards() {
-            const flopActions = actionHistory.filter(a => a.street === 'FLOP');
-            const turnActions = actionHistory.filter(a => a.street === 'TURN');
-            const riverActions = actionHistory.filter(a => a.street === 'RIVER');
+            const byStreet = {
+                FLOP:  actionHistory.filter(a => a.street === 'FLOP'),
+                TURN:  actionHistory.filter(a => a.street === 'TURN'),
+                RIVER: actionHistory.filter(a => a.street === 'RIVER')
+            };
+            const keyMap = { FLOP: 'flop', TURN: 'turn', RIVER: 'river' };
+
+            // All three street bars always render (per the approved mockup). Each shows its real
+            // action cards underneath when present; otherwise it renders as a grey empty bar.
             let out = '';
+            ['FLOP', 'TURN', 'RIVER'].forEach(street => {
+                const isActive = currentStreet === street;
+                const acts = byStreet[street];
 
-            // FLOP (board card always present once a report is loaded)
-            out += boardCardHTML('FLOP');
-            flopActions.forEach((a, k) => { out += positionCardHTML(getGlobalIndex('flop', k)); });
-            if (currentStreet === 'FLOP') out += activeCardHTML('FLOP');
+                // cards = past position cards for this street + the active (to-act) card if current.
+                let cards = '';
+                acts.forEach((a, k) => { cards += positionCardHTML(getGlobalIndex(keyMap[street], k)); });
+                if (isActive) cards += activeCardHTML(street);
 
-            // TURN
-            if (turnActions.length > 0 || currentStreet === 'TURN' || currentStreet === 'RIVER') {
-                out += boardCardHTML('TURN');
-                turnActions.forEach((a, k) => { out += positionCardHTML(getGlobalIndex('turn', k)); });
-                if (currentStreet === 'TURN') out += activeCardHTML('TURN');
-            }
+                const hasCards = cards.length > 0;
+                const barCls = isActive ? 'street-bar active' : (hasCards ? 'street-bar' : 'street-bar empty');
+                const groupCls = hasCards ? 'street-group' : 'street-group is-empty';
 
-            // RIVER
-            if (riverActions.length > 0 || currentStreet === 'RIVER') {
-                out += boardCardHTML('RIVER');
-                riverActions.forEach((a, k) => { out += positionCardHTML(getGlobalIndex('river', k)); });
-                if (currentStreet === 'RIVER') out += activeCardHTML('RIVER');
-            }
+                out += `<div class="${groupCls}">
+                    <div class="${barCls}">${street}</div>
+                    ${hasCards ? `<div class="street-cards">${cards}</div>` : ''}
+                </div>`;
+            });
             return out;
         }
 
@@ -3426,6 +3524,7 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
             document.getElementById('tagPotType').value = currentReport.potType || '';
             document.getElementById('tagPlayer').value = currentPerspective || '';
             document.getElementById('tagInitiative').value = currentReport.perspectives[currentPerspective]?.initiative || '';
+            { const bc = document.getElementById('tagBoardsCategory'); if (bc) bc.value = currentReport.flopTexture || ''; }
 
             // Pre-fill with existing data from report
             document.getElementById('dataInput').value = rawData;
@@ -4976,6 +5075,8 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                 document.getElementById('tagPotType').value = report.potType || '';
                 document.getElementById('tagPlayer').value = ''; // Will need to be set based on which perspective
                 document.getElementById('tagInitiative').value = ''; // Will need to be set based on perspective
+                // Prefill Boards Category from the report so Edit can change it.
+                { const bc = document.getElementById('tagBoardsCategory'); if (bc) bc.value = report.flopTexture || ''; }
 
                 // Load rawData into textarea
                 const perspective = Object.keys(report.perspectives)[0];
@@ -4999,6 +5100,7 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                 document.getElementById('tagPotType').value = '';
                 document.getElementById('tagPlayer').value = '';
                 document.getElementById('tagInitiative').value = '';
+                { const bc = document.getElementById('tagBoardsCategory'); if (bc) bc.value = ''; }
             }
             
             console.log('Adding active class to modal');
@@ -5026,6 +5128,10 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
             const potType = document.getElementById('tagPotType').value;
             const player = document.getElementById('tagPlayer').value;
             const initiative = document.getElementById('tagInitiative').value;
+            // Boards Category is typed at import and stored on the report (field: flopTexture,
+            // the same field the report card's "Boards Category" row reads). Optional/free-text.
+            const boardsCategoryEl = document.getElementById('tagBoardsCategory');
+            const boardsCategory = boardsCategoryEl ? boardsCategoryEl.value.trim() : '';
 
             if (!dataText) {
                 alert('Please paste your data first');
@@ -5164,6 +5270,10 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                             rawData: dataText
                         };
 
+                        // Persist any edited Boards Category on the report (Edit can change it).
+                        if (boardsCategory) existingReport.flopTexture = boardsCategory;
+                        else if (existingReport.flopTexture == null) existingReport.flopTexture = '';
+
                         localStorage.setItem('gtoReports', JSON.stringify(allReports));
 
                         currentReport = existingReport;
@@ -5202,6 +5312,12 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                                 rawData: dataInput.value                            }
                         };
 
+                        // Carry the typed Boards Category onto the report. Only overwrite when the
+                        // user typed one (so re-importing with the field blank won't wipe an
+                        // existing category); seed missing field so the row always has a key.
+                        if (boardsCategory) existingReport.flopTexture = boardsCategory;
+                        else if (existingReport.flopTexture == null) existingReport.flopTexture = '';
+
                         localStorage.setItem('gtoReports', JSON.stringify(allReports));
                         alert(`✓ Added ${player} data (${data.length} flops)`);
                     }                  
@@ -5213,7 +5329,7 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                         date: new Date().toISOString(),
                         potType: potType,
                         position: normalizedPosition,
-                        flopTexture: 'KLL',  // Add this line
+                        flopTexture: boardsCategory,  // Boards Category, typed at import
                         perspectives: {
                             [player]: {
                                 postflopPosition: posInfo.postflopPosition,
@@ -7533,21 +7649,23 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
 
         function updateAuthUI() {
             const authStatus = document.getElementById('authStatus');
+            const leftStrip = document.getElementById('leftStrip');
             if (currentUser) {
                 const email = currentUser.email || '';
                 const initial = (email.trim()[0] || '?').toUpperCase();
+                // Avatar-only control on the far-left strip. Click opens the account menu
+                // (Logout). Menu opens to the RIGHT of the avatar.
                 authStatus.innerHTML = `
-                    <div class="acct-pill" onclick="toggleUserMenu()" title="${escapeHtml(email)}">
-                        <span class="acct-avatar">${escapeHtml(initial)}</span>
-                        <span class="acct-email">${escapeHtml(email)}</span>
-                        <svg class="acct-caret" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                    <span class="acct-avatar" onclick="toggleUserMenu()" title="${escapeHtml(email)}">${escapeHtml(initial)}
                         <div id="userDropdown" class="acct-menu" style="display: none;">
                             <div class="acct-menu-item" onclick="handleLogout()">Logout</div>
                         </div>
-                    </div>
+                    </span>
                 `;
+                if (leftStrip) leftStrip.classList.remove('app-hidden');
             } else {
                 authStatus.innerHTML = `<button id="loginBtn" onclick="openAuthModal()" style="background: #4a9eff; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 11px;">Login</button>`;
+                if (leftStrip) leftStrip.classList.add('app-hidden');
             }
         }
 
