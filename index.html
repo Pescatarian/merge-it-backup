@@ -770,6 +770,50 @@
             border-radius: 6px; padding: 7px 16px; font-size: 12.5px; font-weight: 600; cursor: pointer;
         }
         .gtow-report-card .rc-edit:hover { background: #34343a; }
+        /* ---- Import data button (top of report card) ---- */
+        .gtow-report-card .rc-import {
+            display: flex; align-items: center; justify-content: center; gap: 7px;
+            width: 100%; background: #2a2a2e; border: 1px solid #3a3a3f; color: #d4d4d9;
+            border-radius: 6px; padding: 8px 12px; font-size: 12.5px; font-weight: 600;
+            cursor: pointer;
+        }
+        .gtow-report-card .rc-import:hover { background: #34343a; color: #fff; }
+        /* ---- picker rows: name + per-report Export ---- */
+        .rc-pick-item {
+            display: flex; align-items: center; justify-content: space-between; gap: 8px;
+        }
+        .rc-pick-name {
+            flex: 1 1 auto; min-width: 0; padding: 8px 0 8px 10px; cursor: pointer;
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        }
+        .rc-pick-export {
+            flex: 0 0 auto; display: flex; align-items: center; gap: 4px;
+            margin: 6px 8px 6px 0; padding: 4px 9px; font-size: 11.5px; font-weight: 600;
+            color: #c9c9cf; background: #2a2a2e; border: 1px solid #3a3a3f; border-radius: 6px;
+            cursor: pointer;
+        }
+        .rc-pick-export:hover { background: #34343a; color: #fff; }
+        .rc-pick-export svg { display: block; }
+        /* ---- LOAD A REPORT drop-zone (bottom of picker menu) ---- */
+        .rc-load { border-top: 1px solid #2a2a2e; padding: 10px; }
+        .rc-load-label {
+            font-size: 10.5px; font-weight: 700; letter-spacing: .8px;
+            color: #8c8c92; text-transform: uppercase; margin-bottom: 8px;
+        }
+        .rc-load-zone {
+            display: flex; flex-direction: column; align-items: center; gap: 6px;
+            border: 1px dashed #45454c; border-radius: 8px; padding: 14px 10px;
+            background: #1b1b1e; text-align: center;
+        }
+        .rc-load-zone.dragover { border-color: #4a9eff; background: #1d2533; }
+        .rc-load-icon { color: #8c8c92; }
+        .rc-load-hint { font-size: 12px; color: #c4c4ca; }
+        .rc-load-or { font-size: 11px; color: #6e6f75; }
+        .rc-load-btn {
+            background: #3b82f6; border: none; color: #fff; border-radius: 6px;
+            padding: 7px 16px; font-size: 12px; font-weight: 600; cursor: pointer;
+        }
+        .rc-load-btn:hover { background: #4a9eff; }
 
         .header {
             background-color: #0d0d0d;
@@ -1471,27 +1515,15 @@
         <h2 style="color:#e0e0e0;">Please log in to use this app</h2>
     </div>
     <div class="main-content app-hidden" id="appContent">
-        <!-- TOP SEARCH BAR -->
+        <!-- TOP BAR -->
+        <!-- Board/flop search REMOVED: flop filtering is covered by the report card's Boards
+             Category + the flop-texture toggles. Import / Export / full-restore buttons removed
+             from the top bar; report import lives on the report card ("Import data"), and
+             per-report Export + Load live in the report-card picker dropdown. Only the account
+             control remains here. spotDisplayBox + saved-reports-dropdown are kept hidden in the
+             DOM so existing JS handlers (updateSpotDisplay / toggleReportsDropdown) stay valid. -->
         <div class="top-search-bar">
-            <input 
-                type="text" 
-                id="situationSearchTop" 
-                placeholder="Situation (e.g., 3bp ip pfr)"
-                class="search-input-inline"
-                onkeypress="if(event.key === 'Enter') applySearch()"
-            >
-            <input 
-                type="text" 
-                id="flopSearchTop" 
-                placeholder="Flop (e.g., AKQ or Ad9h8h)"
-                class="search-input-inline"
-                onkeypress="if(event.key === 'Enter') applySearch()"
-            >
-            <button class="btn-search-inline" onclick="applySearch()">Search</button>
-            <!-- spot box + Clear + Saved Reports picker relocated INTO the hand-line report card
-                 (mockup v2). Kept in the DOM (hidden) so existing JS handlers stay valid. -->
             <div class="spot-display-box" id="spotDisplayBox" style="display:none;"></div>
-            <button class="btn-clear-inline" onclick="clearSearch()" style="display:none;">Clear</button>
 
             <div class="saved-reports-dropdown" style="display:none;">
                 <button class="dropdown-btn" onclick="toggleReportsDropdown()">
@@ -1503,38 +1535,9 @@
                 </div>
             </div>
 
-            <!-- ACTIONS - in-flow toolbar group, pushed right. Lives inside .top-search-bar so it
-                 shares the flex row (with flex-wrap) and can never overlap the Clear / Saved Reports
-                 buttons at narrow laptop widths. -->
-            <div style="display: flex; gap: 12px; align-items: center; margin-left: auto;">
-            <button onclick="openImportModal()" style="background: #333; color: white; border: 1px solid #555; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 12px; display: flex; align-items: center; gap: 6px;">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
-                    <path d="M4 17v2a2 2 0 002 2h12a2 2 0 002-2v-2"/>
-                    <path d="M7 11l5 5 5-5"/>
-                    <path d="M12 4v12"/>
-                </svg>
-                Import Report
-            </button>
-            <button onclick="exportAllData()" style="background: #333; color: white; border: 1px solid #555; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 12px; display: flex; align-items: center; gap: 6px;">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
-                    <path d="M4 17v2a2 2 0 002 2h12a2 2 0 002-2v-2"/>
-                    <path d="M7 9l5-5 5 5"/>
-                    <path d="M12 4v12"/>
-                </svg>
-                Export Data
-            </button>
-            <button onclick="document.getElementById('importFileInput').click()" style="background: #333; color: white; border: 1px solid #555; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 12px; display: flex; align-items: center; gap: 6px;">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
-                    <path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/>
-                    <path d="M12 11v6"/>
-                    <path d="M9 14l3 3 3-3"/>
-                </svg>
-                Load Report
-            </button>
-            <input type="file" id="importFileInput" accept=".json" style="display: none;" onchange="importDataFile(event)">
-            <div id="authStatus" style="display: flex; align-items: center; gap: 8px;">
+            <!-- Account control, pushed right -->
+            <div id="authStatus" style="display: flex; align-items: center; gap: 8px; margin-left: auto;">
                 <button id="loginBtn" onclick="openAuthModal()" style="background: #4a9eff; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 11px;">Login</button>
-            </div>
             </div>
         </div>
 
@@ -2997,8 +3000,25 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                 : 'Select a report';
 
             const items = (allReports && allReports.length)
-                ? allReports.map((r, i) => `<div class="rc-pick-item" onclick="event.stopPropagation(); selectReportFromDropdown(${i}); toggleHandlinePicker(false);">${escapeHtml(r.name || ('Report ' + (i + 1)))}</div>`).join('')
+                ? allReports.map((r, i) => `<div class="rc-pick-item"><span class="rc-pick-name" onclick="event.stopPropagation(); selectReportFromDropdown(${i}); toggleHandlinePicker(false);">${escapeHtml(r.name || ('Report ' + (i + 1)))}</span><button class="rc-pick-export" title="Export this report to a JSON file" onclick="event.stopPropagation(); exportSingleReport(${i});"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 19V5"/><path d="M5 12l7-7 7 7"/></svg>Export</button></div>`).join('')
                 : '<div class="rc-pick-empty">No saved reports yet</div>';
+
+            // LOAD zone (always present, even with no reports) — loads ONE app-exported report JSON.
+            // CSV / Pio import does NOT happen here; it lives behind the "Import data" button/modal.
+            const loadZone = `<div class="rc-load">
+                <div class="rc-load-label">LOAD A REPORT</div>
+                <div class="rc-load-zone" id="rcLoadZone"
+                     onclick="event.stopPropagation();"
+                     ondragover="event.preventDefault(); event.stopPropagation(); this.classList.add('dragover');"
+                     ondragleave="this.classList.remove('dragover');"
+                     ondrop="event.preventDefault(); event.stopPropagation(); this.classList.remove('dragover'); if (event.dataTransfer.files && event.dataTransfer.files[0]) loadReportFromFile(event.dataTransfer.files[0]);">
+                    <svg class="rc-load-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M5 21h14"/></svg>
+                    <div class="rc-load-hint">Drag a report file here</div>
+                    <div class="rc-load-or">— or —</div>
+                    <button class="rc-load-btn" onclick="event.stopPropagation(); document.getElementById('rcLoadInput').click();">Choose file…</button>
+                    <input type="file" id="rcLoadInput" accept=".json,application/json" style="display:none;" onchange="loadReportFile(event)">
+                </div>
+            </div>`;
 
             let fields = '';
             if (hasReport) {
@@ -3014,8 +3034,12 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                 : '';
 
             return `<div class="gtow-report-card">
+                <button class="rc-import" onclick="openImportModal()" title="Import a report (CSV / Pio)">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 17v2a2 2 0 002 2h12a2 2 0 002-2v-2"/><path d="M7 11l5 5 5-5"/><path d="M12 4v12"/></svg>
+                    Import data
+                </button>
                 <div class="rc-top">
-                    <div class="rc-picker" onclick="toggleHandlinePicker()">${escapeHtml(summary)}<div id="handlinePickerMenu" class="rc-pick-menu">${items}</div></div>
+                    <div class="rc-picker" onclick="toggleHandlinePicker()">${escapeHtml(summary)}<div id="handlinePickerMenu" class="rc-pick-menu">${items}${loadZone}</div></div>
                     <button class="rc-clear" onclick="clearSearch()">Clear</button>
                 </div>
                 ${fields}
@@ -3029,6 +3053,21 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
             const show = (typeof force === 'boolean') ? force : !menu.classList.contains('open');
             menu.classList.toggle('open', show);
             if (show) {
+                // The menu lives inside .gtow-handline, whose overflow-x:auto computes overflow-y
+                // to auto and would vertically CLIP this tall menu (report rows + LOAD zone).
+                // Escape the clip: position it fixed, anchored under the .rc-picker trigger.
+                const trigger = menu.closest('.rc-picker');
+                if (trigger) {
+                    const r = trigger.getBoundingClientRect();
+                    menu.style.position = 'fixed';
+                    menu.style.top = Math.round(r.bottom + 4) + 'px';
+                    menu.style.left = Math.round(r.left) + 'px';
+                    const w = Math.max(220, Math.round(r.width));
+                    menu.style.width = w + 'px';
+                    menu.style.minWidth = w + 'px';   // CSS min-width:100% resolves vs viewport under fixed
+                    menu.style.maxWidth = w + 'px';
+                    menu.style.maxHeight = Math.max(180, Math.round(window.innerHeight - r.bottom - 24)) + 'px';
+                }
                 // close on the next outside click
                 setTimeout(() => {
                     document.addEventListener('click', function handler(e) {
@@ -5161,33 +5200,19 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
             };
         }
 
-        function exportAllData() {
-            console.log('currentReport:', currentReport);
-            const exportData = {
-                gtoReports: JSON.parse(localStorage.getItem('gtoReports') || '[]'),
-                boardDetailData: JSON.parse(localStorage.getItem('boardDetailData') || '{}')
-            };
-
-            if (exportData.gtoReports.length === 0) {
-                alert('No reports to export');
-                return;
-            }
-
-            const dataStr = JSON.stringify(exportData, null, 2);
-            const dataBlob = new Blob([dataStr], { type: 'application/json' });
-            const url = URL.createObjectURL(dataBlob);
+        // Export ONE report (the picker row clicked) to a JSON file. The file wraps the single
+        // report in the loader's shape so it round-trips through loadReportFromFile(). This is the
+        // ONLY export path — the old full-backup exportAllData()/restore were removed.
+        function exportSingleReport(index) {
+            const report = allReports && allReports[index];
+            if (!report) { alert('Report not found'); return; }
+            const payload = { gtoReports: [report], boardDetailData: {} };
+            const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
             const link = document.createElement('a');
             link.href = url;
-            
-            // Use current report name if available, otherwise use date
-            let filename;
-            if (currentReport && currentReport.name) {
-                filename = `${currentReport.name}.json`;
-            } else {
-                filename = `poker-backup-${new Date().toISOString().split('T')[0]}.json`;
-            }
-            
-            link.download = filename;
+            const safeName = String(report.name || 'report').replace(/[\\/:*?"<>|]+/g, '_').trim() || 'report';
+            link.download = `${safeName}.json`;
             link.click();
             URL.revokeObjectURL(url);
         }
@@ -5220,57 +5245,56 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
             });
         }
 
-        function importDataFile(event) {
-            const file = event.target.files[0];
-            if (!file) return;
+        // LOAD A REPORT (picker drop-zone) — loads ONE app-exported report JSON back into the app.
+        // JSON only: CSV / Pio imports go through the "Import data" button/modal, NOT here.
+        // onchange handler for the hidden file input.
+        function loadReportFile(event) {
+            const file = event.target.files && event.target.files[0];
+            loadReportFromFile(file);
+            event.target.value = '';
+        }
 
-            // Check if it's a CSV file (PioSOLVER)
-            if (file.name.endsWith('.csv')) {
-                importPioCSV(file);
-                event.target.value = '';
+        // Shared by the file picker and the drag-and-drop zone.
+        function loadReportFromFile(file) {
+            if (!file) return;
+            if (/\.csv$/i.test(file.name)) {
+                alert('The Load zone accepts exported report JSON only. Use "Import data" for CSV / Pio imports.');
                 return;
             }
-
-            // Existing JSON import logic
             const reader = new FileReader();
-            reader.onload = async function(e) {
+            reader.onload = function(e) {
                 try {
                     const imported = JSON.parse(e.target.result);
-                    
-                    if (imported.gtoReports && !Array.isArray(imported)) {
-                        
-                        const proceed = await showImportModal(imported.gtoReports.length);
-                        if (!proceed) return;
-                        
-                        allReports = [...allReports, ...imported.gtoReports];
-                        const existingBoardData = JSON.parse(localStorage.getItem('boardDetailData') || '{}');
-                        const mergedBoardData = { ...existingBoardData, ...imported.boardDetailData };
-                        localStorage.setItem('boardDetailData', JSON.stringify(mergedBoardData));
-                        localStorage.setItem('gtoReports', JSON.stringify(allReports));
-                        location.reload();
-                        
-                    } else if (Array.isArray(imported)) {
-                        
-                        const proceed = await showImportModal(imported.length);
-                        if (!proceed) return;
-                        
-                        allReports = [...allReports, ...imported];
-                        localStorage.setItem('gtoReports', JSON.stringify(allReports));
-                        location.reload();
-                        
-                    } else {
-                        alert('Invalid file format');
-                    }
-                    
+                    if (ingestReportData(imported)) location.reload();
                 } catch (error) {
                     alert('Error reading file: ' + error.message);
                 }
             };
             reader.readAsText(file);
-            
-            event.target.value = '';
         }
-        
+
+        // Append report(s) from a parsed exported-JSON object into allReports + localStorage.
+        // Accepts the app export shape { gtoReports:[...], boardDetailData? }, a bare reports
+        // array, or a single bare report object. Returns true on success (caller reloads).
+        function ingestReportData(imported) {
+            let toAdd = [];
+            if (imported && Array.isArray(imported.gtoReports)) toAdd = imported.gtoReports;
+            else if (Array.isArray(imported)) toAdd = imported;
+            else if (imported && imported.id && imported.perspectives) toAdd = [imported];
+            else { alert('Invalid report file'); return false; }
+
+            if (!toAdd.length) { alert('No report found in file'); return false; }
+
+            allReports = [...allReports, ...toAdd];
+            localStorage.setItem('gtoReports', JSON.stringify(allReports));
+
+            if (imported && imported.boardDetailData && Object.keys(imported.boardDetailData).length) {
+                const existing = JSON.parse(localStorage.getItem('boardDetailData') || '{}');
+                localStorage.setItem('boardDetailData', JSON.stringify({ ...existing, ...imported.boardDetailData }));
+            }
+            return true;
+        }
+
         function extractRanks(flop) {
             const ranks = [];
             for (let i = 0; i < flop.length; i += 2) {
@@ -5628,9 +5652,10 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
         }
 
         function clearSearch() {
-            document.getElementById('situationSearchTop').value = '';
-            document.getElementById('flopSearchTop').value = '';
-            
+            // situation/flop search inputs were removed from the top bar; guard in case absent.
+            const sitEl = document.getElementById('situationSearchTop'); if (sitEl) sitEl.value = '';
+            const flopEl = document.getElementById('flopSearchTop'); if (flopEl) flopEl.value = '';
+
             searchFilters.situation = null;
             searchFilters.flop = null;
 
