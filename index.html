@@ -759,6 +759,16 @@
         }
         .rc-pick-item:last-child { border-bottom: none; }
         .rc-pick-item:hover { background: #303034; color: #fff; }
+        /* currently-loaded report row: blue highlight + leading checkmark */
+        .rc-pick-item.is-current { background: rgba(74,158,255,.12); box-shadow: inset 2px 0 0 #4a9eff; }
+        .rc-pick-item.is-current:hover { background: rgba(74,158,255,.18); }
+        .rc-pick-item.is-current .rc-pick-title { color: #f1f4f9; }
+        .rc-pick-check {
+            flex: 0 0 auto; width: 14px; margin-left: 8px;
+            text-align: center; font-size: 12px; font-weight: 700; line-height: 1;
+            color: transparent; user-select: none;
+        }
+        .rc-pick-item.is-current .rc-pick-check { color: #4a9eff; }
         .rc-pick-empty { padding: 8px 10px; font-size: 12px; color: #6e6f75; }
         .gtow-report-card .rc-fields { display: flex; flex-direction: column; gap: 4px; margin-top: 1px; }
         .gtow-report-card .rc-row { font-size: 12.5px; line-height: 1.2; white-space: nowrap; }
@@ -783,7 +793,7 @@
             display: flex; align-items: center; justify-content: space-between; gap: 8px;
         }
         .rc-pick-name {
-            flex: 1 1 auto; min-width: 0; padding: 7px 0 7px 10px; cursor: pointer;
+            flex: 1 1 auto; min-width: 0; padding: 7px 0 7px 6px; cursor: pointer;
             display: flex; flex-direction: column; gap: 2px; overflow: hidden;
         }
         .rc-pick-title {
@@ -816,6 +826,33 @@
         }
         .rc-pick-export:hover { background: #34343a; color: #fff; }
         .rc-pick-export svg { display: block; }
+        /* ---- account control pill (top-right): avatar initial + email + caret ---- */
+        .acct-pill {
+            position: relative; display: inline-flex; align-items: center; gap: 9px;
+            max-width: 260px; padding: 5px 13px 5px 5px; cursor: pointer;
+            background: #1f1f22; border: 1px solid #3a3a3f; border-radius: 999px;
+        }
+        .acct-pill:hover { background: #26262a; }
+        .acct-avatar {
+            flex: 0 0 auto; width: 32px; height: 32px; border-radius: 50%;
+            background: #10b981; color: #fff; font-size: 14px; font-weight: 700;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .acct-email {
+            flex: 0 1 auto; min-width: 0; font-size: 13px; font-weight: 600; color: #ededf0;
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        }
+        .acct-caret { flex: 0 0 auto; color: #8a8a90; display: block; }
+        .acct-menu {
+            display: none; position: absolute; right: 0; top: calc(100% + 8px);
+            min-width: 170px; padding: 6px 0; z-index: 1000;
+            background: #1f1f22; border: 1px solid #3a3a3f; border-radius: 10px;
+            box-shadow: 0 8px 24px rgba(0,0,0,.5);
+        }
+        .acct-menu-item {
+            padding: 9px 16px; font-size: 12.5px; font-weight: 600; color: #d4d4d9; cursor: pointer;
+        }
+        .acct-menu-item:hover { background: #303034; color: #fff; }
         /* ---- LOAD A REPORT drop-zone (bottom of picker menu) ---- */
         .rc-load { border-top: 1px solid #2a2a2e; padding: 10px; }
         .rc-load-label {
@@ -3030,7 +3067,8 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                     const flopCount = Math.max(0, ...Object.values(r.perspectives || {})
                         .map(p => (p && p.action1 && p.action1.data ? p.action1.data.length : 0)));
                     const sub = flopCount + (flopCount === 1 ? ' flop' : ' flops');
-                    return `<div class="rc-pick-item" data-search="${escapeHtml(nm)}"><div class="rc-pick-name" onclick="event.stopPropagation(); selectReportFromDropdown(${i}); toggleHandlinePicker(false);"><div class="rc-pick-title">${escapeHtml(nm)}</div><div class="rc-pick-sub">${escapeHtml(sub)}</div></div><button class="rc-pick-export" title="Export this report to a JSON file" onclick="event.stopPropagation(); exportSingleReport(${i});"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 19V5"/><path d="M5 12l7-7 7 7"/></svg>Export</button></div>`;
+                    const isCurrent = !!currentReport && (r === currentReport || (r.id != null && r.id === currentReport.id));
+                    return `<div class="rc-pick-item${isCurrent ? ' is-current' : ''}" data-search="${escapeHtml(nm)}"><span class="rc-pick-check" aria-hidden="true">${isCurrent ? '✓' : ''}</span><div class="rc-pick-name" onclick="event.stopPropagation(); selectReportFromDropdown(${i}); toggleHandlinePicker(false);"><div class="rc-pick-title">${escapeHtml(nm)}</div><div class="rc-pick-sub">${escapeHtml(sub)}</div></div><button class="rc-pick-export" title="Export this report to a JSON file" onclick="event.stopPropagation(); exportSingleReport(${i});"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 19V5"/><path d="M5 12l7-7 7 7"/></svg>Export</button></div>`;
                 }).join('')
                 : '<div class="rc-pick-empty">No saved reports yet</div>';
 
@@ -5657,53 +5695,6 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
             return true;
         }
 
-        function applySearch() {
-            const situationInput = document.getElementById('situationSearchTop').value;
-            const flopInput = document.getElementById('flopSearchTop').value;
-            
-            searchFilters.situation = parseSituationSearch(situationInput);
-            searchFilters.flop = parseFlopSearchPattern(flopInput);
-            
-            if (flopInput && !searchFilters.situation) {
-                alert('Please enter a situation (e.g., "3BP IP PFR") before searching for flops');
-                return;
-            }
-
-            if (!searchFilters.situation) {
-                alert('Please enter a situation (e.g., "3BP IP PFR")');
-                return;
-            }
-
-            const matchingReports = allReports.filter(report => {
-                if (!report.filters) return false;
-                
-                return report.filters.potType.toUpperCase() === searchFilters.situation.potType.toUpperCase() &&
-                    report.filters.postflopPosition.toUpperCase() === searchFilters.situation.postflopPosition.toUpperCase() &&
-                    report.filters.initiative.toUpperCase() === searchFilters.situation.initiative.toUpperCase();
-            });
-
-            if (matchingReports.length === 0) {
-                alert('No reports found matching this situation');
-                displayNoData();
-                showBreadcrumbSection(); // keep the picker visible (re-render no-report state)
-                return;
-            }
-
-            // Use the first matching report and display it
-            currentReport = matchingReports[0];
-            displayReport(currentReport.id, true);
-            showBreadcrumbSection();
-        }
-
-        function resetFlopFilter() {
-            document.getElementById('flopSearchTop').value = '';
-            searchFilters.flop = null;
-            
-            if (currentReport) {
-                displayReport(currentReport);
-            }
-        }
-
         function clearSearch() {
             // situation/flop search inputs were removed from the top bar; guard in case absent.
             const sitEl = document.getElementById('situationSearchTop'); if (sitEl) sitEl.value = '';
@@ -7543,16 +7534,15 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
         function updateAuthUI() {
             const authStatus = document.getElementById('authStatus');
             if (currentUser) {
+                const email = currentUser.email || '';
+                const initial = (email.trim()[0] || '?').toUpperCase();
                 authStatus.innerHTML = `
-                    <div style="position: relative; margin-left: 20px;">
-                        <div onclick="toggleUserMenu()" style="width: 44px; height: 44px; background: #333; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center;">
-                            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
-                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                                <circle cx="12" cy="7" r="4"></circle>
-                            </svg>
-                        </div>
-                        <div id="userDropdown" style="display: none; position: absolute; right: 0; top: 50px; background: #333; border-radius: 8px; padding: 8px 0; min-width: 120px; z-index: 1000;">
-                            <div onclick="handleLogout()" style="padding: 8px 16px; cursor: pointer; color: white; font-size: 12px;">Logout</div>
+                    <div class="acct-pill" onclick="toggleUserMenu()" title="${escapeHtml(email)}">
+                        <span class="acct-avatar">${escapeHtml(initial)}</span>
+                        <span class="acct-email">${escapeHtml(email)}</span>
+                        <svg class="acct-caret" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                        <div id="userDropdown" class="acct-menu" style="display: none;">
+                            <div class="acct-menu-item" onclick="handleLogout()">Logout</div>
                         </div>
                     </div>
                 `;
