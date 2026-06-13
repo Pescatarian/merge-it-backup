@@ -1610,14 +1610,18 @@
             --imd-surface-3:  #101216;
             --imd-line:       #292d34;
             --imd-line-soft:  #21242a;
-            --imd-txt:        #f3f5f8;
-            --imd-txt-2:      #aeb4bf;
-            --imd-txt-3:      #6b7280;
-            --imd-accent:     #4a9eff;
-            --imd-accent-strong:#3a8eef;
+            --imd-txt:        #f3f5f8;          /* primary text       ~16:1 */
+            --imd-txt-2:      #aeb4bf;          /* secondary text     ~8.5:1 */
+            --imd-txt-3:      #a3a3a3;          /* labels / muted     ~7:1  (was #6b7280 = 3.68:1 FAIL) */
+            --imd-txt-ph:     #969ba5;          /* placeholder        ~6.7:1 (in scope, must pass 4.5:1) */
+            --imd-accent:     #4a9eff;          /* accent TEXT/BORDER/ICON on dark ~6.45:1 */
+            --imd-accent-strong:#3a8eef;        /* (legacy accent hover — retained) */
+            --imd-accent-fill:  #2563eb;        /* FILLED surface w/ white text = 5.17:1 (AA) */
+            --imd-accent-fill-strong:#1d4ed8;   /* filled hover (white text still passes) */
             --imd-accent-tint:rgba(74,158,255,.14);
             --imd-accent-line:rgba(74,158,255,.45);
-            --imd-lock:       #7c8698;
+            --imd-lock:       #7c8698;          /* lock-icon affordance (non-text, ≥3:1) */
+            --imd-focus:      2px solid var(--imd-accent);  /* focus ring ≥3:1 (accent ~6.45:1) */
             --imd-radius:     16px;
             --imd-radius-sm:  10px;
             --imd-radius-xs:  8px;
@@ -1639,7 +1643,9 @@
             overflow: auto;
             font-family: var(--imd-font);
             color: var(--imd-txt);
+            animation: imd-modal-in .18s ease;
         }
+        @keyframes imd-modal-in { from { opacity:0; transform:translateY(8px) scale(.99); } to { opacity:1; transform:none; } }
         #importModal .modal-content::-webkit-scrollbar,
         #linkReportModal .modal-content::-webkit-scrollbar { width: 10px; }
         #importModal .modal-content::-webkit-scrollbar-thumb,
@@ -1651,17 +1657,17 @@
         #importModal .imd-head,
         #linkReportModal .imd-head {
             display:flex; align-items:flex-start; justify-content:space-between;
-            padding:22px 24px 16px;
+            padding:24px 24px 16px;
         }
         #importModal .imd-title,
         #linkReportModal .imd-title {
-            font-size:19px; font-weight:700; letter-spacing:-.2px; margin:0; color:var(--imd-txt);
+            font-size:20px; font-weight:700; letter-spacing:-.2px; margin:0; color:var(--imd-txt);
         }
         #importModal .imd-sub,
-        #linkReportModal .imd-sub { margin:3px 0 0; font-size:12.5px; color:var(--imd-txt-3); }
+        #linkReportModal .imd-sub { margin:4px 0 0; font-size:13px; line-height:1.5; color:var(--imd-txt-3); }
         #importModal .imd-x,
         #linkReportModal .imd-x {
-            flex:0 0 auto; width:30px; height:30px; border-radius:8px; border:0; cursor:pointer;
+            flex:0 0 auto; width:36px; height:36px; border-radius:8px; border:0; cursor:pointer;
             background:transparent; color:var(--imd-txt-3); display:grid; place-items:center;
             transition:.15s; font-size:0; line-height:0; padding:0;
         }
@@ -1669,13 +1675,13 @@
         #linkReportModal .imd-x:hover { background:#23262c; color:var(--imd-txt); }
 
         #importModal .imd-body,
-        #linkReportModal .imd-body { padding:4px 24px 0; }
+        #linkReportModal .imd-body { padding:8px 24px 0; }
 
         #importModal .imd-foot,
         #linkReportModal .imd-foot {
             position:sticky; bottom:0;
-            display:flex; align-items:center; gap:10px;
-            padding:18px 24px 22px; margin-top:8px;
+            display:flex; align-items:center; gap:8px;
+            padding:16px 24px 24px; margin-top:8px;
             background:linear-gradient(180deg, rgba(22,24,28,0) 0%, var(--imd-surface) 28%);
         }
 
@@ -1685,21 +1691,21 @@
             background:var(--imd-surface-2);
             border:1px solid var(--imd-line-soft);
             border-radius:var(--imd-radius-sm);
-            padding:18px 18px 20px;
+            padding:20px;
             margin-bottom:16px;
         }
         #importModal .imd-sechead,
-        #linkReportModal .imd-sechead { display:flex; align-items:center; gap:10px; margin-bottom:4px; }
+        #linkReportModal .imd-sechead { display:flex; align-items:center; gap:8px; margin-bottom:4px; }
         #importModal .imd-step,
         #linkReportModal .imd-step {
-            flex:0 0 auto; font:700 10.5px/1 var(--imd-font); letter-spacing:.6px;
+            flex:0 0 auto; font:700 11px/1 var(--imd-font); letter-spacing:.6px;
             color:var(--imd-accent); background:var(--imd-accent-tint);
-            border:1px solid var(--imd-accent-line); border-radius:999px; padding:5px 9px;
+            border:1px solid var(--imd-accent-line); border-radius:999px; padding:4px 8px;
         }
         #importModal .imd-sectitle,
-        #linkReportModal .imd-sectitle { font-size:14.5px; font-weight:600; color:var(--imd-txt); }
+        #linkReportModal .imd-sectitle { font-size:16px; font-weight:650; color:var(--imd-txt); }
         #importModal .imd-help,
-        #linkReportModal .imd-help { margin:6px 0 16px; font-size:12.5px; line-height:1.5; color:var(--imd-txt-2); }
+        #linkReportModal .imd-help { margin:8px 0 16px; font-size:13px; line-height:1.5; color:var(--imd-txt-2); max-width:64ch; }
         #importModal .imd-help b,
         #linkReportModal .imd-help b { color:var(--imd-txt); }
 
@@ -1707,11 +1713,11 @@
         #importModal .imd-field { margin-bottom:16px; }
         #importModal .imd-field:last-child { margin-bottom:0; }
         #importModal .imd-lbl {
-            display:block; font:600 11px/1 var(--imd-font); letter-spacing:.7px;
-            text-transform:uppercase; color:var(--imd-txt-3); margin-bottom:9px;
+            display:block; font:600 12px/1.3 var(--imd-font); letter-spacing:.06em;
+            text-transform:uppercase; color:var(--imd-txt-3); margin-bottom:8px;
         }
         #importModal .imd-lbl .imd-hint {
-            text-transform:none; letter-spacing:0; font-weight:500; color:#565d68; margin-left:7px;
+            text-transform:none; letter-spacing:0; font-weight:500; color:var(--imd-txt-2); margin-left:8px;
         }
 
         /* segmented control */
@@ -1723,68 +1729,67 @@
         #importModal .imd-seg.imd-fill { display:flex; }
         #importModal .imd-seg button {
             flex:1; min-width:54px; cursor:pointer;
-            font:600 13px/1 var(--imd-font); color:var(--imd-txt-2);
+            font:600 14px/1 var(--imd-font); color:var(--imd-txt-2);
             background:transparent; border:1px solid transparent; border-radius:7px;
             padding:9px 14px; transition:.13s ease;
         }
         #importModal .imd-seg button:hover { color:var(--imd-txt); background:#191c21; }
         #importModal .imd-seg button[aria-pressed="true"] {
-            color:#fff; background:var(--imd-accent);
-            border-color:var(--imd-accent-strong);
-            box-shadow:0 1px 0 rgba(0,0,0,.25), 0 6px 16px -8px var(--imd-accent);
+            color:#fff; background:var(--imd-accent-fill); font-weight:700;
+            border-color:var(--imd-accent-fill-strong);
+            box-shadow:0 1px 0 rgba(0,0,0,.25), 0 6px 16px -8px var(--imd-accent-fill);
         }
 
         /* matchup preview */
         #importModal .imd-matchup-preview {
-            display:inline-flex; align-items:center; gap:7px; margin-top:11px;
-            font-size:12.5px; color:var(--imd-txt-2);
+            display:inline-flex; align-items:center; gap:8px; margin-top:12px;
+            font-size:13px; color:var(--imd-txt-2);
         }
-        #importModal .imd-matchup-preview b { color:var(--imd-txt); font-weight:600; }
+        #importModal .imd-matchup-preview b { color:var(--imd-txt); font-weight:650; }
         #importModal .imd-vs {
-            font:700 10px/1 var(--imd-font); color:var(--imd-accent);
+            font:700 11px/1 var(--imd-font); color:var(--imd-accent);
             background:var(--imd-accent-tint); border:1px solid var(--imd-accent-line);
             border-radius:6px; padding:4px 6px; letter-spacing:.5px;
         }
 
-        /* text input (Board Category) */
+        /* text input (Board Category) — 16px value, 16px horiz pad, 40px, 2px focus */
         #importModal .imd-text-in {
-            width:100%; font:500 13.5px/1 var(--imd-font); color:var(--imd-txt);
+            width:100%; font:500 16px/1.2 var(--imd-font); color:var(--imd-txt);
             background:var(--imd-surface-3); border:1px solid var(--imd-line);
-            border-radius:var(--imd-radius-xs); padding:11px 13px; transition:.15s;
+            border-radius:var(--imd-radius-xs); padding:11px 16px; transition:.15s;
         }
-        #importModal .imd-text-in::placeholder { color:#565d68; }
-        #importModal .imd-text-in:focus {
-            outline:none; border-color:var(--imd-accent); box-shadow:0 0 0 3px var(--imd-accent-tint);
-        }
+        #importModal .imd-text-in::placeholder { color:var(--imd-txt-ph); }
+        #importModal .imd-text-in:focus { outline:none; border-color:var(--imd-accent); }
+        #importModal .imd-text-in:focus-visible { outline:var(--imd-focus); outline-offset:2px; }
 
         /* paste well — beats #dataInput / #linkReportModal textarea via id+class specificity */
         #importModal .imd-paste,
         #linkReportModal .imd-paste {
-            width:100%; min-height:150px; resize:vertical;
-            font:13px/1.55 var(--imd-mono); color:var(--imd-txt);
+            width:100%; min-height:160px; resize:vertical;
+            font:16px/1.55 var(--imd-mono); color:var(--imd-txt);
             background:var(--imd-surface-3); border:1px solid var(--imd-line);
-            border-radius:var(--imd-radius-xs); padding:13px;
+            border-radius:var(--imd-radius-xs); padding:13px 16px;
             white-space:pre; overflow-x:auto; tab-size:8;
         }
         #importModal .imd-paste::placeholder,
-        #linkReportModal .imd-paste::placeholder { color:#4d535d; }
+        #linkReportModal .imd-paste::placeholder { color:var(--imd-txt-ph); }
         #importModal .imd-paste:focus,
-        #linkReportModal .imd-paste:focus {
-            outline:none; border-color:var(--imd-accent); box-shadow:0 0 0 3px var(--imd-accent-tint);
-        }
+        #linkReportModal .imd-paste:focus { outline:none; border-color:var(--imd-accent); }
+        #importModal .imd-paste:focus-visible,
+        #linkReportModal .imd-paste:focus-visible { outline:var(--imd-focus); outline-offset:2px; }
 
         /* auto-name preview */
         #importModal .imd-autoname {
-            display:flex; align-items:center; gap:9px; margin-top:16px;
-            padding:11px 13px; border-radius:var(--imd-radius-xs);
+            display:flex; align-items:center; gap:8px; margin-top:16px;
+            padding:12px 16px; border-radius:var(--imd-radius-xs);
             background:var(--imd-surface-3); border:1px dashed var(--imd-line);
         }
-        #importModal .imd-autoname svg { flex:0 0 auto; color:var(--imd-txt-3); }
+        #importModal .imd-autoname svg { flex:0 0 auto; color:var(--imd-accent); }
         #importModal .imd-autoname .imd-k {
-            font:600 10.5px/1 var(--imd-font); letter-spacing:.6px; text-transform:uppercase; color:var(--imd-txt-3);
+            font:600 11px/1 var(--imd-font); letter-spacing:.6px; text-transform:uppercase; color:var(--imd-txt-3);
         }
-        #importModal .imd-autoname .imd-v { font-size:13px; font-weight:600; color:var(--imd-txt); }
-        #importModal .imd-autoname .imd-muted { color:#565d68; font-weight:500; }
+        #importModal .imd-autoname .imd-v { font-size:14px; font-weight:650; color:var(--imd-txt); }
+        #importModal .imd-autoname .imd-muted { color:var(--imd-txt-3); font-weight:500; }
 
         /* MODAL 2 — context banner + locked confirmations */
         #linkReportModal .imd-ctx {
@@ -1798,42 +1803,50 @@
         #linkReportModal .imd-ctx p b { color:#fff; font-weight:700; }
 
         #linkReportModal .imd-locked-note {
-            display:flex; align-items:center; gap:7px; margin:2px 0 15px;
-            font-size:12.5px; color:var(--imd-txt-2);
+            display:flex; align-items:center; gap:8px; margin:4px 0 16px;
+            font-size:13px; line-height:1.5; color:var(--imd-txt-2);
         }
-        #linkReportModal .imd-locked-note svg { color:var(--imd-lock); }
+        #linkReportModal .imd-locked-note svg { color:var(--imd-lock); flex:0 0 auto; }
 
-        #linkReportModal .imd-locked-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+        #linkReportModal .imd-locked-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
         #linkReportModal .imd-locked-chip {
-            position:relative; padding:11px 13px;
+            position:relative; padding:12px 16px;
             background:var(--imd-surface-3);
             border:1px solid var(--imd-line-soft); border-radius:var(--imd-radius-xs);
         }
         #linkReportModal .imd-locked-chip .imd-k {
-            display:block; font:600 10px/1 var(--imd-font); letter-spacing:.6px;
-            text-transform:uppercase; color:var(--imd-txt-3); margin-bottom:7px;
+            display:block; font:600 12px/1 var(--imd-font); letter-spacing:.6px;
+            text-transform:uppercase; color:var(--imd-txt-3); margin-bottom:8px;
         }
+        /* locked value rendered as a readonly input styled as a static value (a11y: readonly, not disabled) */
         #linkReportModal .imd-locked-chip .imd-v {
-            font-size:14px; font-weight:600; color:var(--imd-txt); letter-spacing:.2px;
+            display:block; width:100%; box-sizing:border-box;
+            font:650 16px/1.2 var(--imd-font); color:var(--imd-txt); letter-spacing:.2px;
+            background:transparent; border:0; padding:0 22px 0 0; margin:0;
+        }
+        #linkReportModal .imd-locked-chip input.imd-v { cursor:default; }
+        #linkReportModal .imd-locked-chip input.imd-v:focus { outline:none; }
+        #linkReportModal .imd-locked-chip input.imd-v:focus-visible {
+            outline:var(--imd-focus); outline-offset:3px; border-radius:4px;
         }
         #linkReportModal .imd-locked-chip .imd-lk {
-            position:absolute; top:11px; right:11px; color:var(--imd-lock); opacity:.8;
+            position:absolute; top:12px; right:12px; color:var(--imd-lock); opacity:.85;
         }
 
         /* buttons (imd-btn family — distinct from the app's .btn) */
         #importModal .imd-btn,
         #linkReportModal .imd-btn {
-            font:600 13.5px/1 var(--imd-font); cursor:pointer; border-radius:9px;
-            padding:11px 18px; border:1px solid transparent; transition:.14s;
+            font:650 14px/1 var(--imd-font); cursor:pointer; border-radius:9px;
+            padding:12px 20px; border:1px solid transparent; transition:.14s;
             display:inline-flex; align-items:center; gap:8px;
         }
         #importModal .imd-btn-primary,
         #linkReportModal .imd-btn-primary {
-            background:var(--imd-accent); color:#fff; border-color:var(--imd-accent-strong);
+            background:var(--imd-accent-fill); color:#fff; border-color:var(--imd-accent-fill-strong);
         }
         #importModal .imd-btn-primary:hover,
         #linkReportModal .imd-btn-primary:hover {
-            background:var(--imd-accent-strong); box-shadow:0 8px 22px -10px var(--imd-accent);
+            background:var(--imd-accent-fill-strong); box-shadow:0 8px 22px -10px var(--imd-accent-fill);
         }
         #importModal .imd-btn-secondary,
         #linkReportModal .imd-btn-secondary {
@@ -1851,6 +1864,21 @@
         #linkReportModal .imd-spacer { flex:1; }
         #importModal .imd-btn .imd-csv-ico,
         #linkReportModal .imd-btn .imd-csv-ico { color:var(--imd-accent); margin-right:1px; }
+
+        /* focus ring — 2px solid accent (≈6.45:1, clears 3:1 non-text contrast) for every
+           focusable control inside the two redesigned modals (seg buttons, X, CSV/Cancel/Save). */
+        #importModal :focus-visible,
+        #linkReportModal :focus-visible { outline:var(--imd-focus); outline-offset:2px; }
+        /* the dialog card receives programmatic focus on open (for AT announcement) —
+           it is not keyboard-navigated, so suppress its non-visible UA focus ring. */
+        #importModal .modal-content:focus:not(:focus-visible),
+        #linkReportModal .modal-content:focus:not(:focus-visible) { outline:none; }
+
+        /* reduced-motion fallback — no entrance animation when the user opts out */
+        @media (prefers-reduced-motion: reduce) {
+            #importModal .modal-content,
+            #linkReportModal .modal-content { animation:none; }
+        }
 
     </style>
 </head>
@@ -1940,13 +1968,13 @@
 
     <!-- MODALS -->
     <div id="importModal" class="modal">
-        <div class="modal-content">
+        <div class="modal-content" role="dialog" aria-modal="true" aria-labelledby="modalTitle" aria-describedby="impModalSub" tabindex="-1">
             <!-- Redesigned (imd-*) Import Data modal. Legacy form controls are kept
                  hidden below as the source-of-truth state the existing JS reads. -->
             <div class="imd-head">
                 <div>
                     <h2 class="imd-title" id="modalTitle">Import Data</h2>
-                    <p class="imd-sub">GTO+ / Simple Postflop aggregate report</p>
+                    <p class="imd-sub" id="impModalSub">GTO+ / Simple Postflop aggregate report</p>
                 </div>
                 <button class="imd-x" onclick="closeImportModal()" aria-label="Close">
                     <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
@@ -1964,8 +1992,8 @@
                     <p class="imd-help">Select the filters that apply to this specific report. The name will be auto-generated.</p>
 
                     <div class="imd-field">
-                        <label class="imd-lbl">Pot Type</label>
-                        <div class="imd-seg" id="impPotSeg" data-target="tagPotType">
+                        <label class="imd-lbl" id="imdLblPot">Pot Type</label>
+                        <div class="imd-seg" id="impPotSeg" data-target="tagPotType" role="group" aria-labelledby="imdLblPot">
                             <button type="button" aria-pressed="false" data-val="2BP">2BP</button>
                             <button type="button" aria-pressed="false" data-val="3BP">3BP</button>
                             <button type="button" aria-pressed="false" data-val="4BP">4BP</button>
@@ -1973,8 +2001,8 @@
                     </div>
 
                     <div class="imd-field imd-matchup">
-                        <label class="imd-lbl">Positions <span class="imd-hint">pick two to form the matchup</span></label>
-                        <div class="imd-seg imd-fill" id="impPosSeg">
+                        <label class="imd-lbl" id="imdLblPos">Positions <span class="imd-hint">pick two to form the matchup</span></label>
+                        <div class="imd-seg imd-fill" id="impPosSeg" role="group" aria-labelledby="imdLblPos">
                             <button type="button" aria-pressed="false" data-val="BB">BB</button>
                             <button type="button" aria-pressed="false" data-val="SB">SB</button>
                             <button type="button" aria-pressed="false" data-val="BU">BU</button>
@@ -1984,8 +2012,8 @@
                     </div>
 
                     <div class="imd-field">
-                        <label class="imd-lbl">Data for <span class="imd-hint">whose data this report represents</span></label>
-                        <div class="imd-seg imd-fill" id="impPlayerSeg" data-target="tagPlayer">
+                        <label class="imd-lbl" id="imdLblPlayer">Data for <span class="imd-hint">whose data this report represents</span></label>
+                        <div class="imd-seg imd-fill" id="impPlayerSeg" data-target="tagPlayer" role="group" aria-labelledby="imdLblPlayer">
                             <button type="button" aria-pressed="false" data-val="BB">BB</button>
                             <button type="button" aria-pressed="false" data-val="SB">SB</button>
                             <button type="button" aria-pressed="false" data-val="BU">BU</button>
@@ -1994,15 +2022,15 @@
                     </div>
 
                     <div class="imd-field">
-                        <label class="imd-lbl">Initiative</label>
-                        <div class="imd-seg" id="impInitSeg" data-target="tagInitiative">
+                        <label class="imd-lbl" id="imdLblInit">Initiative</label>
+                        <div class="imd-seg" id="impInitSeg" data-target="tagInitiative" role="group" aria-labelledby="imdLblInit">
                             <button type="button" aria-pressed="false" data-val="PFR">PFR</button>
                             <button type="button" aria-pressed="false" data-val="PFC">PFC</button>
                         </div>
                     </div>
 
                     <div class="imd-field">
-                        <label class="imd-lbl">Board Category</label>
+                        <label class="imd-lbl" for="tagBoardsCategory">Board Category</label>
                         <input class="imd-text-in" type="text" id="tagBoardsCategory" placeholder="e.g. KLL, Ace-high, paired…" autocomplete="off">
                     </div>
 
@@ -2020,7 +2048,7 @@
                         <span class="imd-sectitle">Paste your data</span>
                     </div>
                     <p class="imd-help">Copy your aggregate report from GTO+ / Simple Postflop and paste it below.</p>
-                    <textarea class="imd-paste" id="dataInput" placeholder="Tree(*)    Equity   EV      Bet 5.4   Check&#10;Ad9h7h     54.759   10.128  40.507    59.493&#10;Ad9h6h     53.560   10.217  52.333    47.667"></textarea>
+                    <textarea class="imd-paste" id="dataInput" aria-label="Paste your aggregate report" placeholder="Tree(*)    Equity   EV      Bet 5.4   Check&#10;Ad9h7h     54.759   10.128  40.507    59.493&#10;Ad9h6h     53.560   10.217  52.333    47.667"></textarea>
                 </div>
 
             </div>
@@ -2072,11 +2100,11 @@
          confirmation chips mirrored from the hidden selects pre-filled by
          showLinkReportModal(); the existing JS still reads those selects. -->
     <div id="linkReportModal" class="modal">
-        <div class="modal-content">
+        <div class="modal-content" role="dialog" aria-modal="true" aria-labelledby="linkModalTitle" aria-describedby="linkModalSub" tabindex="-1">
             <div class="imd-head">
                 <div>
-                    <h2 class="imd-title">Link Data</h2>
-                    <p class="imd-sub">Import the opponent's response for this spot</p>
+                    <h2 class="imd-title" id="linkModalTitle">Link Data</h2>
+                    <p class="imd-sub" id="linkModalSub">Import the opponent's response for this spot</p>
                 </div>
                 <button class="imd-x" id="linkCloseX" aria-label="Close">
                     <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
@@ -2102,22 +2130,22 @@
                         Locked to the action you drilled into — no need to re-enter them.
                     </div>
 
-                    <div class="imd-locked-grid">
+                    <div class="imd-locked-grid" role="group" aria-label="Confirmed filters, read only">
                         <div class="imd-locked-chip">
-                            <span class="imd-k">Pot Type</span><span class="imd-v" id="lockPotVal">—</span>
-                            <svg class="imd-lk" width="12" height="12" viewBox="0 0 16 16" fill="none"><rect x="3" y="7" width="10" height="6.5" rx="1.4" stroke="currentColor" stroke-width="1.3"/><path d="M5.2 7V5.3a2.8 2.8 0 015.6 0V7" stroke="currentColor" stroke-width="1.3"/></svg>
+                            <span class="imd-k" id="lkPot">Pot Type</span><input class="imd-v" id="lockPotVal" value="—" readonly aria-readonly="true" aria-labelledby="lkPot">
+                            <svg class="imd-lk" width="12" height="12" viewBox="0 0 16 16" fill="none" aria-hidden="true"><rect x="3" y="7" width="10" height="6.5" rx="1.4" stroke="currentColor" stroke-width="1.3"/><path d="M5.2 7V5.3a2.8 2.8 0 015.6 0V7" stroke="currentColor" stroke-width="1.3"/></svg>
                         </div>
                         <div class="imd-locked-chip">
-                            <span class="imd-k">Positions</span><span class="imd-v" id="lockPosVal">—</span>
-                            <svg class="imd-lk" width="12" height="12" viewBox="0 0 16 16" fill="none"><rect x="3" y="7" width="10" height="6.5" rx="1.4" stroke="currentColor" stroke-width="1.3"/><path d="M5.2 7V5.3a2.8 2.8 0 015.6 0V7" stroke="currentColor" stroke-width="1.3"/></svg>
+                            <span class="imd-k" id="lkPos">Positions</span><input class="imd-v" id="lockPosVal" value="—" readonly aria-readonly="true" aria-labelledby="lkPos">
+                            <svg class="imd-lk" width="12" height="12" viewBox="0 0 16 16" fill="none" aria-hidden="true"><rect x="3" y="7" width="10" height="6.5" rx="1.4" stroke="currentColor" stroke-width="1.3"/><path d="M5.2 7V5.3a2.8 2.8 0 015.6 0V7" stroke="currentColor" stroke-width="1.3"/></svg>
                         </div>
                         <div class="imd-locked-chip">
-                            <span class="imd-k">Postflop Position</span><span class="imd-v" id="lockPostflopVal">—</span>
-                            <svg class="imd-lk" width="12" height="12" viewBox="0 0 16 16" fill="none"><rect x="3" y="7" width="10" height="6.5" rx="1.4" stroke="currentColor" stroke-width="1.3"/><path d="M5.2 7V5.3a2.8 2.8 0 015.6 0V7" stroke="currentColor" stroke-width="1.3"/></svg>
+                            <span class="imd-k" id="lkPpos">Postflop Position</span><input class="imd-v" id="lockPostflopVal" value="—" readonly aria-readonly="true" aria-labelledby="lkPpos">
+                            <svg class="imd-lk" width="12" height="12" viewBox="0 0 16 16" fill="none" aria-hidden="true"><rect x="3" y="7" width="10" height="6.5" rx="1.4" stroke="currentColor" stroke-width="1.3"/><path d="M5.2 7V5.3a2.8 2.8 0 015.6 0V7" stroke="currentColor" stroke-width="1.3"/></svg>
                         </div>
                         <div class="imd-locked-chip">
-                            <span class="imd-k">Initiative</span><span class="imd-v" id="lockInitVal">—</span>
-                            <svg class="imd-lk" width="12" height="12" viewBox="0 0 16 16" fill="none"><rect x="3" y="7" width="10" height="6.5" rx="1.4" stroke="currentColor" stroke-width="1.3"/><path d="M5.2 7V5.3a2.8 2.8 0 015.6 0V7" stroke="currentColor" stroke-width="1.3"/></svg>
+                            <span class="imd-k" id="lkInit">Initiative</span><input class="imd-v" id="lockInitVal" value="—" readonly aria-readonly="true" aria-labelledby="lkInit">
+                            <svg class="imd-lk" width="12" height="12" viewBox="0 0 16 16" fill="none" aria-hidden="true"><rect x="3" y="7" width="10" height="6.5" rx="1.4" stroke="currentColor" stroke-width="1.3"/><path d="M5.2 7V5.3a2.8 2.8 0 015.6 0V7" stroke="currentColor" stroke-width="1.3"/></svg>
                         </div>
                     </div>
                 </div>
@@ -2129,7 +2157,7 @@
                         <span class="imd-sectitle">Paste opponent's data</span>
                     </div>
                     <p class="imd-help">Copy the opponent's aggregate report from GTO+ / Simple Postflop and paste it below.</p>
-                    <textarea class="imd-paste" id="linkDataInput" placeholder="Paste opponent's data here (Tree, Equity, actions...)"></textarea>
+                    <textarea class="imd-paste" id="linkDataInput" aria-label="Paste opponent's aggregate report" placeholder="Paste opponent's data here (Tree, Equity, actions...)"></textarea>
                 </div>
 
             </div>
@@ -8253,7 +8281,13 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
 
         // ---- Link modal: mirror the pre-filled hidden selects into the locked chips ----
         function syncLinkChipsFromState(){
-            function set(id, val){ var el = document.getElementById(id); if(el) el.textContent = val || '—'; }
+            // Locked chips are readonly <input> elements (a11y: readonly, not disabled),
+            // so write the displayed value via .value; fall back to textContent for non-inputs.
+            function set(id, val){
+                var el = document.getElementById(id); if(!el) return;
+                if(el.tagName === 'INPUT'){ el.value = val || '—'; }
+                else { el.textContent = val || '—'; }
+            }
             set('lockPotVal', (document.getElementById('linkPotType')||{}).value);
             set('lockPosVal', (document.getElementById('linkPosition')||{}).value);
             set('lockPostflopVal', (document.getElementById('linkPostflopPosition')||{}).value);
@@ -8276,17 +8310,67 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                 var c = document.getElementById('linkCancelBtn'); if(c) c.click();
             });
 
-            // Re-sync chips whenever a modal gains the 'active' class — this fires AFTER
-            // openImportModal()/showLinkReportModal() have set the hidden controls, so the
-            // chips always reflect the real state regardless of which path opened the modal.
-            function observe(modalId, syncFn){
-                var m = document.getElementById(modalId); if(!m) return;
-                new MutationObserver(function(){
-                    if(m.classList.contains('active')) syncFn();
-                }).observe(m, { attributes:true, attributeFilter:['class'] });
+            // ---- Focus management + keyboard a11y for the two redesigned modals ----
+            // Focusable elements inside the modal card, excluding the hidden legacy
+            // state-holders (they live in a display:none block, so offsetParent is null).
+            function focusables(modal){
+                var sel = 'a[href], button:not([disabled]), textarea:not([disabled]), input:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])';
+                return Array.prototype.slice.call(modal.querySelectorAll(sel))
+                    .filter(function(el){ return el.offsetParent !== null; });
             }
-            observe('importModal', syncImportChipsFromState);
-            observe('linkReportModal', syncLinkChipsFromState);
+
+            // Wire one modal: sync-on-open + focus trap + Esc-to-close + return-focus.
+            // Fires AFTER openImportModal()/showLinkReportModal() set the hidden controls,
+            // so chips always reflect real state regardless of which path opened the modal.
+            function wireModal(modalId, syncFn, onEsc){
+                var modal = document.getElementById(modalId); if(!modal) return;
+                var card = modal.querySelector('.modal-content');
+                var lastFocused = null;
+
+                function onKeydown(e){
+                    if(e.key === 'Escape'){ e.preventDefault(); onEsc(); return; }
+                    if(e.key !== 'Tab') return;
+                    var f = focusables(modal);
+                    if(!f.length) return;
+                    var first = f[0], last = f[f.length - 1];
+                    if(e.shiftKey){
+                        if(document.activeElement === first || !modal.contains(document.activeElement)){
+                            e.preventDefault(); last.focus();
+                        }
+                    } else {
+                        if(document.activeElement === last || !modal.contains(document.activeElement)){
+                            e.preventDefault(); first.focus();
+                        }
+                    }
+                }
+
+                new MutationObserver(function(){
+                    if(modal.classList.contains('active')){
+                        syncFn();
+                        lastFocused = document.activeElement;
+                        modal.addEventListener('keydown', onKeydown);
+                        // Move focus into the dialog container so AT announces the dialog
+                        // label/description; Tab then advances to the first control.
+                        if(card){ try { card.focus(); } catch(_){ } }
+                    } else {
+                        modal.removeEventListener('keydown', onKeydown);
+                        if(lastFocused && typeof lastFocused.focus === 'function'){
+                            try { lastFocused.focus(); } catch(_){ }
+                        }
+                        lastFocused = null;
+                    }
+                }).observe(modal, { attributes:true, attributeFilter:['class'] });
+            }
+
+            wireModal('importModal', syncImportChipsFromState, function(){
+                if(typeof window.closeImportModal === 'function') window.closeImportModal();
+                else document.getElementById('importModal').classList.remove('active');
+            });
+            wireModal('linkReportModal', syncLinkChipsFromState, function(){
+                var c = document.getElementById('linkCancelBtn');
+                if(c) c.click();
+                else document.getElementById('linkReportModal').classList.remove('active');
+            });
 
             // Initial paint in case a modal is already active.
             syncImportChipsFromState();
