@@ -5349,40 +5349,70 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                     return;
                 }
                 
-                const headers = parseCSVLine(lines[headerIndex]);
+                const headers = parseCSVLine(lines[headerIndex]).map(h => h.trim());
                 const dataRows = lines.slice(headerIndex + 1);
-                
-                // Extract actions from headers
-                const actions = [];
-                for (let i = 8; i < headers.length; i += 2) {
-                    const freqHeader = headers[i];
-                    if (freqHeader && freqHeader.includes(' freq')) {
-                        const rawAction = freqHeader.replace(' freq', '').trim();
-                        actions.push(normalizePioAction(rawAction));
-                    }
+
+                // ----- Locate columns BY HEADER NAME (PioViewer 3.5.2.6 inserts extra columns:
+                // Matchups, separate OOP/IP Equity, OOP/IP EV, OOP/IP EQR — so the old fixed
+                // indices (equity=col 2, actions from col 8 stepping +2) read garbage. This mirrors
+                // the main importPioCSV header-name logic. -----
+                const findCol = (predicate) => headers.findIndex(h => predicate(h.toLowerCase()));
+
+                const flopCol = findCol(h => h === 'flop');
+                if (flopCol === -1) {
+                    alert('Invalid PioSOLVER CSV: Could not find a "Flop" column');
+                    return;
                 }
-                
+
+                // Equity column for THIS import's perspective. The Link modal imports the OPPONENT's
+                // response, whose perspective is the #linkPostflopPosition select (IP/OOP). New CSVs
+                // have "OOP Equity" / "IP Equity"; older single-perspective exports have a plain
+                // "Equity" — fall back to that.
+                const linkPos = (document.getElementById('linkPostflopPosition').value || '').toUpperCase();
+                const wantEquity = linkPos === 'IP' ? 'ip equity' : 'oop equity';
+                let equityCol = findCol(h => h === wantEquity);
+                if (equityCol === -1) equityCol = findCol(h => h === 'equity');
+                if (equityCol === -1) equityCol = findCol(h => h.endsWith('equity')); // last-resort
+
+                // Action columns: ANY header ending in " freq" is an action. Read each by its own
+                // index (freq columns sit at odd indices in 3.5.2.6, so a fixed +2 step misses them).
+                const actions = [];       // normalized action keys, in column order
+                const actionFreqCol = []; // parallel array of freq-column indices
+                headers.forEach((h, i) => {
+                    if (/ freq$/i.test(h)) {
+                        const rawAction = h.replace(/ freq$/i, '').trim();
+                        actions.push(normalizePioAction(rawAction));
+                        actionFreqCol.push(i);
+                    }
+                });
+                if (actions.length === 0) {
+                    alert('Invalid PioSOLVER CSV: no action ("… freq") columns found');
+                    return;
+                }
+
                 // Parse board data
                 const data = [];
                 for (const row of dataRows) {
                     const cols = parseCSVLine(row);
-                    if (cols.length < 8) continue;
-                    
-                    const flop = cols[0].trim();
+
+                    // Skip rows too short, and the trailing aggregate row (blank Flop cell).
+                    const maxCol = Math.max(flopCol, equityCol, ...actionFreqCol);
+                    if (cols.length <= maxCol) continue;
+
+                    const flop = (cols[flopCol] || '').trim();
                     if (!flop) continue;
-                    
+
                     const boardData = {
                         tree: flop.replace(/\s+/g, ''),
-                        equity: parseFloat(cols[2]) || 0,
+                        equity: equityCol !== -1 ? (parseFloat(cols[equityCol]) || 0) : 0,
                         actions: {}
                     };
-                    
-                    for (const action of actions) {
-                        const colIndex = 8 + actions.indexOf(action) * 2;
-                        const freq = parseFloat(cols[colIndex]) || 0;
-                        boardData.actions[action] = freq;
+
+                    for (let k = 0; k < actions.length; k++) {
+                        const freq = parseFloat(cols[actionFreqCol[k]]) || 0;
+                        boardData.actions[actions[k]] = freq;
                     }
-                    
+
                     // Set bet/check for chart compatibility
                     let totalBet = 0;
                     for (const [key, value] of Object.entries(boardData.actions)) {
