@@ -1596,7 +1596,262 @@
             background: transparent !important;
         }
 
-        
+        /* ============================================================
+           IMPORT / LINK MODAL REDESIGN (imd-*) — LOOK-ONLY layer.
+           Ported from the approved _import_modal_mockup.html. All new
+           classes are prefixed imd- and scoped under the two modal IDs
+           so nothing bleeds into the rest of the app. The legacy form
+           controls (selects, reportName) are kept hidden as the
+           source-of-truth state the existing JS reads/writes.
+           ============================================================ */
+        #importModal, #linkReportModal {
+            --imd-surface:    #16181c;
+            --imd-surface-2:  #1b1e23;
+            --imd-surface-3:  #101216;
+            --imd-line:       #292d34;
+            --imd-line-soft:  #21242a;
+            --imd-txt:        #f3f5f8;
+            --imd-txt-2:      #aeb4bf;
+            --imd-txt-3:      #6b7280;
+            --imd-accent:     #4a9eff;
+            --imd-accent-strong:#3a8eef;
+            --imd-accent-tint:rgba(74,158,255,.14);
+            --imd-accent-line:rgba(74,158,255,.45);
+            --imd-lock:       #7c8698;
+            --imd-radius:     16px;
+            --imd-radius-sm:  10px;
+            --imd-radius-xs:  8px;
+            --imd-font: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            --imd-mono: ui-monospace, 'SF Mono', 'Cascadia Code', Menlo, Consolas, monospace;
+        }
+
+        /* outer card — override the generic .modal-content for these two modals */
+        #importModal .modal-content,
+        #linkReportModal .modal-content {
+            width: 560px;
+            max-width: 560px;
+            padding: 0;
+            background: linear-gradient(180deg, #181b20 0%, var(--imd-surface) 120px);
+            border: 1px solid var(--imd-line);
+            border-radius: var(--imd-radius);
+            box-shadow: 0 24px 64px -16px rgba(0,0,0,.7), 0 0 0 1px rgba(255,255,255,.03);
+            max-height: calc(100vh - 96px);
+            overflow: auto;
+            font-family: var(--imd-font);
+            color: var(--imd-txt);
+        }
+        #importModal .modal-content::-webkit-scrollbar,
+        #linkReportModal .modal-content::-webkit-scrollbar { width: 10px; }
+        #importModal .modal-content::-webkit-scrollbar-thumb,
+        #linkReportModal .modal-content::-webkit-scrollbar-thumb {
+            background:#2c3038; border-radius:8px; border:3px solid var(--imd-surface);
+        }
+
+        /* head */
+        #importModal .imd-head,
+        #linkReportModal .imd-head {
+            display:flex; align-items:flex-start; justify-content:space-between;
+            padding:22px 24px 16px;
+        }
+        #importModal .imd-title,
+        #linkReportModal .imd-title {
+            font-size:19px; font-weight:700; letter-spacing:-.2px; margin:0; color:var(--imd-txt);
+        }
+        #importModal .imd-sub,
+        #linkReportModal .imd-sub { margin:3px 0 0; font-size:12.5px; color:var(--imd-txt-3); }
+        #importModal .imd-x,
+        #linkReportModal .imd-x {
+            flex:0 0 auto; width:30px; height:30px; border-radius:8px; border:0; cursor:pointer;
+            background:transparent; color:var(--imd-txt-3); display:grid; place-items:center;
+            transition:.15s; font-size:0; line-height:0; padding:0;
+        }
+        #importModal .imd-x:hover,
+        #linkReportModal .imd-x:hover { background:#23262c; color:var(--imd-txt); }
+
+        #importModal .imd-body,
+        #linkReportModal .imd-body { padding:4px 24px 0; }
+
+        #importModal .imd-foot,
+        #linkReportModal .imd-foot {
+            position:sticky; bottom:0;
+            display:flex; align-items:center; gap:10px;
+            padding:18px 24px 22px; margin-top:8px;
+            background:linear-gradient(180deg, rgba(22,24,28,0) 0%, var(--imd-surface) 28%);
+        }
+
+        /* section card + step badge */
+        #importModal .imd-section,
+        #linkReportModal .imd-section {
+            background:var(--imd-surface-2);
+            border:1px solid var(--imd-line-soft);
+            border-radius:var(--imd-radius-sm);
+            padding:18px 18px 20px;
+            margin-bottom:16px;
+        }
+        #importModal .imd-sechead,
+        #linkReportModal .imd-sechead { display:flex; align-items:center; gap:10px; margin-bottom:4px; }
+        #importModal .imd-step,
+        #linkReportModal .imd-step {
+            flex:0 0 auto; font:700 10.5px/1 var(--imd-font); letter-spacing:.6px;
+            color:var(--imd-accent); background:var(--imd-accent-tint);
+            border:1px solid var(--imd-accent-line); border-radius:999px; padding:5px 9px;
+        }
+        #importModal .imd-sectitle,
+        #linkReportModal .imd-sectitle { font-size:14.5px; font-weight:600; color:var(--imd-txt); }
+        #importModal .imd-help,
+        #linkReportModal .imd-help { margin:6px 0 16px; font-size:12.5px; line-height:1.5; color:var(--imd-txt-2); }
+        #importModal .imd-help b,
+        #linkReportModal .imd-help b { color:var(--imd-txt); }
+
+        /* field block */
+        #importModal .imd-field { margin-bottom:16px; }
+        #importModal .imd-field:last-child { margin-bottom:0; }
+        #importModal .imd-lbl {
+            display:block; font:600 11px/1 var(--imd-font); letter-spacing:.7px;
+            text-transform:uppercase; color:var(--imd-txt-3); margin-bottom:9px;
+        }
+        #importModal .imd-lbl .imd-hint {
+            text-transform:none; letter-spacing:0; font-weight:500; color:#565d68; margin-left:7px;
+        }
+
+        /* segmented control */
+        #importModal .imd-seg {
+            display:inline-flex; gap:4px; padding:4px;
+            background:var(--imd-surface-3); border:1px solid var(--imd-line-soft);
+            border-radius:10px;
+        }
+        #importModal .imd-seg.imd-fill { display:flex; }
+        #importModal .imd-seg button {
+            flex:1; min-width:54px; cursor:pointer;
+            font:600 13px/1 var(--imd-font); color:var(--imd-txt-2);
+            background:transparent; border:1px solid transparent; border-radius:7px;
+            padding:9px 14px; transition:.13s ease;
+        }
+        #importModal .imd-seg button:hover { color:var(--imd-txt); background:#191c21; }
+        #importModal .imd-seg button[aria-pressed="true"] {
+            color:#fff; background:var(--imd-accent);
+            border-color:var(--imd-accent-strong);
+            box-shadow:0 1px 0 rgba(0,0,0,.25), 0 6px 16px -8px var(--imd-accent);
+        }
+
+        /* matchup preview */
+        #importModal .imd-matchup-preview {
+            display:inline-flex; align-items:center; gap:7px; margin-top:11px;
+            font-size:12.5px; color:var(--imd-txt-2);
+        }
+        #importModal .imd-matchup-preview b { color:var(--imd-txt); font-weight:600; }
+        #importModal .imd-vs {
+            font:700 10px/1 var(--imd-font); color:var(--imd-accent);
+            background:var(--imd-accent-tint); border:1px solid var(--imd-accent-line);
+            border-radius:6px; padding:4px 6px; letter-spacing:.5px;
+        }
+
+        /* text input (Board Category) */
+        #importModal .imd-text-in {
+            width:100%; font:500 13.5px/1 var(--imd-font); color:var(--imd-txt);
+            background:var(--imd-surface-3); border:1px solid var(--imd-line);
+            border-radius:var(--imd-radius-xs); padding:11px 13px; transition:.15s;
+        }
+        #importModal .imd-text-in::placeholder { color:#565d68; }
+        #importModal .imd-text-in:focus {
+            outline:none; border-color:var(--imd-accent); box-shadow:0 0 0 3px var(--imd-accent-tint);
+        }
+
+        /* paste well — beats #dataInput / #linkReportModal textarea via id+class specificity */
+        #importModal .imd-paste,
+        #linkReportModal .imd-paste {
+            width:100%; min-height:150px; resize:vertical;
+            font:13px/1.55 var(--imd-mono); color:var(--imd-txt);
+            background:var(--imd-surface-3); border:1px solid var(--imd-line);
+            border-radius:var(--imd-radius-xs); padding:13px;
+            white-space:pre; overflow-x:auto; tab-size:8;
+        }
+        #importModal .imd-paste::placeholder,
+        #linkReportModal .imd-paste::placeholder { color:#4d535d; }
+        #importModal .imd-paste:focus,
+        #linkReportModal .imd-paste:focus {
+            outline:none; border-color:var(--imd-accent); box-shadow:0 0 0 3px var(--imd-accent-tint);
+        }
+
+        /* auto-name preview */
+        #importModal .imd-autoname {
+            display:flex; align-items:center; gap:9px; margin-top:16px;
+            padding:11px 13px; border-radius:var(--imd-radius-xs);
+            background:var(--imd-surface-3); border:1px dashed var(--imd-line);
+        }
+        #importModal .imd-autoname svg { flex:0 0 auto; color:var(--imd-txt-3); }
+        #importModal .imd-autoname .imd-k {
+            font:600 10.5px/1 var(--imd-font); letter-spacing:.6px; text-transform:uppercase; color:var(--imd-txt-3);
+        }
+        #importModal .imd-autoname .imd-v { font-size:13px; font-weight:600; color:var(--imd-txt); }
+        #importModal .imd-autoname .imd-muted { color:#565d68; font-weight:500; }
+
+        /* MODAL 2 — context banner + locked confirmations */
+        #linkReportModal .imd-ctx {
+            display:flex; gap:11px; align-items:flex-start;
+            margin:0 24px 4px; padding:13px 14px;
+            background:var(--imd-accent-tint); border:1px solid var(--imd-accent-line);
+            border-radius:var(--imd-radius-sm);
+        }
+        #linkReportModal .imd-ctx svg { flex:0 0 auto; color:var(--imd-accent); margin-top:1px; }
+        #linkReportModal .imd-ctx p { margin:0; font-size:13px; line-height:1.5; color:#dbe6f7; }
+        #linkReportModal .imd-ctx p b { color:#fff; font-weight:700; }
+
+        #linkReportModal .imd-locked-note {
+            display:flex; align-items:center; gap:7px; margin:2px 0 15px;
+            font-size:12.5px; color:var(--imd-txt-2);
+        }
+        #linkReportModal .imd-locked-note svg { color:var(--imd-lock); }
+
+        #linkReportModal .imd-locked-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+        #linkReportModal .imd-locked-chip {
+            position:relative; padding:11px 13px;
+            background:var(--imd-surface-3);
+            border:1px solid var(--imd-line-soft); border-radius:var(--imd-radius-xs);
+        }
+        #linkReportModal .imd-locked-chip .imd-k {
+            display:block; font:600 10px/1 var(--imd-font); letter-spacing:.6px;
+            text-transform:uppercase; color:var(--imd-txt-3); margin-bottom:7px;
+        }
+        #linkReportModal .imd-locked-chip .imd-v {
+            font-size:14px; font-weight:600; color:var(--imd-txt); letter-spacing:.2px;
+        }
+        #linkReportModal .imd-locked-chip .imd-lk {
+            position:absolute; top:11px; right:11px; color:var(--imd-lock); opacity:.8;
+        }
+
+        /* buttons (imd-btn family — distinct from the app's .btn) */
+        #importModal .imd-btn,
+        #linkReportModal .imd-btn {
+            font:600 13.5px/1 var(--imd-font); cursor:pointer; border-radius:9px;
+            padding:11px 18px; border:1px solid transparent; transition:.14s;
+            display:inline-flex; align-items:center; gap:8px;
+        }
+        #importModal .imd-btn-primary,
+        #linkReportModal .imd-btn-primary {
+            background:var(--imd-accent); color:#fff; border-color:var(--imd-accent-strong);
+        }
+        #importModal .imd-btn-primary:hover,
+        #linkReportModal .imd-btn-primary:hover {
+            background:var(--imd-accent-strong); box-shadow:0 8px 22px -10px var(--imd-accent);
+        }
+        #importModal .imd-btn-secondary,
+        #linkReportModal .imd-btn-secondary {
+            background:#23262c; color:var(--imd-txt); border-color:#2f333b;
+        }
+        #importModal .imd-btn-secondary:hover,
+        #linkReportModal .imd-btn-secondary:hover { background:#2a2e35; }
+        #importModal .imd-btn-ghost,
+        #linkReportModal .imd-btn-ghost {
+            background:transparent; color:var(--imd-txt-2); border-color:var(--imd-line);
+        }
+        #importModal .imd-btn-ghost:hover,
+        #linkReportModal .imd-btn-ghost:hover { background:#1b1e23; color:var(--imd-txt); }
+        #importModal .imd-spacer,
+        #linkReportModal .imd-spacer { flex:1; }
+        #importModal .imd-btn .imd-csv-ico,
+        #linkReportModal .imd-btn .imd-csv-ico { color:var(--imd-accent); margin-right:1px; }
+
     </style>
 </head>
 <body>
@@ -1686,152 +1941,236 @@
     <!-- MODALS -->
     <div id="importModal" class="modal">
         <div class="modal-content">
-            <div class="modal-header">
-                <h3 class="modal-title" id="modalTitle">Import GTO+ / Simple Postflop Data</h3>
-                <button class="close-btn" onclick="closeImportModal()">&times;</button>
-            </div>
-
-            <div class="info-banner">
-                <h4>Step 1: Paste Your Data</h4>
-                <p>Copy your aggregate report from GTO+ or Simple Postflop and paste it below.</p>
-            </div>
-
-            <div class="import-section">
-                <h4>Paste Your Aggregate Report</h4>
-                <textarea id="dataInput" placeholder="Tree(*)	Equity	EV	Bet 5.4	Check
-    Ad9h7h	54.759	10.128	40.507	59.493
-    Ad9h6h	53.56	10.217	52.333	47.667"></textarea>
-            </div>
-
-            <div class="info-banner" style="background-color: #2d1e3a; border-left-color: #a855f7;">
-                <h4>Step 2: Tag This Report</h4>
-                <p>Select the filters that apply to this specific report. The name will be auto-generated.</p>
-            </div>
-
-            <div class="filter-tags-section">
-                <h4>Report Filters</h4>
-                
-                <div class="input-group">
-                    <label>Report Name (auto-generated)</label>
-                    <input type="text" id="reportName" placeholder="Will be generated automatically" readonly style="background-color: #0d0d0d;">
+            <!-- Redesigned (imd-*) Import Data modal. Legacy form controls are kept
+                 hidden below as the source-of-truth state the existing JS reads. -->
+            <div class="imd-head">
+                <div>
+                    <h2 class="imd-title" id="modalTitle">Import Data</h2>
+                    <p class="imd-sub">GTO+ / Simple Postflop aggregate report</p>
                 </div>
-                
-                <div class="filter-tags-grid">
-                    <div class="tag-group">
-                        <div class="tag-group-title">Pot Type</div>
-                        <select id="tagPotType" required onchange="updateReportName()">
-                            <option value="">Select Pot Type</option>
-                            <option value="2BP">2BP</option>
-                            <option value="3BP">3BP</option>
-                            <option value="4BP">4BP</option>
-                        </select>
+                <button class="imd-x" onclick="closeImportModal()" aria-label="Close">
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+                </button>
+            </div>
+
+            <div class="imd-body">
+
+                <!-- STEP 1 — filters -->
+                <div class="imd-section">
+                    <div class="imd-sechead">
+                        <span class="imd-step">STEP 1</span>
+                        <span class="imd-sectitle">Report filters</span>
                     </div>
-                
-                    <div class="tag-group">
-                        <div class="tag-group-title">Position</div>
-                        <select id="tagPosition" required onchange="updateReportName()">
-                            <option value="">Select Position</option>
-                            <option value="BB vs BU">BB vs BU</option>
-                            <option value="BB vs SB">BB vs SB</option>
-                            <option value="BB vs CO">BB vs CO</option>
-                            <option value="SB vs BU">SB vs BU</option>
-                            <option value="SB vs CO">SB vs CO</option>
-                            <option value="CO vs BU">CO vs BU</option>
-                        </select>
+                    <p class="imd-help">Select the filters that apply to this specific report. The name will be auto-generated.</p>
+
+                    <div class="imd-field">
+                        <label class="imd-lbl">Pot Type</label>
+                        <div class="imd-seg" id="impPotSeg" data-target="tagPotType">
+                            <button type="button" aria-pressed="false" data-val="2BP">2BP</button>
+                            <button type="button" aria-pressed="false" data-val="3BP">3BP</button>
+                            <button type="button" aria-pressed="false" data-val="4BP">4BP</button>
+                        </div>
                     </div>
 
-                    <div class="tag-group">
-                        <div class="tag-group-title">Player (whose data is this?)</div>
-                        <select id="tagPlayer" required onchange="updateReportName()">
-                            <option value="">Select Player</option>
-                            <option value="BB">BB</option>
-                            <option value="SB">SB</option>
-                            <option value="BU">BU</option>
-                            <option value="CO">CO</option>
-                        </select>
-                    </div>
-                
-                    <div class="tag-group">
-                        <div class="tag-group-title">Initiative</div>
-                        <select id="tagInitiative" required onchange="updateReportName()">
-                            <option value="">Select Initiative</option>
-                            <option value="PFR">PFR</option>
-                            <option value="PFC">PFC</option>
-                        </select>
+                    <div class="imd-field imd-matchup">
+                        <label class="imd-lbl">Positions <span class="imd-hint">pick two to form the matchup</span></label>
+                        <div class="imd-seg imd-fill" id="impPosSeg">
+                            <button type="button" aria-pressed="false" data-val="BB">BB</button>
+                            <button type="button" aria-pressed="false" data-val="SB">SB</button>
+                            <button type="button" aria-pressed="false" data-val="BU">BU</button>
+                            <button type="button" aria-pressed="false" data-val="CO">CO</button>
+                        </div>
+                        <div class="imd-matchup-preview">Matchup: <b class="imd-mp-a">—</b> <span class="imd-vs">VS</span> <b class="imd-mp-b">—</b></div>
                     </div>
 
-                    <div class="tag-group">
-                        <div class="tag-group-title">Boards Category</div>
-                        <input type="text" id="tagBoardsCategory" placeholder="e.g. KLL, Ace-high, paired…" autocomplete="off">
+                    <div class="imd-field">
+                        <label class="imd-lbl">Data for <span class="imd-hint">whose data this report represents</span></label>
+                        <div class="imd-seg imd-fill" id="impPlayerSeg" data-target="tagPlayer">
+                            <button type="button" aria-pressed="false" data-val="BB">BB</button>
+                            <button type="button" aria-pressed="false" data-val="SB">SB</button>
+                            <button type="button" aria-pressed="false" data-val="BU">BU</button>
+                            <button type="button" aria-pressed="false" data-val="CO">CO</button>
+                        </div>
+                    </div>
+
+                    <div class="imd-field">
+                        <label class="imd-lbl">Initiative</label>
+                        <div class="imd-seg" id="impInitSeg" data-target="tagInitiative">
+                            <button type="button" aria-pressed="false" data-val="PFR">PFR</button>
+                            <button type="button" aria-pressed="false" data-val="PFC">PFC</button>
+                        </div>
+                    </div>
+
+                    <div class="imd-field">
+                        <label class="imd-lbl">Board Category</label>
+                        <input class="imd-text-in" type="text" id="tagBoardsCategory" placeholder="e.g. KLL, Ace-high, paired…" autocomplete="off">
+                    </div>
+
+                    <div class="imd-autoname">
+                        <svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M8 1.5l1.8 3.8 4.2.6-3 3 .7 4.1L8 11.7 4.3 13l.7-4.1-3-3 4.2-.6L8 1.5z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/></svg>
+                        <span class="imd-k">Auto-named</span>
+                        <span class="imd-v" id="impAutoName"><span class="imd-muted">Select filters…</span></span>
                     </div>
                 </div>
+
+                <!-- STEP 2 — paste -->
+                <div class="imd-section">
+                    <div class="imd-sechead">
+                        <span class="imd-step">STEP 2</span>
+                        <span class="imd-sectitle">Paste your data</span>
+                    </div>
+                    <p class="imd-help">Copy your aggregate report from GTO+ / Simple Postflop and paste it below.</p>
+                    <textarea class="imd-paste" id="dataInput" placeholder="Tree(*)    Equity   EV      Bet 5.4   Check&#10;Ad9h7h     54.759   10.128  40.507    59.493&#10;Ad9h6h     53.560   10.217  52.333    47.667"></textarea>
+                </div>
+
             </div>
-            
-            <div style="display: flex; gap: 10px; margin-top: 20px;">
-                <button class="btn btn-primary" onclick="saveReport()" id="saveBtn">Save Report</button>
-                <button class="btn btn-secondary" onclick="closeImportModal()">Cancel</button>
-                <button class="btn btn-secondary" onclick="selectPioCSV()" style="margin-left: auto;">Pio CSV</button>
+
+            <div class="imd-foot">
+                <button type="button" class="imd-btn imd-btn-ghost" onclick="selectPioCSV()"><svg class="imd-csv-ico" width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M4 1.6h5l3 3V14a.4.4 0 01-.4.4H4a.4.4 0 01-.4-.4V2a.4.4 0 01.4-.4z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/><path d="M9 1.6V4.6h3" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/></svg> PIO CSV</button>
+                <span class="imd-spacer"></span>
+                <button type="button" class="imd-btn imd-btn-secondary" onclick="closeImportModal()">Cancel</button>
+                <button type="button" class="imd-btn imd-btn-primary" onclick="saveReport()" id="saveBtn">Save</button>
+            </div>
+
+            <!-- Hidden legacy state-holders — the existing JS (saveReport, selectPioCSV,
+                 updateReportName, openImportModal) reads/writes these. The imd-* chips
+                 above mirror their selections into these controls. DO NOT remove. -->
+            <div style="display:none;" aria-hidden="true">
+                <input type="text" id="reportName" readonly>
+                <select id="tagPotType" required onchange="updateReportName()">
+                    <option value="">Select Pot Type</option>
+                    <option value="2BP">2BP</option>
+                    <option value="3BP">3BP</option>
+                    <option value="4BP">4BP</option>
+                </select>
+                <select id="tagPosition" required onchange="updateReportName()">
+                    <option value="">Select Position</option>
+                    <option value="BB vs BU">BB vs BU</option>
+                    <option value="BB vs SB">BB vs SB</option>
+                    <option value="BB vs CO">BB vs CO</option>
+                    <option value="SB vs BU">SB vs BU</option>
+                    <option value="SB vs CO">SB vs CO</option>
+                    <option value="CO vs BU">CO vs BU</option>
+                </select>
+                <select id="tagPlayer" required onchange="updateReportName()">
+                    <option value="">Select Player</option>
+                    <option value="BB">BB</option>
+                    <option value="SB">SB</option>
+                    <option value="BU">BU</option>
+                    <option value="CO">CO</option>
+                </select>
+                <select id="tagInitiative" required onchange="updateReportName()">
+                    <option value="">Select Initiative</option>
+                    <option value="PFR">PFR</option>
+                    <option value="PFC">PFC</option>
+                </select>
             </div>
         </div>
     </div>
 
-    <!-- NEW: Link Report Modal -->
+    <!-- NEW: Link Report Modal (redesigned imd-* — LOOK-ONLY). Filters are LOCKED
+         confirmation chips mirrored from the hidden selects pre-filled by
+         showLinkReportModal(); the existing JS still reads those selects. -->
     <div id="linkReportModal" class="modal">
         <div class="modal-content">
-            <h2>Import Opponent Data</h2>
-            <p id="linkReportMessage" style="color: #4a9eff; margin-bottom: 15px;"></p>
-            
-            <textarea id="linkDataInput" placeholder="Paste opponent's data here (Tree, Equity, actions...)" rows="8"></textarea>
-            
-            <!-- Horizontal 2x2 grid layout -->
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 15px;">
-                <div class="filter-group">
-                    <label>Pot Type:</label>
-                    <select id="linkPotType">
-                        <option value="">Select...</option>
-                        <option value="SRP">SRP</option>
-                        <option value="3BP">3BP</option>
-                        <option value="4BP">4BP</option>
-                    </select>
+            <div class="imd-head">
+                <div>
+                    <h2 class="imd-title">Link Data</h2>
+                    <p class="imd-sub">Import the opponent's response for this spot</p>
                 </div>
-                
-                <div class="filter-group">
-                    <label>Postflop Position:</label>
-                    <select id="linkPostflopPosition">
-                        <option value="">Select...</option>
-                        <option value="IP">IP</option>
-                        <option value="OOP">OOP</option>
-                    </select>
-                </div>
-                
-                <div class="filter-group">
-                    <label>Initiative:</label>
-                    <select id="linkInitiative">
-                        <option value="">Select...</option>
-                        <option value="PFR">PFR</option>
-                        <option value="PFC">PFC</option>
-                    </select>
-                </div>
-                
-                <div class="filter-group">
-                    <label>Position:</label>
-                    <select id="linkPosition">
-                        <option value="">Select...</option>
-                        <option value="BB vs SB">BB vs SB</option>
-                        <option value="SB vs BB">SB vs BB</option>
-                        <option value="BB vs BU">BB vs BU</option>
-                        <option value="BU vs BB">BU vs BB</option>
-                        <option value="SB vs BU">SB vs BU</option>
-                        <option value="BU vs SB">BU vs SB</option>
-                    </select>
-                </div>
+                <button class="imd-x" id="linkCloseX" aria-label="Close">
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+                </button>
             </div>
-            
-            <div style="display: flex; gap: 10px; margin-top: 20px;">
-                <button id="linkSaveBtn" class="btn btn-primary">Import & Link</button>
-                <button id="linkCancelBtn" class="btn btn-secondary" onclick="document.getElementById('linkReportModal').classList.remove('active')">Cancel</button>
+
+            <!-- per-action context line (preserved — text set by showLinkReportModal) -->
+            <div class="imd-ctx">
+                <svg width="17" height="17" viewBox="0 0 16 16" fill="none"><path d="M8 7.2v4M8 4.8h.01" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><circle cx="8" cy="8" r="6.4" stroke="currentColor" stroke-width="1.3"/></svg>
+                <p id="linkReportMessage"></p>
+            </div>
+
+            <div class="imd-body">
+
+                <!-- locked confirmation of the drilled-into node -->
+                <div class="imd-section">
+                    <div class="imd-sechead">
+                        <span class="imd-step">THIS SPOT</span>
+                        <span class="imd-sectitle">Confirmed filters</span>
+                    </div>
+                    <div class="imd-locked-note">
+                        <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><rect x="3" y="7" width="10" height="6.5" rx="1.4" stroke="currentColor" stroke-width="1.3"/><path d="M5.2 7V5.3a2.8 2.8 0 015.6 0V7" stroke="currentColor" stroke-width="1.3"/></svg>
+                        Locked to the action you drilled into — no need to re-enter them.
+                    </div>
+
+                    <div class="imd-locked-grid">
+                        <div class="imd-locked-chip">
+                            <span class="imd-k">Pot Type</span><span class="imd-v" id="lockPotVal">—</span>
+                            <svg class="imd-lk" width="12" height="12" viewBox="0 0 16 16" fill="none"><rect x="3" y="7" width="10" height="6.5" rx="1.4" stroke="currentColor" stroke-width="1.3"/><path d="M5.2 7V5.3a2.8 2.8 0 015.6 0V7" stroke="currentColor" stroke-width="1.3"/></svg>
+                        </div>
+                        <div class="imd-locked-chip">
+                            <span class="imd-k">Positions</span><span class="imd-v" id="lockPosVal">—</span>
+                            <svg class="imd-lk" width="12" height="12" viewBox="0 0 16 16" fill="none"><rect x="3" y="7" width="10" height="6.5" rx="1.4" stroke="currentColor" stroke-width="1.3"/><path d="M5.2 7V5.3a2.8 2.8 0 015.6 0V7" stroke="currentColor" stroke-width="1.3"/></svg>
+                        </div>
+                        <div class="imd-locked-chip">
+                            <span class="imd-k">Postflop Position</span><span class="imd-v" id="lockPostflopVal">—</span>
+                            <svg class="imd-lk" width="12" height="12" viewBox="0 0 16 16" fill="none"><rect x="3" y="7" width="10" height="6.5" rx="1.4" stroke="currentColor" stroke-width="1.3"/><path d="M5.2 7V5.3a2.8 2.8 0 015.6 0V7" stroke="currentColor" stroke-width="1.3"/></svg>
+                        </div>
+                        <div class="imd-locked-chip">
+                            <span class="imd-k">Initiative</span><span class="imd-v" id="lockInitVal">—</span>
+                            <svg class="imd-lk" width="12" height="12" viewBox="0 0 16 16" fill="none"><rect x="3" y="7" width="10" height="6.5" rx="1.4" stroke="currentColor" stroke-width="1.3"/><path d="M5.2 7V5.3a2.8 2.8 0 015.6 0V7" stroke="currentColor" stroke-width="1.3"/></svg>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- paste -->
+                <div class="imd-section">
+                    <div class="imd-sechead">
+                        <span class="imd-step">PASTE</span>
+                        <span class="imd-sectitle">Paste opponent's data</span>
+                    </div>
+                    <p class="imd-help">Copy the opponent's aggregate report from GTO+ / Simple Postflop and paste it below.</p>
+                    <textarea class="imd-paste" id="linkDataInput" placeholder="Paste opponent's data here (Tree, Equity, actions...)"></textarea>
+                </div>
+
+            </div>
+
+            <div class="imd-foot">
                 <input type="file" id="linkPioFileInput" accept=".csv" style="display: none;" onchange="importLinkPioCSV(this.files[0])">
-                <button type="button" class="btn btn-secondary" onclick="document.getElementById('linkPioFileInput').click()" style="margin-left: auto;">Pio CSV</button>
+                <button type="button" class="imd-btn imd-btn-ghost" onclick="document.getElementById('linkPioFileInput').click()"><svg class="imd-csv-ico" width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M4 1.6h5l3 3V14a.4.4 0 01-.4.4H4a.4.4 0 01-.4-.4V2a.4.4 0 01.4-.4z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/><path d="M9 1.6V4.6h3" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/></svg> PIO CSV</button>
+                <span class="imd-spacer"></span>
+                <button id="linkCancelBtn" type="button" class="imd-btn imd-btn-secondary" onclick="document.getElementById('linkReportModal').classList.remove('active')">Cancel</button>
+                <button id="linkSaveBtn" type="button" class="imd-btn imd-btn-primary">Import &amp; Link</button>
+            </div>
+
+            <!-- Hidden legacy state-holders — showLinkReportModal pre-fills these and
+                 saveLinkReport reads them. The locked chips above mirror their values.
+                 DO NOT remove. -->
+            <div style="display:none;" aria-hidden="true">
+                <select id="linkPotType">
+                    <option value="">Select...</option>
+                    <option value="SRP">SRP</option>
+                    <option value="3BP">3BP</option>
+                    <option value="4BP">4BP</option>
+                </select>
+                <select id="linkPostflopPosition">
+                    <option value="">Select...</option>
+                    <option value="IP">IP</option>
+                    <option value="OOP">OOP</option>
+                </select>
+                <select id="linkInitiative">
+                    <option value="">Select...</option>
+                    <option value="PFR">PFR</option>
+                    <option value="PFC">PFC</option>
+                </select>
+                <select id="linkPosition">
+                    <option value="">Select...</option>
+                    <option value="BB vs SB">BB vs SB</option>
+                    <option value="SB vs BB">SB vs BB</option>
+                    <option value="BB vs BU">BB vs BU</option>
+                    <option value="BU vs BB">BU vs BB</option>
+                    <option value="SB vs BU">SB vs BU</option>
+                    <option value="BU vs SB">BU vs SB</option>
+                </select>
             </div>
         </div>
     </div>
@@ -3582,6 +3921,8 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
             
             // Open import modal
             document.getElementById('importModal').classList.add('active');
+            // Mirror the prefilled hidden controls into the imd-* chips (look-only).
+            if (window.__imdSyncImport) window.__imdSyncImport();
         }
 
         function goToStreet(street) {
@@ -4764,6 +5105,8 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
             
             // Show modal
             document.getElementById('linkReportModal').classList.add('active');
+            // Mirror the just-set hidden selects into the locked confirmation chips (look-only).
+            if (window.__imdSyncLink) window.__imdSyncLink();
         }
 
         function saveLinkReport() {
@@ -5136,8 +5479,8 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                 // This is a limitation of the current edit system
                 
             } else {
-                document.getElementById('modalTitle').textContent = 'Import GTO+ / Simple Postflop Data';
-                document.getElementById('saveBtn').textContent = 'Save Report';
+                document.getElementById('modalTitle').textContent = 'Import Data';
+                document.getElementById('saveBtn').textContent = 'Save';
                 
                 document.getElementById('dataInput').value = '';
                 document.getElementById('reportName').value = '';
@@ -5150,6 +5493,8 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
             
             console.log('Adding active class to modal');
             modal.classList.add('active');
+            // Mirror the hidden form controls into the imd-* chips (look-only).
+            if (window.__imdSyncImport) window.__imdSyncImport();
             console.log('Modal should now be visible');
         }
 
@@ -5163,8 +5508,8 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
             }
             
             // Reset modal title and button text
-            document.getElementById('modalTitle').textContent = 'Import GTO+ / Simple Postflop Data';
-            document.getElementById('saveBtn').textContent = 'Save Report';
+            document.getElementById('modalTitle').textContent = 'Import Data';
+            document.getElementById('saveBtn').textContent = 'Save';
         }
 
         function saveReport() {
@@ -7765,6 +8110,196 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
 
         
         </script>
+
+    <!-- ============================================================
+         IMPORT / LINK MODAL REDESIGN — presentational driver (imd-*).
+         The imd-* chips are a LOOK-ONLY layer over the hidden legacy
+         form controls. Clicking a chip mirrors its value into the
+         matching hidden <select> (which the existing save/parse/link
+         JS reads). No save/parse/link/dedup behavior is changed here.
+         ============================================================ -->
+    <script>
+    (function(){
+        // Canonical position priority — matches the 6 fixed options the app stores
+        // and saveReport()'s normalization (BB > SB > CO > BU as the "first" slot).
+        var IMD_POS_PRIORITY = ['BB','SB','CO','BU'];
+
+        function imdNormalizePosition(p){
+            return p==='SB vs BB' ? 'BB vs SB' :
+                   p==='BU vs BB' ? 'BB vs BU' :
+                   p==='BU vs SB' ? 'SB vs BU' :
+                   p==='CO vs BB' ? 'BB vs CO' :
+                   p==='CO vs SB' ? 'SB vs CO' : p;
+        }
+
+        // Two selected positions -> canonical "A vs B" matching an existing tagPosition option.
+        function imdCanonicalMatchup(list){
+            if(!list || list.length !== 2) return '';
+            var s = list.slice().sort(function(a,b){
+                return IMD_POS_PRIORITY.indexOf(a) - IMD_POS_PRIORITY.indexOf(b);
+            });
+            return s[0] + ' vs ' + s[1];
+        }
+
+        function imdPressed(seg){
+            return Array.prototype.slice
+                .call(seg.querySelectorAll('button[aria-pressed="true"]'))
+                .map(function(b){ return b.getAttribute('data-val'); });
+        }
+
+        function imdSetSeg(seg, val){
+            seg.querySelectorAll('button').forEach(function(b){
+                b.setAttribute('aria-pressed', b.getAttribute('data-val') === val ? 'true' : 'false');
+            });
+        }
+
+        // ---- Auto-name preview: <PotType> · <Position> (matches the stored report name key) ----
+        function updateImpAutoName(){
+            var el = document.getElementById('impAutoName');
+            if(!el) return;
+            var pot = (document.getElementById('tagPotType')||{}).value || '';
+            var pos = (document.getElementById('tagPosition')||{}).value || '';
+            if(pot && pos){
+                el.textContent = pot + ' · ' + imdNormalizePosition(pos);
+            } else {
+                el.innerHTML = '<span class="imd-muted">Select Pot Type and Positions…</span>';
+            }
+        }
+
+        function callUpdateReportName(){
+            if(typeof window.updateReportName === 'function'){
+                try { window.updateReportName(); } catch(e){}
+            }
+        }
+
+        // ---- Single-select segmented groups (Pot Type / Data for / Initiative) ----
+        function wireSingleSeg(segId){
+            var seg = document.getElementById(segId);
+            if(!seg) return;
+            var targetId = seg.getAttribute('data-target');
+            seg.addEventListener('click', function(e){
+                var btn = e.target.closest('button'); if(!btn) return;
+                var val = btn.getAttribute('data-val');
+                imdSetSeg(seg, val);
+                var sel = document.getElementById(targetId);
+                if(sel){ sel.value = val; }
+                callUpdateReportName();
+                updateImpAutoName();
+            });
+        }
+
+        // ---- Matchup picker (pick exactly two of four) ----
+        function wireMatchupSeg(){
+            var seg = document.getElementById('impPosSeg');
+            if(!seg) return;
+            var card = seg.closest('.imd-matchup');
+            seg.addEventListener('click', function(e){
+                var btn = e.target.closest('button'); if(!btn) return;
+                var on = btn.getAttribute('aria-pressed') === 'true';
+                var sel = seg.querySelectorAll('button[aria-pressed="true"]');
+                if(on){
+                    if(sel.length > 1) btn.setAttribute('aria-pressed','false');
+                } else {
+                    if(sel.length >= 2) sel[0].setAttribute('aria-pressed','false');
+                    btn.setAttribute('aria-pressed','true');
+                }
+                applyMatchup();
+            });
+        }
+
+        function applyMatchup(){
+            var seg = document.getElementById('impPosSeg');
+            var card = seg.closest('.imd-matchup');
+            var chosen = imdPressed(seg);
+            var canonical = imdCanonicalMatchup(chosen);
+            // mirror into the hidden tagPosition select (canonical -> an existing option)
+            var sel = document.getElementById('tagPosition');
+            if(sel){ sel.value = canonical; }
+            // preview in canonical order so it matches the stored name
+            var a = '—', b = '—';
+            if(canonical){ var p = canonical.split(' vs '); a = p[0]; b = p[1]; }
+            if(card){
+                card.querySelector('.imd-mp-a').textContent = a;
+                card.querySelector('.imd-mp-b').textContent = b;
+            }
+            callUpdateReportName();
+            updateImpAutoName();
+        }
+
+        // ---- Sync chips FROM the hidden selects (covers every modal-open path) ----
+        function syncImportChipsFromState(){
+            var pot = document.getElementById('impPotSeg');
+            var player = document.getElementById('impPlayerSeg');
+            var init = document.getElementById('impInitSeg');
+            var posSeg = document.getElementById('impPosSeg');
+            if(pot) imdSetSeg(pot, (document.getElementById('tagPotType')||{}).value || '');
+            if(player) imdSetSeg(player, (document.getElementById('tagPlayer')||{}).value || '');
+            if(init) imdSetSeg(init, (document.getElementById('tagInitiative')||{}).value || '');
+
+            if(posSeg){
+                var posVal = (document.getElementById('tagPosition')||{}).value || '';
+                var parts = posVal ? posVal.split(' vs ') : [];
+                posSeg.querySelectorAll('button').forEach(function(b){
+                    b.setAttribute('aria-pressed', parts.indexOf(b.getAttribute('data-val')) !== -1 ? 'true' : 'false');
+                });
+                var card = posSeg.closest('.imd-matchup');
+                if(card){
+                    card.querySelector('.imd-mp-a').textContent = parts[0] || '—';
+                    card.querySelector('.imd-mp-b').textContent = parts[1] || '—';
+                }
+            }
+            updateImpAutoName();
+        }
+
+        // ---- Link modal: mirror the pre-filled hidden selects into the locked chips ----
+        function syncLinkChipsFromState(){
+            function set(id, val){ var el = document.getElementById(id); if(el) el.textContent = val || '—'; }
+            set('lockPotVal', (document.getElementById('linkPotType')||{}).value);
+            set('lockPosVal', (document.getElementById('linkPosition')||{}).value);
+            set('lockPostflopVal', (document.getElementById('linkPostflopPosition')||{}).value);
+            set('lockInitVal', (document.getElementById('linkInitiative')||{}).value);
+        }
+
+        function init(){
+            // Expose sync helpers so the modal-open handlers can mirror state synchronously.
+            window.__imdSyncImport = syncImportChipsFromState;
+            window.__imdSyncLink = syncLinkChipsFromState;
+
+            wireSingleSeg('impPotSeg');
+            wireSingleSeg('impPlayerSeg');
+            wireSingleSeg('impInitSeg');
+            wireMatchupSeg();
+
+            // Close-X on the link modal mirrors Cancel (pops the action + closes).
+            var lx = document.getElementById('linkCloseX');
+            if(lx) lx.addEventListener('click', function(){
+                var c = document.getElementById('linkCancelBtn'); if(c) c.click();
+            });
+
+            // Re-sync chips whenever a modal gains the 'active' class — this fires AFTER
+            // openImportModal()/showLinkReportModal() have set the hidden controls, so the
+            // chips always reflect the real state regardless of which path opened the modal.
+            function observe(modalId, syncFn){
+                var m = document.getElementById(modalId); if(!m) return;
+                new MutationObserver(function(){
+                    if(m.classList.contains('active')) syncFn();
+                }).observe(m, { attributes:true, attributeFilter:['class'] });
+            }
+            observe('importModal', syncImportChipsFromState);
+            observe('linkReportModal', syncLinkChipsFromState);
+
+            // Initial paint in case a modal is already active.
+            syncImportChipsFromState();
+            syncLinkChipsFromState();
+        }
+
+        if(document.readyState === 'loading'){
+            document.addEventListener('DOMContentLoaded', init);
+        } else {
+            init();
+        }
+    })();
+    </script>
 
     <!-- Auth Modal (moved to body level so its z-index competes with .auth-required-overlay) -->
     <div id="authModal" class="modal" style="z-index: 10000;">
