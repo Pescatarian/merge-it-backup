@@ -1993,41 +1993,74 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                     return;
                 }
                 
-                const headers = parseCSVLine(lines[headerIndex]);
+                const headers = parseCSVLine(lines[headerIndex]).map(h => h.trim());
                 const dataRows = lines.slice(headerIndex + 1);
-                
-                // Extract actions from headers
-                    const actions = [];
-                    for (let i = 8; i < headers.length; i += 2) {
-                        const freqHeader = headers[i];
-                        if (freqHeader && freqHeader.includes(' freq')) {
-                            const rawAction = freqHeader.replace(' freq', '').trim();
-                            actions.push(normalizePioAction(rawAction));
-                        }
+
+                // Determine this import's perspective (OOP vs IP) from the PLAYER chosen in the
+                // import modal — NOT inferred from the CSV. getPlayerPositionInfo maps the
+                // position string + player to postflopPosition ("OOP" | "IP"); that is exactly
+                // how the report is built downstream, so reading the matching equity column keeps
+                // the equity consistent with the report's perspective.
+                const posInfo = getPlayerPositionInfo(filters.position, filters.player);
+                if (!posInfo) return; // getPlayerPositionInfo already alerts on a bad position/player
+
+                // ----- Locate columns BY HEADER NAME (PioViewer 3.5.2.6 inserts extra columns:
+                // Matchups, separate OOP/IP Equity, OOP/IP EV, OOP/IP EQR — so fixed indices break) -----
+                const findCol = (predicate) => headers.findIndex(h => predicate(h.toLowerCase()));
+
+                const flopCol = findCol(h => h === 'flop');
+                if (flopCol === -1) {
+                    alert('Invalid PioSOLVER CSV: Could not find a "Flop" column');
+                    return;
+                }
+
+                // Equity column for the report's perspective. New CSVs have "OOP Equity" / "IP Equity";
+                // older single-perspective exports may have a plain "Equity" — fall back to that.
+                const wantEquity = posInfo.postflopPosition === 'IP' ? 'ip equity' : 'oop equity';
+                let equityCol = findCol(h => h === wantEquity);
+                if (equityCol === -1) equityCol = findCol(h => h === 'equity');
+                if (equityCol === -1) equityCol = findCol(h => h.endsWith('equity')); // last-resort
+
+                // Action columns: ANY header ending in " freq" is an action. Read each by its own
+                // index and pair with its "<label> EV" column when present.
+                const actions = [];      // normalized action keys, in column order
+                const actionFreqCol = []; // parallel array of freq-column indices
+                headers.forEach((h, i) => {
+                    if (/ freq$/i.test(h)) {
+                        const rawAction = h.replace(/ freq$/i, '').trim();
+                        actions.push(normalizePioAction(rawAction));
+                        actionFreqCol.push(i);
                     }
-                
+                });
+                if (actions.length === 0) {
+                    alert('Invalid PioSOLVER CSV: no action ("… freq") columns found');
+                    return;
+                }
+
                 // Parse board data
                     const data = [];
 
                     for (const row of dataRows) {
                         const cols = parseCSVLine(row);
-                        if (cols.length < 8) continue;
-                        
-                        const flop = cols[0].trim();
+
+                        // Skip rows too short to contain our columns (and the trailing aggregate row,
+                        // whose Flop cell is blank — caught by the !flop check below).
+                        const maxCol = Math.max(flopCol, equityCol, ...actionFreqCol);
+                        if (cols.length <= maxCol) continue;
+
+                        const flop = (cols[flopCol] || '').trim();
                         if (!flop) continue;
-                        
+
                         const boardData = {
                             tree: flop.replace(/\s+/g, ''),
-                            equity: parseFloat(cols[2]) || 0,
+                            equity: equityCol !== -1 ? (parseFloat(cols[equityCol]) || 0) : 0,
                             actions: {}
                         };
-                        
-                        // Parse action frequencies using normalized action names
-                        let colIndex = 8;
-                        for (const action of actions) {
-                            const freq = parseFloat(cols[colIndex]) || 0;
-                            boardData.actions[action] = freq;
-                            colIndex += 2;
+
+                        // Parse action frequencies by each action's own column index.
+                        for (let k = 0; k < actions.length; k++) {
+                            const freq = parseFloat(cols[actionFreqCol[k]]) || 0;
+                            boardData.actions[actions[k]] = freq;
                         }
                         // Set bet/check for chart compatibility
                         let totalBet = 0;
@@ -2050,8 +2083,8 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                 // Build report using filters
                 const normalizedPosition = normalizePosition(filters.position);
                 const reportName = `${filters.potType} ${normalizedPosition}`;
-                const posInfo = getPlayerPositionInfo(filters.position, filters.player);
-                
+                // posInfo already computed above (perspective drives the equity column).
+
                 let existingReport = allReports.find(r => r.name === reportName);
                 
                 if (existingReport) {
@@ -5682,15 +5715,22 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                 return interpolateColor(percentage, 100);
             }
 
-            // Raises: "r25", "Raise", "Raise 3.5x". A bare "Raise" (no digits) previously fell
-            // through to grey; give it a distinct warm color. Numeric raises keep the original
-            // 2x->0% .. 5x->100% multiplier mapping.
+            // Raises come in two flavors, disambiguated by the presence of "x":
+            //   - MULTIPLIER raises ("R3x", "r2.5x"): manually-typed GTO+ raises where the number
+            //     is a raise-size multiplier. Map on the 2x->0% .. 5x->100% aggression scale.
+            //   - POT-PERCENTAGE raises ("r30" from PioSOLVER's "RAISE 30%"): the number is a
+            //     percent-of-pot, identical in meaning to a bet of the same size. Color it on the
+            //     SAME percentage scale as bets so a 30% raise looks like a 30% bet, not max red.
+            // A bare "Raise" (no digits) gets a distinct warm mid color.
             if (actionLower.startsWith('r')) {
                 const m = raw.match(/(\d+(?:\.\d+)?)/);
                 if (m) {
-                    const multiplier = parseFloat(m[1]);
-                    const percentage = Math.min(Math.max(((multiplier - 2) / 3) * 100, 0), 100);
-                    return interpolateColor(percentage, 100);
+                    const n = parseFloat(m[1]);
+                    if (actionLower.includes('x')) {
+                        const percentage = Math.min(Math.max(((n - 2) / 3) * 100, 0), 100);
+                        return interpolateColor(percentage, 100);
+                    }
+                    return interpolateColor(n, 100); // pot-% raise: same scale as a bet
                 }
                 return interpolateColor(60, 100);
             }
