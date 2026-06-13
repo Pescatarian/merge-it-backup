@@ -73,6 +73,14 @@
             font-size: 12px;
         }
 
+        /* Board-filter + turn-search inputs: explicit AA-contrast placeholder
+           (#a0a0a0 on #0d0d0d ~7.4:1). Browser-default placeholder color is
+           unspecified/low-contrast, so set it explicitly to meet WCAG AA. */
+        #boardFilterInput::placeholder,
+        #turnCardSearchInput::placeholder {
+            color: #a0a0a0;
+        }
+
         .btn-search-inline {
             padding: 8px 16px;
             background-color: #4a9eff;
@@ -3033,7 +3041,8 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
             
             if (!input) return;
             
-            boardFilterText = input.value.trim().toLowerCase();
+            // Preserve case: the new grammar disambiguates rank (UPPER) vs suit (lower).
+            boardFilterText = input.value.trim();
             window.savedBoardFilterText = input.value;
             
             // Visual indicator - orange border when active
@@ -3068,35 +3077,120 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
             filterFlopBoard(currentFlopFilter || 'all');
         }
 
-        function boardMatchesTextFilter(board, filterText) {
-            if (!filterText) return true;
+        // ===== BOARD-FILTER GRAMMAR (shared by Flop box + Turn box) =====
+        // SYNTAX (case matters — this is how rank/suit/group are disambiguated):
+        //   Ranks  : A K Q J T 9 8 7 6 5 4 3 2   (UPPERCASE; T = ten)
+        //   Suits  : c d h s                      (lowercase, only valid right after a rank → "Ac")
+        //   Groups : B = any broadway (A/K/Q/J/T), L = any low (9..2)   (UPPERCASE)
+        //   Comma  : OR  — a board shows if it matches ANY include segment (union)
+        //   No comma within a segment: AND — every matcher must map to a DISTINCT card
+        //   "no" prefix on a segment = EXCLUDE (full powers: groups, suits, AND-patterns)
+        // Forgiving: whitespace ignored; "no A" and "noA" both work (no rank/group/suit
+        // starts with n/o, so the leading "no" is unambiguously the exclude keyword).
+        const _BF_RANKS = 'AKQJT98765432';
+        const _BF_SUITS = 'cdhs';
 
-            const filters = filterText.split(',').map(f => f.trim());
+        // Parse a board string ("As6s5h" / "Ac") into [{rank:'A',suit:'s'}, ...].
+        // Normalizes rank→upper, suit→lower so matching is robust to stored case.
+        function bfParseBoardCards(boardStr) {
+            const cards = [];
+            for (let i = 0; i + 1 < boardStr.length; i += 2) {
+                cards.push({ rank: boardStr[i].toUpperCase(), suit: boardStr[i + 1].toLowerCase() });
+            }
+            return cards;
+        }
 
-            for (const filter of filters) {
-                if (filter.startsWith('no ')) {
-                    const term = filter.substring(3).trim();
-                    if (shouldExcludeBoard(board, term)) return false;
-                } else if (filter.startsWith('yes ')) {
-                    const term = filter.substring(4).trim();
-                    if (!shouldIncludeBoard(board, term)) return false;
+        // Tokenize a whitespace-stripped segment into matcher objects.
+        function bfParseMatchers(seg) {
+            const matchers = [];
+            let i = 0;
+            while (i < seg.length) {
+                const ch = seg[i];
+                if (ch === 'B' || ch === 'L') {
+                    matchers.push({ type: 'group', group: ch });
+                    i++;
+                } else if (_BF_RANKS.includes(ch)) {
+                    const next = seg[i + 1];
+                    if (next && _BF_SUITS.includes(next)) {
+                        matchers.push({ type: 'cardsuit', rank: ch, suit: next });
+                        i += 2;
+                    } else {
+                        matchers.push({ type: 'rank', rank: ch });
+                        i++;
+                    }
+                } else {
+                    i++; // unknown char (forgiving): skip
                 }
+            }
+            return matchers;
+        }
+
+        // Does a single matcher accept a single card?
+        function bfMatcherMatchesCard(m, card) {
+            if (m.type === 'rank') return card.rank === m.rank;
+            if (m.type === 'cardsuit') return card.rank === m.rank && card.suit === m.suit;
+            if (m.type === 'group') {
+                const isBroadway = 'AKQJT'.includes(card.rank);
+                return m.group === 'B' ? isBroadway : !isBroadway; // L = low = non-broadway
+            }
+            return false;
+        }
+
+        // Is there an injective assignment of every matcher to a DISTINCT card?
+        // (Backtracking bipartite match over ≤3 cards — handles overlapping
+        // rank/group matchers like AB / BB / AA correctly, unlike naive greedy.)
+        function bfSegmentMatches(matchers, cards) {
+            if (matchers.length === 0) return true;
+            if (matchers.length > cards.length) return false;
+            const used = new Array(cards.length).fill(false);
+            const assign = (mi) => {
+                if (mi === matchers.length) return true;
+                for (let ci = 0; ci < cards.length; ci++) {
+                    if (!used[ci] && bfMatcherMatchesCard(matchers[mi], cards[ci])) {
+                        used[ci] = true;
+                        if (assign(mi + 1)) return true;
+                        used[ci] = false;
+                    }
+                }
+                return false;
+            };
+            return assign(0);
+        }
+
+        // Parse one side (flop text OR turn text) into {includes:[...], excludes:[...]}.
+        function bfParseSide(sideText) {
+            const includes = [], excludes = [];
+            (sideText || '').split(',').forEach(rawSeg => {
+                let seg = rawSeg.replace(/\s+/g, ''); // ignore all whitespace
+                if (!seg) return;
+                let isNo = false;
+                if (/^no/i.test(seg)) { isNo = true; seg = seg.slice(2); }
+                if (!seg) return; // bare "no" with no matchers → ignore
+                const matchers = bfParseMatchers(seg);
+                if (matchers.length === 0) return;
+                (isNo ? excludes : includes).push(matchers);
+            });
+            return { includes, excludes };
+        }
+
+        // Apply one parsed side to a set of cards: includes OR (empty = "any"),
+        // then every exclude segment subtracts.
+        function bfSideMatches(side, cards) {
+            const included = side.includes.length === 0
+                ? true
+                : side.includes.some(m => bfSegmentMatches(m, cards));
+            if (!included) return false;
+            for (const ex of side.excludes) {
+                if (bfSegmentMatches(ex, cards)) return false;
             }
             return true;
         }
 
-        function shouldExcludeBoard(board, term) {
-            // Texture words (rainbow/flushdraw/monotone/straight/paired) are NO LONGER handled
-            // here — texture filtering is owned exclusively by the tri-state texture toggles.
-            // This box does ONLY card/rank search. Term is treated as a rank (A, K, Q, ... 2).
-            const ranks = [board[0], board[2], board[4]].map(r => r.toUpperCase());
-            return ranks.includes(term.toUpperCase());
-        }
-
-        function shouldIncludeBoard(board, term) {
-            // Texture words are NO LONGER handled here (see shouldExcludeBoard). Rank-only search.
-            const ranks = [board[0], board[2], board[4]].map(r => r.toUpperCase());
-            return ranks.includes(term.toUpperCase());
+        // FLOP box matcher: the whole text applies to the 3 flop cards.
+        function boardMatchesTextFilter(board, filterText) {
+            if (!filterText || !filterText.trim()) return true;
+            const cards = bfParseBoardCards(board);
+            return bfSideMatches(bfParseSide(filterText), cards);
         }
 
         function openTrainer() {
@@ -4685,7 +4779,7 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
             const boardInput = (input2 && input2.value.trim()) ? input2 : input1;
             
             if (boardInput && boardInput.value.trim()) {
-                boardFilterText = boardInput.value.trim().toLowerCase();
+                boardFilterText = boardInput.value.trim(); // preserve case (rank vs suit)
             }
             
             // ... rest of wrapper unchanged
@@ -4771,7 +4865,8 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
         function liveBoardFilter() {
             const input = document.getElementById('boardFilterInput');
             if (!input) return;
-            boardFilterText = input.value.trim().toLowerCase();
+            // Preserve case: the new grammar disambiguates rank (UPPER) vs suit (lower).
+            boardFilterText = input.value.trim();
             window.savedBoardFilterText = input.value;
             input.style.border = boardFilterText ? '2px solid #f97316' : '1px solid #2a2a2a';
             if (vsMode && vsFirstFilter && vsSecondFilter) { showVsComparison(vsFirstFilter, vsSecondFilter); return; }
@@ -4912,49 +5007,32 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
             applyTurnFilter();
         }
 
-        // Does one fullData item's board match the typed Turn search text?
-        // PRESERVED grammars: dashed combined flop-rank+turn-rank "KQ6-A"; dashed full board
-        // "Ks9h5d-Ac"; 3-char flop ranks "KQ6" (all turns of that flop); 6-char full flop
-        // "Ks9h5d"; bare card/rank OR-list "A", "Ah+Kd", "T+6".
-        // ADDED (Flop parity): comma-separated yes/no include/exclude tokens — "no A", "yes Ah",
-        // "no A, no K". Texture WORDS (flush/pairing/...) are intentionally NOT handled here —
-        // texture is owned by the tri-state toggles.
+        // TURN box matcher: same grammar as the Flop box, split by '-' into
+        //   [flop rules] - [turn rules]
+        // Text before '-' applies to the 3 FLOP cards; text after '-' applies to the
+        // single TURN card (tree[6..8]). Either side may be empty = "any".
+        // No '-' present  → whole text is TURN rules, flop = any (so bare "A" = turn is an
+        // ace, "-A" equivalent; matches the box's historical "turn card" intent and the
+        // spec's "-L" = any flop, low turn). Preserved dashed searches: "K43-A" (flop K/4/3,
+        // turn A), "Ks4h3d-Ac" (those exact cards, turn ace of clubs) both map onto this model.
+        // Texture WORDS (flush/pairing/...) are NOT handled here — texture is owned by the toggles.
         function turnItemMatchesSearch(item, input) {
-            const tree = item.tree?.toUpperCase();
+            const tree = item.tree;
             if (!tree || tree.length < 8) return false;
-            const flopRanks = tree[0] + tree[2] + tree[4];
-            const flopFull = tree.substring(0, 6);
-            const turnCard = tree.substring(6, 8);
-            const turnRank = turnCard[0];
+            const flopCards = bfParseBoardCards(tree.substring(0, 6));
+            const turnCards = bfParseBoardCards(tree.substring(6, 8)); // single 4th card
 
-            // Dashed: combined flop-rank+turn-rank (KQ6-A) or full board (Ks9h5d-Ac)
-            if (input.includes('-')) {
-                const [flopPart, turnPart] = input.split('-');
-                if (flopPart.length === 3 && turnPart.length === 1) {
-                    return flopRanks === flopPart && turnRank === turnPart;
-                }
-                return tree === (flopPart + turnPart);
+            let flopText, turnText;
+            const dash = input.indexOf('-');
+            if (dash !== -1) {
+                flopText = input.slice(0, dash);
+                turnText = input.slice(dash + 1);
+            } else {
+                flopText = '';
+                turnText = input;
             }
-            // Plain 3-char flop ranks: show all turns for that flop
-            if (input.length === 3 && /^[AKQJT98765432]{3}$/.test(input)) {
-                return flopRanks === input;
-            }
-            // Plain 6-char full flop: show all turns for that flop
-            if (input.length === 6 && /^([AKQJT98765432][SHDC]){3}$/.test(input)) {
-                return flopFull === input;
-            }
-            // Token grammar: yes/no (include/exclude) + plain OR-list
-            const termMatches = (t) => t.length === 1 ? turnRank === t : (t.length === 2 ? turnCard === t : false);
-            const plain = [], yes = [], no = [];
-            input.split(',').map(s => s.trim()).filter(Boolean).forEach(seg => {
-                if (seg.startsWith('NO ')) seg.substring(3).split(/[+\s]+/).filter(Boolean).forEach(t => no.push(t));
-                else if (seg.startsWith('YES ')) seg.substring(4).split(/[+\s]+/).filter(Boolean).forEach(t => yes.push(t));
-                else seg.split(/[+\s]+/).filter(Boolean).forEach(t => plain.push(t));
-            });
-            for (const t of no) if (termMatches(t)) return false;          // exclude wins
-            for (const t of yes) if (!termMatches(t)) return false;        // every yes must hold
-            if (plain.length > 0 && !plain.some(termMatches)) return false; // OR over plain tokens
-            return true;
+            return bfSideMatches(bfParseSide(flopText), flopCards)
+                && bfSideMatches(bfParseSide(turnText), turnCards);
         }
 
         // Unified Turn filter: applies the tri-state texture toggles (AND) AND the search box text,
@@ -4965,7 +5043,8 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
             window.isFilteringTurn = true;
 
             const inputEl = document.getElementById('turnCardSearchInput');
-            const input = inputEl ? inputEl.value.trim().toUpperCase() : '';
+            // Preserve case: the turn grammar disambiguates rank (UPPER) vs suit (lower).
+            const input = inputEl ? inputEl.value.trim() : '';
             savedSearchInput = inputEl ? inputEl.value.trim() : '';
 
             const perspectiveData = currentReport.perspectives[currentPerspective];
@@ -6584,7 +6663,10 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                             <button class="flop-cat-btn" data-category="paired" onclick="cycleFlopTexture('paired')" style="${flopToggleBtnStyle(flopTextureToggles.paired)} border-radius: 4px; padding: 4px 10px; font-size: 11px; cursor: pointer; white-space: nowrap; flex-shrink: 0;">${flopToggleLabel('paired', flopTextureToggles.paired)}</button>
                             <button class="flop-cat-btn" data-category="trips" title="Three-of-a-kind flop" onclick="cycleFlopTexture('trips')" style="${flopToggleBtnStyle(flopTextureToggles.trips)} border-radius: 4px; padding: 4px 10px; font-size: 11px; cursor: pointer; white-space: nowrap; flex-shrink: 0;">${flopToggleLabel('trips', flopTextureToggles.trips)}</button>
                             <button id="vsBtn" onclick="toggleVsMode()" style="background: #0d0d0d; color: #f97316; border: 1px solid #f97316; border-radius: 4px; padding: 4px 10px; font-size: 11px; cursor: pointer; margin-left: 10px;">VS</button>
-                            <input type="text" id="boardFilterInput" value="${savedFlopFilterInput}" placeholder="e.g. yes 8, no a" oninput="liveBoardFilter()" style="background: #0d0d0d; color: #fff; border: ${savedFlopFilterInput ? '2px solid #f97316' : '1px solid #2a2a2a'}; border-radius: 4px; padding: 4px 8px; font-size: 12px; width: 120px; margin-left: 10px;">
+                            <input type="text" id="boardFilterInput" value="${savedFlopFilterInput}" placeholder="A, K · BBL · AcKs · no A" title="Flop card filter. Ranks A K Q J T 9-2 (T=ten), suits c d h s (e.g. Ac), groups B=broadway L=low. Comma = OR, no comma = AND on distinct cards. Prefix 'no' to exclude." oninput="liveBoardFilter()" style="background: #0d0d0d; color: #fff; border: ${savedFlopFilterInput ? '2px solid #f97316' : '1px solid #2a2a2a'}; border-radius: 4px; padding: 4px 8px; font-size: 12px; width: 220px; margin-left: 10px;">
+                        </div>
+                        <div style="margin-top: 8px; font-size: 11px; color: #c2c2c2; line-height: 1.5; max-width: 620px;">
+                            Ranks <b style="color:#fff;">A K Q J T 9-2</b> · suits <b style="color:#fff;">c d h s</b> (e.g. <b style="color:#fff;">Ac</b>) · groups <b style="color:#fff;">B</b>=broadway <b style="color:#fff;">L</b>=low. Comma = OR, no comma = AND (distinct cards), prefix <b style="color:#fff;">no</b> = exclude. e.g. <b style="color:#fff;">BBL</b>, <b style="color:#fff;">AK</b>, <b style="color:#fff;">A, K</b>, <b style="color:#fff;">no A</b>.
                         </div>
                     </div>
 
@@ -6599,7 +6681,10 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                                     <button class="turn-cat-btn" data-category="straight" onclick="cycleTurnTexture('straight')" style="${turnToggleBtnStyle(turnTextureToggles.straight)} border-radius: 4px; padding: 4px 10px; font-size: 11px; cursor: pointer; white-space: nowrap; flex-shrink: 0;">${turnToggleLabel('straight', turnTextureToggles.straight)}</button>
                                     <button class="turn-cat-btn" data-category="broadway" onclick="cycleTurnTexture('broadway')" style="${turnToggleBtnStyle(turnTextureToggles.broadway)} border-radius: 4px; padding: 4px 10px; font-size: 11px; cursor: pointer; white-space: nowrap; flex-shrink: 0;">${turnToggleLabel('broadway', turnTextureToggles.broadway)}</button>
                                     <button class="turn-cat-btn" data-category="blank" onclick="cycleTurnTexture('blank')" style="${turnToggleBtnStyle(turnTextureToggles.blank)} border-radius: 4px; padding: 4px 10px; font-size: 11px; cursor: pointer; white-space: nowrap; flex-shrink: 0;">${turnToggleLabel('blank', turnTextureToggles.blank)}</button>
-                                    <input type="text" id="turnCardSearchInput" value="${savedSearchInput}" placeholder="e.g. A, KQ6-A, no A" oninput="searchTurnCards()" style="background: ${savedSearchInput ? '#3b82f6' : '#0d0d0d'}; color: #fff; border: 1px solid #2a2a2a; border-radius: 4px; padding: 4px 8px; font-size: 12px; width: 140px; margin-left: 10px;">
+                                    <input type="text" id="turnCardSearchInput" value="${savedSearchInput}" placeholder="BBL-L · noA-B · K43-A" title="Turn filter, split by '-' : [flop rules] - [turn rules]. Same syntax as the flop box on each side; either side blank = any. e.g. BBL-L, noA-B, K43-A." oninput="searchTurnCards()" style="background: ${savedSearchInput ? '#3b82f6' : '#0d0d0d'}; color: #fff; border: 1px solid #2a2a2a; border-radius: 4px; padding: 4px 8px; font-size: 12px; width: 200px; margin-left: 10px;">
+                                </div>
+                                <div style="margin-top: 8px; font-size: 11px; color: #c2c2c2; line-height: 1.5; max-width: 620px;">
+                                    Same syntax split by <b style="color:#fff;">-</b> : <b style="color:#fff;">[flop] - [turn]</b>. Either side blank = any. e.g. <b style="color:#fff;">BBL-L</b> (2 broadway + 1 low flop, low turn), <b style="color:#fff;">noA-B</b> (no ace on flop, broadway turn), <b style="color:#fff;">K43-A</b>.
                                 </div>
                             </div>
 
