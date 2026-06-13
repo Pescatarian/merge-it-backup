@@ -2773,7 +2773,7 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                     const color = getActionColor(action);
                     html += `
                         <div style="background-color: #0d0d0d; border: 1px solid #2a2a2a; border-radius: 4px; padding: 10px; width: 70px; height: 70px; display: flex; flex-direction: column; justify-content: center; align-items: center;">
-                            <div style="font-size: 9px; color: #fff; margin-bottom: 3px;">Avg. ${action}</div>
+                            <div style="font-size: 9px; color: #fff; margin-bottom: 3px;">Avg. ${displayActionLabel(action)}</div>
                             <div style="font-size: 16px; color: ${color}; font-weight: 600;">${value}%</div>
                         </div>
                     `;
@@ -2837,7 +2837,7 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
             
             // Create datasets for each action
             const datasets = availableActions.map(action => ({
-                label: action,
+                label: displayActionLabel(action),
                 data: boards.map(b => b.actions?.[action] ?? b[action] ?? 0),
                 backgroundColor: getActionColor(action),
                 barPercentage: 0.9,
@@ -3875,13 +3875,25 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
             displayReport(currentReport.id);
         }
 
+        // DISPLAY ONLY: uppercase the leading b/r of a bet/raise action label
+        // (b40 -> B40, r30 -> R30, r3x -> R3x). Internal keys stay lowercase;
+        // this never mutates stored data. No-op for anything not starting with
+        // a lowercase b/r (check/call/fold and already-capitalized labels unchanged).
+        function displayActionLabel(action) {
+            if (typeof action !== 'string' || !action) return action;
+            const first = action.charAt(0);
+            if (first === 'b' || first === 'r') {
+                return first.toUpperCase() + action.slice(1);
+            }
+            return action;
+        }
+
         function formatActionText(action) {
             const actionLower = action.toLowerCase();
             if (actionLower === 'check') return 'Check';
             if (actionLower === 'call') return 'Call';
             if (actionLower === 'fold') return 'Fold';
-            if (actionLower.startsWith('b')) return action.toUpperCase();
-            if (actionLower.startsWith('r')) return action;
+            if (actionLower.startsWith('b') || actionLower.startsWith('r')) return displayActionLabel(action);
             return action;
         }
 
@@ -6553,7 +6565,7 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                                 const color = getActionColor(action);
                                 return `
                                     <div style="background-color: #0d0d0d; border: 1px solid #2a2a2a; border-radius: 4px; padding: 10px; width: 70px; height: 70px; display: flex; flex-direction: column; justify-content: center; align-items: center;">
-                                        <div style="font-size: 9px; color: #fff; margin-bottom: 3px;">Avg. ${action}</div>
+                                        <div style="font-size: 9px; color: #fff; margin-bottom: 3px;">Avg. ${displayActionLabel(action)}</div>
                                         <div class="avgStatValue" style="font-size: 16px; color: ${color}; font-weight: 600;">${avgValue.toFixed(1)}%</div>
                                     </div>
                                 `;
@@ -6819,7 +6831,7 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                         }),
                         datasets: perspectiveData.availableActions.map((action) => {
                             return {
-                                label: action + ' %',
+                                label: displayActionLabel(action) + ' %',
                                 data: limited.map(h => h.actions?.[action.toLowerCase()] || h[action.toLowerCase()] || 0),
                                 backgroundColor: getActionColor(action),
                                 stack: 'stack1',
