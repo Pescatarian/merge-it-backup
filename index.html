@@ -2287,6 +2287,11 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
 </body>
 
         <script>
+       // Debug logging is gated behind a single flag so normal use leaves the console clean
+       // (KI #23). Flip DEBUG to true to re-enable the verbose trace logs. console.error /
+       // console.warn are intentionally NOT routed through this — real error handling always logs.
+       const DEBUG = false;
+       function debugLog(...args) { if (DEBUG) console.log(...args); }
        let allReports = [];
         let currentFilters = {
             position: null,
@@ -2355,106 +2360,122 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
             input.click();
         }
 
+        // Shared PioSOLVER-CSV parser. Turns the raw comma-delimited PioViewer CSV text into
+        // { data, actions, posInfo } — the SAME shape the GTO+ paste path produces. Used by BOTH
+        // importPioCSV (import) and saveReport (edit/save), so a Pio-CSV report can be edited and
+        // re-saved without a second parser (KI #24). Returns null if the position/player is invalid
+        // (getPlayerPositionInfo already alerts); throws Error(msg) for CSV-structure problems so the
+        // caller can alert with the message.
+        function parsePioCSVText(text, position, player) {
+            const lines = text.split('\n').map(line => line.trim()).filter(line => line);
+
+            // Find column headers
+            let headerIndex = lines.findIndex(line => line.startsWith('Flop,'));
+            if (headerIndex === -1) {
+                throw new Error('Invalid PioSOLVER CSV: Could not find column headers');
+            }
+
+            const headers = parseCSVLine(lines[headerIndex]).map(h => h.trim());
+            const dataRows = lines.slice(headerIndex + 1);
+
+            // Determine this import's perspective (OOP vs IP) from the PLAYER chosen in the
+            // import modal — NOT inferred from the CSV. getPlayerPositionInfo maps the
+            // position string + player to postflopPosition ("OOP" | "IP"); that is exactly
+            // how the report is built downstream, so reading the matching equity column keeps
+            // the equity consistent with the report's perspective.
+            const posInfo = getPlayerPositionInfo(position, player);
+            if (!posInfo) return null; // getPlayerPositionInfo already alerts on a bad position/player
+
+            // ----- Locate columns BY HEADER NAME (PioViewer 3.5.2.6 inserts extra columns:
+            // Matchups, separate OOP/IP Equity, OOP/IP EV, OOP/IP EQR — so fixed indices break) -----
+            const findCol = (predicate) => headers.findIndex(h => predicate(h.toLowerCase()));
+
+            const flopCol = findCol(h => h === 'flop');
+            if (flopCol === -1) {
+                throw new Error('Invalid PioSOLVER CSV: Could not find a "Flop" column');
+            }
+
+            // Equity column for the report's perspective. New CSVs have "OOP Equity" / "IP Equity";
+            // older single-perspective exports may have a plain "Equity" — fall back to that.
+            const wantEquity = posInfo.postflopPosition === 'IP' ? 'ip equity' : 'oop equity';
+            let equityCol = findCol(h => h === wantEquity);
+            if (equityCol === -1) equityCol = findCol(h => h === 'equity');
+            if (equityCol === -1) equityCol = findCol(h => h.endsWith('equity')); // last-resort
+
+            // Action columns: ANY header ending in " freq" is an action. Read each by its own
+            // index and pair with its "<label> EV" column when present.
+            const actions = [];      // normalized action keys, in column order
+            const actionFreqCol = []; // parallel array of freq-column indices
+            headers.forEach((h, i) => {
+                if (/ freq$/i.test(h)) {
+                    const rawAction = h.replace(/ freq$/i, '').trim();
+                    actions.push(normalizePioAction(rawAction));
+                    actionFreqCol.push(i);
+                }
+            });
+            if (actions.length === 0) {
+                throw new Error('Invalid PioSOLVER CSV: no action ("… freq") columns found');
+            }
+
+            // Parse board data
+            const data = [];
+            for (const row of dataRows) {
+                const cols = parseCSVLine(row);
+
+                // Skip rows too short to contain our columns (and the trailing aggregate row,
+                // whose Flop cell is blank — caught by the !flop check below).
+                const maxCol = Math.max(flopCol, equityCol, ...actionFreqCol);
+                if (cols.length <= maxCol) continue;
+
+                const flop = (cols[flopCol] || '').trim();
+                if (!flop) continue;
+
+                const boardData = {
+                    tree: flop.replace(/\s+/g, ''),
+                    equity: equityCol !== -1 ? (parseFloat(cols[equityCol]) || 0) : 0,
+                    actions: {}
+                };
+
+                // Parse action frequencies by each action's own column index.
+                for (let k = 0; k < actions.length; k++) {
+                    const freq = parseFloat(cols[actionFreqCol[k]]) || 0;
+                    boardData.actions[actions[k]] = freq;
+                }
+                // Set bet/check for chart compatibility
+                let totalBet = 0;
+                for (const [key, value] of Object.entries(boardData.actions)) {
+                    if (key.startsWith('b') && key !== 'check') {
+                        totalBet += value;
+                    }
+                }
+                boardData.bet = totalBet;
+                boardData.check = boardData.actions['check'] || 0;
+
+                data.push(boardData);
+            }
+
+            return { data, actions, posInfo };
+        }
+
         function importPioCSV(file, filters) {
             const reader = new FileReader();
             reader.onload = function(e) {
                 const text = e.target.result;
-                const lines = text.split('\n').map(line => line.trim()).filter(line => line);
-                
-                // Find column headers
-                let headerIndex = lines.findIndex(line => line.startsWith('Flop,'));
-                if (headerIndex === -1) {
-                    alert('Invalid PioSOLVER CSV: Could not find column headers');
+                let parsed;
+                try {
+                    parsed = parsePioCSVText(text, filters.position, filters.player);
+                } catch (err) {
+                    alert(err.message);
                     return;
                 }
-                
-                const headers = parseCSVLine(lines[headerIndex]).map(h => h.trim());
-                const dataRows = lines.slice(headerIndex + 1);
+                if (!parsed) return; // bad position/player — already alerted by getPlayerPositionInfo
+                const { data, actions, posInfo } = parsed;
 
-                // Determine this import's perspective (OOP vs IP) from the PLAYER chosen in the
-                // import modal — NOT inferred from the CSV. getPlayerPositionInfo maps the
-                // position string + player to postflopPosition ("OOP" | "IP"); that is exactly
-                // how the report is built downstream, so reading the matching equity column keeps
-                // the equity consistent with the report's perspective.
-                const posInfo = getPlayerPositionInfo(filters.position, filters.player);
-                if (!posInfo) return; // getPlayerPositionInfo already alerts on a bad position/player
-
-                // ----- Locate columns BY HEADER NAME (PioViewer 3.5.2.6 inserts extra columns:
-                // Matchups, separate OOP/IP Equity, OOP/IP EV, OOP/IP EQR — so fixed indices break) -----
-                const findCol = (predicate) => headers.findIndex(h => predicate(h.toLowerCase()));
-
-                const flopCol = findCol(h => h === 'flop');
-                if (flopCol === -1) {
-                    alert('Invalid PioSOLVER CSV: Could not find a "Flop" column');
-                    return;
-                }
-
-                // Equity column for the report's perspective. New CSVs have "OOP Equity" / "IP Equity";
-                // older single-perspective exports may have a plain "Equity" — fall back to that.
-                const wantEquity = posInfo.postflopPosition === 'IP' ? 'ip equity' : 'oop equity';
-                let equityCol = findCol(h => h === wantEquity);
-                if (equityCol === -1) equityCol = findCol(h => h === 'equity');
-                if (equityCol === -1) equityCol = findCol(h => h.endsWith('equity')); // last-resort
-
-                // Action columns: ANY header ending in " freq" is an action. Read each by its own
-                // index and pair with its "<label> EV" column when present.
-                const actions = [];      // normalized action keys, in column order
-                const actionFreqCol = []; // parallel array of freq-column indices
-                headers.forEach((h, i) => {
-                    if (/ freq$/i.test(h)) {
-                        const rawAction = h.replace(/ freq$/i, '').trim();
-                        actions.push(normalizePioAction(rawAction));
-                        actionFreqCol.push(i);
-                    }
-                });
-                if (actions.length === 0) {
-                    alert('Invalid PioSOLVER CSV: no action ("… freq") columns found');
-                    return;
-                }
-
-                // Parse board data
-                    const data = [];
-
-                    for (const row of dataRows) {
-                        const cols = parseCSVLine(row);
-
-                        // Skip rows too short to contain our columns (and the trailing aggregate row,
-                        // whose Flop cell is blank — caught by the !flop check below).
-                        const maxCol = Math.max(flopCol, equityCol, ...actionFreqCol);
-                        if (cols.length <= maxCol) continue;
-
-                        const flop = (cols[flopCol] || '').trim();
-                        if (!flop) continue;
-
-                        const boardData = {
-                            tree: flop.replace(/\s+/g, ''),
-                            equity: equityCol !== -1 ? (parseFloat(cols[equityCol]) || 0) : 0,
-                            actions: {}
-                        };
-
-                        // Parse action frequencies by each action's own column index.
-                        for (let k = 0; k < actions.length; k++) {
-                            const freq = parseFloat(cols[actionFreqCol[k]]) || 0;
-                            boardData.actions[actions[k]] = freq;
-                        }
-                        // Set bet/check for chart compatibility
-                        let totalBet = 0;
-                        for (const [key, value] of Object.entries(boardData.actions)) {
-                            if (key.startsWith('b') && key !== 'check') {
-                                totalBet += value;
-                            }
-                        }
-                        boardData.bet = totalBet;
-                        boardData.check = boardData.actions['check'] || 0;
-                        
-                        data.push(boardData);
-                    }
-                
                 if (data.length === 0) {
                     alert('No valid board data found in CSV');
                     return;
                 }
-                
+
                 // Build report using filters
                 const normalizedPosition = normalizePosition(filters.position);
                 const reportName = `${filters.potType} ${normalizedPosition}`;
@@ -2644,14 +2665,14 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
 
         function showVsComparison(filter1, filter2) {
             const container = document.getElementById('flopChartContainer');
-            console.log('flopChartContainer found:', !!container);
+            debugLog('flopChartContainer found:', !!container);
             if (!container) return;
             
             const actionKey = Object.keys(currentReport.perspectives[currentPerspective]).filter(k => k.startsWith('action')).pop();
             const currentData = currentReport.perspectives[currentPerspective][actionKey]?.data || [];
             
-            console.log('🔴 VS mode - currentData length:', currentData.length);
-            console.log('🔴 VS mode - sample board:', currentData[0]);
+            debugLog('🔴 VS mode - currentData length:', currentData.length);
+            debugLog('🔴 VS mode - sample board:', currentData[0]);
             
             const boards1 = currentData.filter(b => {
                 const tree = b.tree;
@@ -2675,9 +2696,9 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                 return true;
             });
             
-            console.log('🔴 VS mode - boards1:', boards1.length, 'boards2:', boards2.length);
-            console.log('🔴 VS mode - boards1[0].bet:', boards1[0]?.bet, 'boards1[0].check:', boards1[0]?.check);
-            console.log('🔴 VS mode - boards1[0].actions:', boards1[0]?.actions);
+            debugLog('🔴 VS mode - boards1:', boards1.length, 'boards2:', boards2.length);
+            debugLog('🔴 VS mode - boards1[0].bet:', boards1[0]?.bet, 'boards1[0].check:', boards1[0]?.check);
+            debugLog('🔴 VS mode - boards1[0].actions:', boards1[0]?.actions);
         
             displayVsCharts(filter1, boards1, filter2, boards2);
         }
@@ -3919,7 +3940,7 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
         }
 
         function goToAction(index) {
-            console.log('🎯 goToAction:', index, 'current actionHistory length:', actionHistory.length);
+            debugLog('🎯 goToAction:', index, 'current actionHistory length:', actionHistory.length);
             
             // Destroy existing chart to prevent bar bleeding
             if (window.mainChartInstance) {
@@ -3965,7 +3986,7 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                 currentPerspective = players.find(p => p !== lastAction.player) || lastAction.player;
             }
             
-            console.log('🎯 goToAction result: actionHistory:', actionHistory.length, 'currentStreet:', currentStreet, 'currentPerspective:', currentPerspective);
+            debugLog('🎯 goToAction result: actionHistory:', actionHistory.length, 'currentStreet:', currentStreet, 'currentPerspective:', currentPerspective);
             displayReport(currentReport.id);
         }
 
@@ -3992,25 +4013,25 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
         }
 
         function editCurrentReport() {
-            console.log('🟢 editCurrentReport START');
+            debugLog('🟢 editCurrentReport START');
             
             if (!currentReport) {
                 alert('No report loaded to edit');
                 return;
             }
             
-            console.log('🟢 currentReport exists:', currentReport.name);
-            console.log('🟢 actionHistory.length:', actionHistory.length);
+            debugLog('🟢 currentReport exists:', currentReport.name);
+            debugLog('🟢 actionHistory.length:', actionHistory.length);
 
             // If actionHistory is empty, we're editing Action 1
             const isEditingAction1 = actionHistory.length === 0;
             
-            console.log('🟢 isEditingAction1:', isEditingAction1);
+            debugLog('🟢 isEditingAction1:', isEditingAction1);
             
             if (isEditingAction1) {
                 // Find the report by ID instead of object reference
                 const reportIndex = allReports.findIndex(r => r.id === currentReport.id);
-                console.log('🔍 Editing Action 1, reportIndex:', reportIndex, 'currentReport.id:', currentReport.id);
+                debugLog('🔍 Editing Action 1, reportIndex:', reportIndex, 'currentReport.id:', currentReport.id);
                 
                 if (reportIndex === -1) {
                     alert('Error: Could not find report to edit');
@@ -4030,8 +4051,8 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
             const actionKey = 'action' + actionNumber;
             const rawData = currentReport.perspectives[currentPerspective]?.[actionKey]?.rawData || '';
 
-            console.log('🔍 Editing action:', actionNumber, 'perspective:', currentPerspective);
-            console.log('🔍 rawData found:', rawData ? 'YES (' + rawData.length + ' chars)' : 'NO');
+            debugLog('🔍 Editing action:', actionNumber, 'perspective:', currentPerspective);
+            debugLog('🔍 rawData found:', rawData ? 'YES (' + rawData.length + ' chars)' : 'NO');
 
             // Open modal in edit mode
             document.getElementById('modalTitle').textContent = 'Edit Current Node';
@@ -4060,10 +4081,10 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
         }
 
         function goToStreet(street) {
-            console.log('🎯 goToStreet:', street, 'from currentStreet:', currentStreet);
+            debugLog('🎯 goToStreet:', street, 'from currentStreet:', currentStreet);
             
             if (street === currentStreet) {
-                console.log('Already on this street');
+                debugLog('Already on this street');
                 return;
             }
             
@@ -4095,7 +4116,7 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                 }
             }
             
-            console.log('🎯 goToStreet result: actionHistory:', actionHistory.length, 'currentPerspective:', currentPerspective);
+            debugLog('🎯 goToStreet result: actionHistory:', actionHistory.length, 'currentPerspective:', currentPerspective);
             displayReport(currentReport.id);
         }
 
@@ -4121,7 +4142,7 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
         }
 
         function selectAction(action) {
-            console.log('selectAction called with action:', action, 'currentPerspective:', currentPerspective);
+            debugLog('selectAction called with action:', action, 'currentPerspective:', currentPerspective);
 
             if (!currentReport) {
                 console.error('selectAction: No current report');
@@ -4161,16 +4182,16 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                 rawData: ''
             });
 
-            console.log('Action recorded. actionHistory:', actionHistory);
+            debugLog('Action recorded. actionHistory:', actionHistory);
             
             // Determine next player
             const nextPlayer = sequence.firstToAct === currentPerspective ? sequence.secondToAct : sequence.firstToAct;
             
-            console.log('Next player should be:', nextPlayer);
+            debugLog('Next player should be:', nextPlayer);
             
             // Check if next player's perspective exists
             if (!currentReport.perspectives[nextPlayer]) {
-                console.log('Next player perspective missing entirely, opening link modal');
+                debugLog('Next player perspective missing entirely, opening link modal');
                 showLinkReportModal(action, sequence);
                 return;
             }
@@ -4183,19 +4204,19 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
             const prevAction = actionHistory.length > 0 ? actionHistory[actionHistory.length - 1].action : '';
             const actionKey = 'action' + actionNumber + (prevAction ? '_' + prevAction : '');
 
-            console.log('Looking for action data with key:', actionKey);
+            debugLog('Looking for action data with key:', actionKey);
 
             // Check if action data exists
             const hasDataForSequence = nextPerspectiveData[actionKey] !== undefined;
 
             if (hasDataForSequence) {
-                console.log('Found action data for key:', actionKey);
+                debugLog('Found action data for key:', actionKey);
             } else {
-                console.log('No action data found for key:', actionKey);
+                debugLog('No action data found for key:', actionKey);
             }
             
             if (!hasDataForSequence) {
-                console.log('Next player does not have data for this action sequence, opening link modal');
+                debugLog('Next player does not have data for this action sequence, opening link modal');
                 showLinkReportModal(action, sequence);
                 return;
             }
@@ -4212,25 +4233,25 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
             if (bothChecked) {
                 if (currentStreet === 'FLOP') {
                     currentStreet = 'TURN';
-                    console.log('🔄 Check-Check on Flop - CHANGED TO TURN');
+                    debugLog('🔄 Check-Check on Flop - CHANGED TO TURN');
                 } else if (currentStreet === 'TURN') {
                     currentStreet = 'RIVER';
-                    console.log('🔄 Check-Check on Turn - CHANGED TO RIVER');
+                    debugLog('🔄 Check-Check on Turn - CHANGED TO RIVER');
                 }
             }
 
             // Also advance after action 4 (bet-call on flop) or action 6 (bet-call on turn)
             if (nextActionToDisplay === 4 && currentStreet === 'FLOP') {
                 currentStreet = 'TURN';
-                console.log('🔄 Action 4 - CHANGED TO TURN');
+                debugLog('🔄 Action 4 - CHANGED TO TURN');
             }
             if (nextActionToDisplay === 6 && currentStreet === 'TURN') {
                 currentStreet = 'RIVER';
-                console.log('🔄 Action 6 - CHANGED TO RIVER');
+                debugLog('🔄 Action 6 - CHANGED TO RIVER');
             }
 
             // Switch to next player's perspective
-            console.log('Switching from', currentPerspective, 'to', nextPlayer);
+            debugLog('Switching from', currentPerspective, 'to', nextPlayer);
             currentPerspective = nextPlayer;
             displayReport(currentReport.id);
         }
@@ -4363,11 +4384,11 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
             
             window.isFilteringFlop = false;
             const savedFilter = boardFilterText;
-            console.log('BEFORE displayReport, savedFilter:', savedFilter);
+            debugLog('BEFORE displayReport, savedFilter:', savedFilter);
             displayReport(currentReport.id);
-            console.log('AFTER displayReport, boardFilterText:', boardFilterText);
+            debugLog('AFTER displayReport, boardFilterText:', boardFilterText);
             boardFilterText = savedFilter;
-            console.log('RESTORED boardFilterText:', boardFilterText);
+            debugLog('RESTORED boardFilterText:', boardFilterText);
         }
 
        // Zero the stats header (Total Flops + Avg boxes) on a zero-match so it doesn't
@@ -5229,12 +5250,12 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
         }
 
         function saveLinkReport() {
-            console.log('=== saveLinkReport CALLED ===');
-            console.log('pendingLinkAction:', pendingLinkAction);
-            console.log('pendingLinkReport:', pendingLinkReport);
+            debugLog('=== saveLinkReport CALLED ===');
+            debugLog('pendingLinkAction:', pendingLinkAction);
+            debugLog('pendingLinkReport:', pendingLinkReport);
             
             const dataInput = document.getElementById('linkDataInput').value.trim();
-            console.log('dataInput length:', dataInput.length);
+            debugLog('dataInput length:', dataInput.length);
             
             if (!dataInput) {
                 alert('Please paste the opponent data');
@@ -5292,9 +5313,9 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
             });
             
             // ADD THIS DEBUG LOG
-            console.log('🔍 pendingLinkAction:', pendingLinkAction);
-            console.log('🔍 headers:', headers);
-            console.log('🔍 actionColumns AFTER filter:', actionColumns);
+            debugLog('🔍 pendingLinkAction:', pendingLinkAction);
+            debugLog('🔍 headers:', headers);
+            debugLog('🔍 actionColumns AFTER filter:', actionColumns);
 
 
             if (actionColumns.length === 0) {
@@ -5357,7 +5378,7 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
             // Determine which player this data is for
             const player = postflopPosition === 'IP' ? positions.IP : positions.OOP;
 
-            console.log('Determined player:', player, 'for postflopPosition:', postflopPosition);
+            debugLog('Determined player:', player, 'for postflopPosition:', postflopPosition);
 
             // Add this data to the EXISTING pendingLinkReport's perspectives
             if (!pendingLinkReport.perspectives) {
@@ -5384,7 +5405,7 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
             const prevAction = actionHistory.length > 0 ? actionHistory[actionHistory.length - 1].action : '';
             const actionKey = 'action' + actionNumber + (prevAction ? '_' + prevAction : '');
 
-            console.log('📝 Saving data with actionKey:', actionKey);
+            debugLog('📝 Saving data with actionKey:', actionKey);
 
             pendingLinkReport.perspectives[player][actionKey] = {
                 data: hands,
@@ -5398,7 +5419,7 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
             }
             localStorage.setItem('gtoReports', JSON.stringify(allReports));
 
-            console.log(`Added ${player}'s data to "${pendingLinkReport.name}"`);
+            debugLog(`Added ${player}'s data to "${pendingLinkReport.name}"`);
 
             // Update dropdown
             loadReportsDropdown();
@@ -5415,8 +5436,8 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
             
             currentPerspective = opponent;
 
-            console.log('Switched to perspective:', currentPerspective);
-            console.log('currentReport.perspectives:', Object.keys(currentReport.perspectives));
+            debugLog('Switched to perspective:', currentPerspective);
+            debugLog('currentReport.perspectives:', Object.keys(currentReport.perspectives));
 
             displayReport(currentReport.id);
 
@@ -5587,7 +5608,7 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
         }
 
         function openImportModal(editIndex = null) {
-            console.log('openImportModal called, editIndex:', editIndex);
+            debugLog('openImportModal called, editIndex:', editIndex);
             
             const modal = document.getElementById('importModal');
             if (!modal) {
@@ -5617,11 +5638,11 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
 
                 // Load rawData into textarea
                 const perspective = Object.keys(report.perspectives)[0];
-                console.log('🔍 Loading rawData for perspective:', perspective);
-                console.log('🔍 Report perspectives:', report.perspectives);
-                console.log('🔍 Action1 data:', report.perspectives[perspective]?.action1);
+                debugLog('🔍 Loading rawData for perspective:', perspective);
+                debugLog('🔍 Report perspectives:', report.perspectives);
+                debugLog('🔍 Action1 data:', report.perspectives[perspective]?.action1);
                 const rawData = report.perspectives[perspective]?.action1?.rawData || '';
-                console.log('🔍 rawData found:', rawData ? 'YES (' + rawData.length + ' chars)' : 'NO');
+                debugLog('🔍 rawData found:', rawData ? 'YES (' + rawData.length + ' chars)' : 'NO');
                 document.getElementById('dataInput').value = rawData;
                 
                 // For editing, we'd need to know which perspective we're editing
@@ -5640,11 +5661,11 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                 { const bc = document.getElementById('tagBoardsCategory'); if (bc) bc.value = ''; }
             }
             
-            console.log('Adding active class to modal');
+            debugLog('Adding active class to modal');
             modal.classList.add('active');
             // Mirror the hidden form controls into the imd-* chips (look-only).
             if (window.__imdSyncImport) window.__imdSyncImport();
-            console.log('Modal should now be visible');
+            debugLog('Modal should now be visible');
         }
 
         function closeImportModal() {
@@ -5690,92 +5711,123 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
             }
 
             try {
-                const lines = dataText.split('\n').filter(line => line.trim());
-                
-                if (lines.length < 2) {
-                    alert('Not enough data. Please check your input.');
-                    return;
-                }
-                
-                const headers = lines[0].split(/\s+/).map(h => h.trim()).filter(h => h);                
-                const treeIdx = headers.findIndex(h => h.toLowerCase().includes('tree'));
-                const equityIdx = headers.findIndex(h => h.toLowerCase().includes('equity'));
+                let data;
+                let availableActions;
 
-                if (treeIdx === -1 || equityIdx === -1) {
-                    alert('Missing required columns: Tree and Equity');
-                    return;
-                }
+                // Pio-CSV reports store the raw comma-delimited PioViewer CSV as rawData, so when one
+                // is edited the textarea holds CSV — not a GTO+ whitespace paste. Detect that (a header
+                // line beginning "Flop,") and parse with the SHARED Pio parser, so editing + saving a
+                // Pio-CSV report works (KI #24). Anything else is the GTO+ whitespace paste below.
+                const isPioCSV = dataText.split('\n').some(l => l.trim().startsWith('Flop,'));
 
-                const actionColumns = [];
-                headers.forEach((header, idx) => {
-                    if (!header) return;
-                    
-                    const h = header.trim().toLowerCase();
-                    
-                    if (h.includes('tree') || h.includes('equity') || h === 'ev' || h.includes('weight')) {
+                if (isPioCSV) {
+                    const parsed = parsePioCSVText(dataText, position, player);
+                    if (!parsed) return; // bad position/player — getPlayerPositionInfo already alerted
+                    data = parsed.data;
+                    availableActions = parsed.actions;
+
+                    if (data.length === 0) {
+                        alert('No valid board data found in CSV');
                         return;
                     }
-                    
-                    if ((h.startsWith('b') && !h.includes('bet ')) || 
-                        h === 'check' || 
-                        h === 'fold' || 
-                        h === 'call' || 
-                        h === 'raise' ||
-                        h.startsWith('r')) {
-                        actionColumns.push({
-                            name: header.trim(),
-                            index: idx
-                        });
+                } else {
+                    const lines = dataText.split('\n').filter(line => line.trim());
+
+                    if (lines.length < 2) {
+                        alert('Not enough data. Please check your input.');
+                        return;
                     }
-                });
 
-                if (actionColumns.length === 0) {
-                    alert('No action columns found in your data');
-                    return;
-                }
+                    const headers = lines[0].split(/\s+/).map(h => h.trim()).filter(h => h);
+                    const treeIdx = headers.findIndex(h => h.toLowerCase().includes('tree'));
+                    const equityIdx = headers.findIndex(h => h.toLowerCase().includes('equity'));
 
-                let data = [];
-                for (let i = 1; i < lines.length; i++) {
-                    if (!lines[i].trim()) continue;
-                    
-                    const cols = lines[i].split(/\s+/).map(c => c.trim()).filter(c => c);                    
-                    if (cols.length < 2) continue;
+                    if (treeIdx === -1 || equityIdx === -1) {
+                        alert('Missing required columns: Tree and Equity');
+                        return;
+                    }
 
-                    const hand = {
-                        tree: cols[treeIdx] || '',
-                        equity: parseFloat(cols[equityIdx]) || 0,
-                        actions: {}
-                    };
+                    // Identify GTO+ action columns by GENUINE action labels only (KI #26):
+                    //   bet sizings   b<digit>  (b40, B25, b107)
+                    //   raise sizings r<digit>  (r30, R2x, R3x)
+                    //   plain words   check / call / fold / raise / bet / all-in (ai)
+                    // The old heuristic treated ANY header starting with 'b' or 'r' as an action, so an
+                    // unexpected column (e.g. "Runout", "Board", "River") was misclassified. Verified
+                    // against the user's real GTO+ exports: every genuine label
+                    // (B25/B30/B66/B70/b40/b107/R2x/R3x/r30/Check/Call/Fold/AI) is matched and the
+                    // non-action headers (Tree(*)/Equity(*)/EV/Weight + stray r/b words) are rejected.
+                    const ACTION_WORDS = new Set(['check', 'call', 'fold', 'raise', 'bet', 'allin', 'ai', 'all-in', 'jam', 'shove']);
+                    const isActionLabel = (h) =>
+                        ACTION_WORDS.has(h) || /^b\d/.test(h) || /^r\d/.test(h);
 
-                    actionColumns.forEach(action => {
-                        const value = parseFloat(cols[action.index]);
-                        if (!isNaN(value)) {
-                            hand.actions[action.name.toLowerCase()] = value;
+                    const actionColumns = [];
+                    headers.forEach((header, idx) => {
+                        if (!header) return;
+
+                        const h = header.trim().toLowerCase();
+
+                        if (h.includes('tree') || h.includes('equity') || h === 'ev' || h.includes('weight')) {
+                            return;
+                        }
+
+                        if (isActionLabel(h)) {
+                            actionColumns.push({
+                                name: header.trim(),
+                                index: idx
+                            });
                         }
                     });
 
-                    // Dynamically set primary action properties for chart display
-                    const actionKeys = Object.keys(hand.actions);
-
-                    // If there's a raise action, use it as primary "bet"
-                    const raiseKey = actionKeys.find(k => k.toLowerCase().startsWith('r'));
-                    if (raiseKey) {
-                        hand.bet = hand.actions[raiseKey];
-                    } else {
-                        // Otherwise use first bet action
-                        const firstBetKey = actionKeys.find(k => k.startsWith('b'));
-                        hand.bet = firstBetKey ? hand.actions[firstBetKey] : 0;
+                    if (actionColumns.length === 0) {
+                        alert('No action columns found in your data');
+                        return;
                     }
 
-                    // For "check", prioritize check, then call, then fold
-                    hand.check = hand.actions.check || hand.actions.call || hand.actions.fold || 0;
+                    data = [];
+                    for (let i = 1; i < lines.length; i++) {
+                        if (!lines[i].trim()) continue;
 
-                    data.push(hand);
-                }
+                        const cols = lines[i].split(/\s+/).map(c => c.trim()).filter(c => c);
+                        if (cols.length < 2) continue;
 
-                if (data.length === 0) {
-                    alert('No valid data found. Please check your format.');
-                    return;
+                        const hand = {
+                            tree: cols[treeIdx] || '',
+                            equity: parseFloat(cols[equityIdx]) || 0,
+                            actions: {}
+                        };
+
+                        actionColumns.forEach(action => {
+                            const value = parseFloat(cols[action.index]);
+                            if (!isNaN(value)) {
+                                hand.actions[action.name.toLowerCase()] = value;
+                            }
+                        });
+
+                        // Dynamically set primary action properties for chart display
+                        const actionKeys = Object.keys(hand.actions);
+
+                        // If there's a raise action, use it as primary "bet"
+                        const raiseKey = actionKeys.find(k => k.toLowerCase().startsWith('r'));
+                        if (raiseKey) {
+                            hand.bet = hand.actions[raiseKey];
+                        } else {
+                            // Otherwise use first bet action
+                            const firstBetKey = actionKeys.find(k => k.startsWith('b'));
+                            hand.bet = firstBetKey ? hand.actions[firstBetKey] : 0;
+                        }
+
+                        // For "check", prioritize check, then call, then fold
+                        hand.check = hand.actions.check || hand.actions.call || hand.actions.fold || 0;
+
+                        data.push(hand);
+                    }
+
+                    if (data.length === 0) {
+                        alert('No valid data found. Please check your format.');
+                        return;
+                    }
+
+                    availableActions = actionColumns.map(a => a.name);
                 }
 
                 const normalizedPosition = position === "SB vs BB" ? "BB vs SB" :
@@ -5801,11 +5853,11 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                             return;
                         }
                         
-                        console.log('🔴 Columns extracted:', actionColumns.map(a => a.name));
+                        debugLog('🔴 Columns extracted:', availableActions);
 
                         existingReport.perspectives[player][actionKey] = {
                             data: data,
-                            availableActions: actionColumns.map(a => a.name),
+                            availableActions: availableActions,
                             rawData: dataText
                         };
 
@@ -5847,7 +5899,7 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                             initiative: initiative,
                             action1: {
                                 data: data,
-                                availableActions: actionColumns.map(a => a.name),
+                                availableActions: availableActions,
                                 rawData: dataInput.value                            }
                         };
 
@@ -5875,7 +5927,7 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                                 initiative: initiative,
                                 action1: {
                                     data: data,
-                                    availableActions: actionColumns.map(a => a.name),
+                                    availableActions: availableActions,
                                     rawData: dataText
                                 }
                             }
@@ -6305,10 +6357,10 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
             // Clear existing buttons
             container.innerHTML = '';
             
-            console.log('updateActionButtons: availableActions for', currentPerspective, ':', availableActions);
+            debugLog('updateActionButtons: availableActions for', currentPerspective, ':', availableActions);
             
             if (availableActions.length === 0) {
-                console.log('updateActionButtons: No available actions, creating default Check button');
+                debugLog('updateActionButtons: No available actions, creating default Check button');
                 const checkBtn = document.createElement('button');
                 checkBtn.className = 'gtow-act-btn';
                 checkBtn.textContent = 'Check';
@@ -6422,8 +6474,8 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
         }
       
         function displayReport(reportId) {
-            console.log('🔴 displayReport START - actionHistory:', actionHistory);
-            console.log('🔴 displayReport START - currentPerspective:', currentPerspective);
+            debugLog('🔴 displayReport START - actionHistory:', actionHistory);
+            debugLog('🔴 displayReport START - currentPerspective:', currentPerspective);
 
             const savedSearchInput = document.getElementById('turnCardSearchInput')?.value || '';
 
@@ -6476,7 +6528,7 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                 return;
             }
 
-            console.log('displayReport: Using perspective:', currentPerspective);
+            debugLog('displayReport: Using perspective:', currentPerspective);
             
             // Initialize action sequence ONLY on first load
             if (actionHistory.length === 0) {
@@ -6491,17 +6543,17 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
             const prevAction = actionHistory.length > 0 ? actionHistory[actionHistory.length - 1].action : '';
             const actionKey = 'action' + actionNumber + (prevAction ? '_' + prevAction : '');
 
-            console.log('🔍 displayReport: Looking for', actionKey, 'in perspective:', currentPerspective);
+            debugLog('🔍 displayReport: Looking for', actionKey, 'in perspective:', currentPerspective);
 
-            console.log('🔍 displayReport: Looking for', actionKey, 'in perspective:', currentPerspective);
-            console.log('🔍 Available keys:', Object.keys(report.perspectives[currentPerspective]));
-            console.log('🔍 actionKey exists?', !!report.perspectives[currentPerspective][actionKey]);
+            debugLog('🔍 displayReport: Looking for', actionKey, 'in perspective:', currentPerspective);
+            debugLog('🔍 Available keys:', Object.keys(report.perspectives[currentPerspective]));
+            debugLog('🔍 actionKey exists?', !!report.perspectives[currentPerspective][actionKey]);
 
             let perspectiveData = report.perspectives[currentPerspective];
 
             if (perspectiveData[actionKey]) {
-                console.log('🔍 BEFORE spread - action3 data length:', perspectiveData[actionKey].data.length);
-                console.log('🔍 BEFORE spread - action1 data length:', perspectiveData.action1?.data?.length);
+                debugLog('🔍 BEFORE spread - action3 data length:', perspectiveData[actionKey].data.length);
+                debugLog('🔍 BEFORE spread - action1 data length:', perspectiveData.action1?.data?.length);
                 
                 perspectiveData = {
                     ...perspectiveData,
@@ -6509,8 +6561,8 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                     availableActions: perspectiveData[actionKey].availableActions
                 };
                 
-                console.log('🔍 AFTER spread - final data length:', perspectiveData.data.length);
-                console.log('🔍 AFTER spread - action1 still exists?', !!perspectiveData.action1);
+                debugLog('🔍 AFTER spread - final data length:', perspectiveData.data.length);
+                debugLog('🔍 AFTER spread - action1 still exists?', !!perspectiveData.action1);
             } else if (perspectiveData.action1) {
                 // Fallback to action1 if specific action not found
                 perspectiveData = {
@@ -6519,16 +6571,16 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                     availableActions: perspectiveData.action1.availableActions
                 };
             }
-            console.log('displayReport: Loading data for', currentPerspective, 'data length:', perspectiveData.data.length);
+            debugLog('displayReport: Loading data for', currentPerspective, 'data length:', perspectiveData.data.length);
 
             if (currentStreet === 'FLOP' && flopFilteredData && flopFilteredData.length > 0) {
                 perspectiveData.data = flopFilteredData;
             }
 
            // Use filtered data if on TURN and filter is active
-            console.log('🔍 TURN CHECK:', 'currentStreet:', currentStreet, 'turnFilteredData length:', turnFilteredData?.length);
+            debugLog('🔍 TURN CHECK:', 'currentStreet:', currentStreet, 'turnFilteredData length:', turnFilteredData?.length);
             if (currentStreet === 'TURN' && turnFilteredData && turnFilteredData.length > 0) {
-                console.log('🔍 APPLYING turnFilteredData');
+                debugLog('🔍 APPLYING turnFilteredData');
                 perspectiveData.data = turnFilteredData;
             }
             
@@ -6608,7 +6660,7 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                 return;
             }
 
-            console.log('Full limited[0]:', JSON.stringify(limited[0], null, 2));
+            debugLog('Full limited[0]:', JSON.stringify(limited[0], null, 2));
 
             const avgEq = data.reduce((sum, h) => sum + h.equity, 0) / data.length;
 
@@ -6793,12 +6845,12 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
 
         const ctx = canvas.getContext('2d');
 
-        console.log('=== CHART CREATION DEBUG ===');
-        console.log('limited[0]:', limited[0]);
-        console.log('limited[0].r3x:', limited[0].r3x);
-        console.log('limited[0].actions:', limited[0].actions);
-        console.log('perspectiveData.availableActions:', perspectiveData.availableActions);
-        console.log('=== END DEBUG ===');
+        debugLog('=== CHART CREATION DEBUG ===');
+        debugLog('limited[0]:', limited[0]);
+        debugLog('limited[0].r3x:', limited[0].r3x);
+        debugLog('limited[0].actions:', limited[0].actions);
+        debugLog('perspectiveData.availableActions:', perspectiveData.availableActions);
+        debugLog('=== END DEBUG ===');
 
         const suitLabelsPlugin = {
             id: 'suitLabels',
@@ -6999,7 +7051,7 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                 const leftOffset = chartArea.left;
                 const leftPosition = leftOffset + (avgBet / 100) * chartWidth;
                 label.style.left = leftPosition + 'px';
-                console.log('🎯 avgLabel:', leftPosition, 'avgBet:', avgBet, 'chartArea:', chartArea);
+                debugLog('🎯 avgLabel:', leftPosition, 'avgBet:', avgBet, 'chartArea:', chartArea);
             }
         }, 100);
 
@@ -7061,7 +7113,7 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
         if (window.savedBoardFilterText) {
             setTimeout(() => {
                 const input = document.getElementById('boardFilterInput');
-                console.log('Restoring:', window.savedBoardFilterText, 'Input found:', !!input);
+                debugLog('Restoring:', window.savedBoardFilterText, 'Input found:', !!input);
                 if (input) input.value = window.savedBoardFilterText;
             }, 50);
         }
@@ -7094,8 +7146,8 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
         function openBoardDetail(boardName) {
             selectedBoardName = boardName;
                     
-            console.log('🔴 openBoardDetail called with:', boardName);
-            console.log('🔴 selectedBoardName set to:', selectedBoardName);
+            debugLog('🔴 openBoardDetail called with:', boardName);
+            debugLog('🔴 selectedBoardName set to:', selectedBoardName);
             
             if (!currentReport) return;
             
@@ -7110,14 +7162,14 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                 actionKey = 'action' + actionNumber + '_' + lastAction.action;
             }
 
-            console.log('🔴 actionHistory:', actionHistory);
-            console.log('🔴 actionHistory.length:', actionHistory.length);
-            console.log('🔴 actionNumber:', actionNumber);
-            console.log('🔴 actionKey:', actionKey);
-            console.log('🔴 Available action keys:', Object.keys(currentReport.perspectives[currentPerspective] || {}));
+            debugLog('🔴 actionHistory:', actionHistory);
+            debugLog('🔴 actionHistory.length:', actionHistory.length);
+            debugLog('🔴 actionNumber:', actionNumber);
+            debugLog('🔴 actionKey:', actionKey);
+            debugLog('🔴 Available action keys:', Object.keys(currentReport.perspectives[currentPerspective] || {}));
 
             const perspectiveData = currentReport.perspectives[currentPerspective][actionKey];
-            console.log('🔴 perspectiveData:', perspectiveData)
+            debugLog('🔴 perspectiveData:', perspectiveData)
 
             if (!perspectiveData || !perspectiveData.data) return;
 
@@ -7197,7 +7249,7 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
             
             const betColor = window.strengthChartInstance?.data?.datasets?.[0]?.backgroundColor || '#f97316';
             const checkColor = window.strengthChartInstance?.data?.datasets?.[1]?.backgroundColor || '#6b7280';
-            console.log('Adopted colors:', betColor, checkColor);
+            debugLog('Adopted colors:', betColor, checkColor);
 
             // Use adjusted values if available
             const datasets = [{
@@ -7362,7 +7414,7 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                 }
             };
 
-            console.log('Chart datasets:', window.boardDetailChartInstance.data.datasets.map(ds => ({
+            debugLog('Chart datasets:', window.boardDetailChartInstance.data.datasets.map(ds => ({
                 label: ds.label,
                 backgroundColor: ds.backgroundColor
             })));
@@ -7584,11 +7636,11 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
             const aggregateTitle = document.getElementById('aggregateTitle');
             
             if (!aggregateDetail || !aggregateTitle) {
-                console.log('🔴 ERROR: aggregateDetail or aggregateTitle not found in DOM');
+                debugLog('🔴 ERROR: aggregateDetail or aggregateTitle not found in DOM');
                 return;
             }
             
-            console.log('🔴 displayAggregateChart: Starting aggregation');
+            debugLog('🔴 displayAggregateChart: Starting aggregation');
             
             aggregateDetail.style.display = 'block';
             
@@ -7598,7 +7650,7 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                 key.startsWith(currentReport.name + '_')
             );
             
-            console.log('🔴 Found board keys:', allBoardKeys);
+            debugLog('🔴 Found board keys:', allBoardKeys);
             
             if (allBoardKeys.length === 0) {
                 aggregateTitle.textContent = 'No Board Data';
@@ -7669,8 +7721,8 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                 });
             });
             
-            console.log('🔴 Aggregated categories:', aggregatedCategories);
-            console.log('🔴 Board count:', boardCount);
+            debugLog('🔴 Aggregated categories:', aggregatedCategories);
+            debugLog('🔴 Board count:', boardCount);
             
             // Calculate averages from aggregated category data
             let totalCatBet = 0;
@@ -7865,7 +7917,7 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                 plugins: [comboLabelsPlugin]
             });
             
-            console.log('🔴 Chart created successfully');
+            debugLog('🔴 Chart created successfully');
             
             // Position avg label
             setTimeout(() => {
@@ -7884,7 +7936,7 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
         }
 
         function showAggregateDetails() {
-            console.log('🔴🔴🔴 showAggregateDetails CALLED');
+            debugLog('🔴🔴🔴 showAggregateDetails CALLED');
             displayAggregateChart();
         }
 
@@ -7911,17 +7963,17 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
 
         function deleteBoardDetail() {
             if (!selectedBoardName || !currentReport) {
-                console.log('🔴 Cannot delete: no board selected');
+                debugLog('🔴 Cannot delete: no board selected');
                 return;
             }
             
-            console.log('🔴 Deleting board:', selectedBoardName);
+            debugLog('🔴 Deleting board:', selectedBoardName);
             
             // Delete the specific board from GLOBAL boardDetailData
             const key = currentReport.name + '_' + selectedBoardName;
             delete boardDetailData[key];
             
-            console.log('🔴 Deleted key:', key);
+            debugLog('🔴 Deleted key:', key);
             
             // Save back to localStorage
             localStorage.setItem('boardDetailData', JSON.stringify(boardDetailData));
@@ -8104,11 +8156,11 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
             e.stopPropagation();
             
             if (isSaving) {
-                console.log('⚠️ Already saving, ignoring click');
+                debugLog('⚠️ Already saving, ignoring click');
                 return;
             }
             
-            console.log('Save button clicked!');
+            debugLog('Save button clicked!');
             isSaving = true;
             
             saveLinkReport();
@@ -8120,12 +8172,12 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
 
         document.getElementById('linkCancelBtn').addEventListener('click', function(e) {
             e.stopPropagation();
-            console.log('Cancel button clicked!');
+            debugLog('Cancel button clicked!');
             
             // Remove the last action from history since we're canceling
             if (actionHistory.length > 0) {
                 actionHistory.pop();
-                console.log('🗑️ Removed last action from history. New length:', actionHistory.length);
+                debugLog('🗑️ Removed last action from history. New length:', actionHistory.length);
             }
             
             document.getElementById('linkReportModal').classList.remove('active');
