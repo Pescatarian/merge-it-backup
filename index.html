@@ -807,12 +807,20 @@
             color: #ededf0; font-weight: 700; font-size: 12.5px; line-height: 1.2;
             white-space: nowrap; margin: 0;
         }
+        .gtow-report-card .rc-actions {
+            margin-top: auto; display: flex; align-items: center; gap: 8px;
+        }
         .gtow-report-card .rc-edit {
-            margin-top: auto; align-self: flex-start;
+            align-self: flex-start;
             background: #0d0d0d; border: 1px solid #2a2a2a; color: #c9c9cf;
             border-radius: 6px; padding: 7px 16px; font-size: 12.5px; font-weight: 600; cursor: pointer;
         }
-        .gtow-report-card .rc-edit:hover { background: #0d0d0d; }
+        .gtow-report-card .rc-edit:hover { background: #0d0d0d; color: #fff; }
+        .gtow-report-card .rc-edit:focus-visible { outline: 2px solid #4a9eff; outline-offset: 2px; }
+        .gtow-report-card .rc-notes {
+            display: inline-flex; align-items: center; gap: 6px;
+        }
+        .gtow-report-card .rc-notes svg { flex: 0 0 auto; }
         /* ---- Import data button (top of report card) ---- */
         .gtow-report-card .rc-import {
             display: flex; align-items: center; justify-content: center; gap: 7px;
@@ -1888,6 +1896,97 @@
             #linkReportModal .modal-content { animation:none; }
         }
 
+        /* ============================================================
+           REPORT NOTES DRAWER (notes-*) — ADDITIVE, look held to the
+           research-backed-UI hard gate. Right-side standard (non-modal)
+           drawer ~400px (GitLab Pajamas / Material standard side-sheet),
+           keeps the report visible. Flat-black #0d0d0d surface + #2a2a2a
+           hairline borders to match the app; contrast tokens reuse the
+           imd modal's WCAG-vetted palette. Every text color is measured
+           against its ACTUAL rendered background:
+             editor body  #f3f5f8 on #141414 = 16.87:1  (AAA)
+             title        #f3f5f8 on #0d0d0d = 17.79:1  (AAA)
+             help/sub     #aeb4bf on #0d0d0d =  9.33:1  (AAA)
+             label        #a3a3a3 on #0d0d0d =  7.70:1  (AAA)
+             placeholder  #969ba5 on #141414 =  6.60:1  (passes AA 4.5:1; NOT the failing #9ca3af gray)
+             "Saved" txt  #4ade80 on #0d0d0d = 11.15:1  (AAA)
+             presence dot #4a9eff on #0d0d0d =  7.06:1  (non-text, ≥3:1)
+           Body text ≥16px, line-height ≥1.5 per WCAG 1.4.12 + 1.4.3.
+           ============================================================ */
+        .notes-drawer {
+            position: fixed; top: 0; right: 0; bottom: 0;
+            width: 400px; max-width: 92vw;
+            background: #0d0d0d;
+            border-left: 1px solid #2a2a2a;
+            box-shadow: -16px 0 48px -16px rgba(0,0,0,.7);
+            display: flex; flex-direction: column;
+            transform: translateX(100%);
+            transition: transform .2s ease;
+            z-index: 9000;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+        .notes-drawer.open { transform: translateX(0); }
+        @media (prefers-reduced-motion: reduce) {
+            .notes-drawer { transition: none; }
+        }
+        .notes-drawer-head {
+            display: flex; align-items: flex-start; justify-content: space-between;
+            gap: 12px; padding: 20px 20px 14px;
+            border-bottom: 1px solid #2a2a2a;
+        }
+        .notes-drawer-titlewrap { min-width: 0; }
+        .notes-drawer-title {
+            margin: 0; font-size: 18px; line-height: 1.3; font-weight: 700;
+            color: #f3f5f8;
+        }
+        .notes-drawer-sub {
+            margin: 4px 0 0; font-size: 13px; line-height: 1.5; color: #aeb4bf;
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        }
+        .notes-drawer-x {
+            flex: 0 0 auto; width: 34px; height: 34px; border-radius: 8px; border: 0;
+            cursor: pointer; background: transparent; color: #aeb4bf;
+            display: grid; place-items: center; transition: .15s; padding: 0;
+        }
+        .notes-drawer-x:hover { background: #1b1e23; color: #f3f5f8; }
+        .notes-drawer-body {
+            flex: 1 1 auto; display: flex; flex-direction: column;
+            padding: 16px 20px 20px; min-height: 0;
+        }
+        .notes-drawer-editor {
+            flex: 1 1 auto; width: 100%; box-sizing: border-box; resize: none;
+            background: #141414; border: 1px solid #2a2a2a; border-radius: 8px;
+            color: #f3f5f8;
+            font-family: inherit;
+            font-size: 16px; line-height: 1.5;
+            padding: 14px;
+            min-height: 200px;
+        }
+        .notes-drawer-editor::placeholder { color: #969ba5; opacity: 1; }
+        .notes-drawer-editor:focus { outline: none; border-color: #4a9eff; }
+        .notes-drawer-editor:focus-visible { outline: 2px solid #4a9eff; outline-offset: 2px; }
+        .notes-drawer-foot {
+            display: flex; align-items: center; gap: 8px;
+            padding: 10px 2px 0; min-height: 20px;
+        }
+        .notes-drawer-status {
+            font-size: 13px; line-height: 1.5; font-weight: 600;
+            color: #4ade80; display: inline-flex; align-items: center; gap: 6px;
+            opacity: 0; transition: opacity .15s ease;
+        }
+        .notes-drawer-status.show { opacity: 1; }
+        .notes-drawer-status.is-typing { color: #aeb4bf; }
+        .notes-drawer-status svg { flex: 0 0 auto; }
+        /* presence dot on the Notes trigger — a report HAS notes */
+        .rc-notes { position: relative; }
+        .rc-notes-dot {
+            position: absolute; top: -3px; right: -3px;
+            width: 8px; height: 8px; border-radius: 50%;
+            background: #4a9eff; border: 1px solid #0d0d0d;
+            display: none;
+        }
+        .rc-notes.has-notes .rc-notes-dot { display: block; }
+
     </style>
 </head>
 <body>
@@ -2283,6 +2382,31 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
             <div id="trainerResults" style="display: none; margin-top: 20px; text-align: left; max-height: 300px; overflow-y: auto;"></div>
         </div>
     </div>
+
+    <!-- REPORT NOTES DRAWER (additive). Non-modal standard side-sheet: it co-exists
+         with the report (no scrim, no focus trap) per Material's standard side-sheet
+         rationale, so role="region" + aria-label, NOT role="dialog"/aria-modal. -->
+    <aside id="notesDrawer" class="notes-drawer" role="region" aria-label="Report notes" aria-hidden="true">
+        <div class="notes-drawer-head">
+            <div class="notes-drawer-titlewrap">
+                <h2 class="notes-drawer-title">Notes</h2>
+                <p class="notes-drawer-sub" id="notesDrawerSub">No report loaded</p>
+            </div>
+            <button type="button" class="notes-drawer-x" onclick="closeNotesDrawer()" aria-label="Close notes">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+            </button>
+        </div>
+        <div class="notes-drawer-body">
+            <textarea id="notesEditor" class="notes-drawer-editor"
+                      placeholder="Write your notes for this report. They save automatically and travel with the report when you export it."
+                      aria-label="Report notes text"
+                      oninput="onNotesInput()"
+                      spellcheck="true"></textarea>
+            <div class="notes-drawer-foot">
+                <span id="notesStatus" class="notes-drawer-status" role="status" aria-live="polite"></span>
+            </div>
+        </div>
+    </aside>
 
 </body>
 
@@ -3634,6 +3758,14 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
             if (hasNode) {
                 updateActionButtons();
             }
+
+            // The report card was just re-rendered, so the Notes trigger is a fresh element:
+            // re-sync its presence dot and (if the drawer is open) the editor to the loaded report.
+            if (typeof syncNotesUI === 'function') {
+                const drawer = document.getElementById('notesDrawer');
+                if (drawer && drawer.classList.contains('open')) syncNotesUI();
+                else updateNotesTriggerDot();
+            }
         }
 
         // Report card = first card: Saved-Reports picker + Clear (relocated off the top bar),
@@ -3696,8 +3828,15 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                 fields = `<dl class="rc-fields">${rows.join('')}</dl>`;
             }
 
-            const edit = hasReport
-                ? `<button id="editReportBtn" class="rc-edit" onclick="editCurrentReport()">Edit</button>`
+            // Edit + Notes share a bottom action row. The Notes trigger carries a presence dot
+            // (filled when the loaded report has notes) and a visible text label (NN/g: an icon
+            // alone is a poor affordance — a label must accompany it).
+            const notesPen = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>`;
+            const actions = hasReport
+                ? `<div class="rc-actions">
+                       <button id="editReportBtn" class="rc-edit" onclick="editCurrentReport()">Edit</button>
+                       <button id="rcNotesBtn" class="rc-edit rc-notes" onclick="toggleNotesDrawer()" title="Open notes for this report" aria-haspopup="true" aria-controls="notesDrawer">${notesPen}<span>Notes</span><span class="rc-notes-dot" aria-hidden="true"></span></button>
+                   </div>`
                 : '';
 
             return `<div class="gtow-report-card">
@@ -3710,7 +3849,7 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                     <button class="rc-clear" onclick="clearSearch()">Clear</button>
                 </div>
                 ${fields}
-                ${edit}
+                ${actions}
             </div>`;
         }
 
@@ -3786,6 +3925,121 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
             return String(s == null ? '' : s)
                 .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
                 .replace(/"/g, '&quot;');
+        }
+
+        // ===== REPORT NOTES (additive) =====
+        // Notes are a single free-form string on the report object (report.notes), with an
+        // optional report.notesUpdatedAt ISO stamp. Because currentReport IS the same object
+        // held in allReports (selectReportFromDropdown sets currentReport = allReports[index]),
+        // mutating currentReport.notes mutates the array entry; we then re-serialize the whole
+        // array to localStorage — the existing persistence pattern. exportSingleReport serializes
+        // the report verbatim (no field allowlist), so notes ride along into export/import with
+        // ZERO change to export/import logic.
+        let notesSaveTimer = null;
+        let notesStatusTimer = null;
+        const NOTES_DEBOUNCE_MS = 500; // pause-to-save; illustrative norm, not a ratified figure
+
+        // True only when a report is loaded (notes are report-level).
+        function notesHasReport() { return !!currentReport; }
+
+        // Reflect the loaded report's notes into the editor + subtitle, and sync the trigger dot.
+        function syncNotesUI() {
+            const editor = document.getElementById('notesEditor');
+            const sub = document.getElementById('notesDrawerSub');
+            const status = document.getElementById('notesStatus');
+            if (editor) {
+                editor.value = notesHasReport() ? (currentReport.notes || '') : '';
+                editor.disabled = !notesHasReport();
+            }
+            if (sub) {
+                sub.textContent = notesHasReport()
+                    ? (currentReport.name || 'Report')
+                    : 'No report loaded';
+            }
+            if (status) { status.className = 'notes-drawer-status'; status.textContent = ''; }
+            updateNotesTriggerDot();
+        }
+
+        // Show/refresh the presence dot on the Notes trigger button (report HAS notes).
+        function updateNotesTriggerDot() {
+            const trigger = document.getElementById('rcNotesBtn');
+            if (!trigger) return;
+            const has = notesHasReport() && !!String(currentReport.notes || '').trim();
+            trigger.classList.toggle('has-notes', has);
+        }
+
+        function openNotesDrawer() {
+            const drawer = document.getElementById('notesDrawer');
+            if (!drawer) return;
+            syncNotesUI();
+            drawer.classList.add('open');
+            drawer.setAttribute('aria-hidden', 'false');
+            const editor = document.getElementById('notesEditor');
+            if (editor && notesHasReport()) setTimeout(() => editor.focus(), 0);
+        }
+
+        function closeNotesDrawer() {
+            const drawer = document.getElementById('notesDrawer');
+            if (!drawer) return;
+            // Flush any pending debounced save so nothing is lost on close.
+            if (notesSaveTimer) { clearTimeout(notesSaveTimer); notesSaveTimer = null; saveNotesNow(); }
+            drawer.classList.remove('open');
+            drawer.setAttribute('aria-hidden', 'true');
+        }
+
+        function toggleNotesDrawer() {
+            const drawer = document.getElementById('notesDrawer');
+            if (!drawer) return;
+            if (drawer.classList.contains('open')) closeNotesDrawer();
+            else openNotesDrawer();
+        }
+
+        // Debounced auto-save on every keystroke + a transient typing/saved status.
+        function onNotesInput() {
+            if (!notesHasReport()) return;
+            setNotesStatus('typing');
+            if (notesSaveTimer) clearTimeout(notesSaveTimer);
+            notesSaveTimer = setTimeout(() => { notesSaveTimer = null; saveNotesNow(); }, NOTES_DEBOUNCE_MS);
+        }
+
+        // Commit the editor's current text to the report object + localStorage, then show "Saved".
+        function saveNotesNow() {
+            if (!notesHasReport()) return;
+            const editor = document.getElementById('notesEditor');
+            if (!editor) return;
+            currentReport.notes = editor.value;
+            currentReport.notesUpdatedAt = new Date().toISOString();
+            try {
+                localStorage.setItem('gtoReports', JSON.stringify(allReports));
+            } catch (e) {
+                setNotesStatus('error');
+                return;
+            }
+            updateNotesTriggerDot();
+            setNotesStatus('saved');
+        }
+
+        // Status pill states: typing (muted), saved (green), error (still announced via aria-live).
+        function setNotesStatus(state) {
+            const status = document.getElementById('notesStatus');
+            if (!status) return;
+            if (notesStatusTimer) { clearTimeout(notesStatusTimer); notesStatusTimer = null; }
+            const checkSvg = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6 9 17l-5-5"/></svg>';
+            if (state === 'typing') {
+                status.className = 'notes-drawer-status is-typing show';
+                status.textContent = 'Saving…';
+            } else if (state === 'saved') {
+                status.className = 'notes-drawer-status show';
+                status.innerHTML = checkSvg + '<span>Saved</span>';
+                // Fade the indicator out after a moment (the note is persisted regardless).
+                notesStatusTimer = setTimeout(() => {
+                    const s = document.getElementById('notesStatus');
+                    if (s) s.classList.remove('show');
+                }, 1600);
+            } else if (state === 'error') {
+                status.className = 'notes-drawer-status is-typing show';
+                status.textContent = 'Could not save (storage full?)';
+            }
         }
 
         // Build the hand-line as STREET GROUPS (FLOP / TURN / RIVER), each a header bar styled
