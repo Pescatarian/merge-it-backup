@@ -768,7 +768,7 @@
             color: #c2c6cd; border-radius: 6px; padding: 6px 11px;
             font-size: 12px; font-weight: 600; cursor: pointer;
         }
-        .gtow-report-card .rc-clear:hover { background: #1c1c1c; }
+        .gtow-report-card .rc-clear:hover { box-shadow: inset 0 0 0 999px rgba(255,255,255,.08); }
         .rc-pick-menu {
             display: none; position: absolute; top: calc(100% + 4px); left: 0;
             min-width: 100%; max-width: 280px; max-height: 260px; overflow-y: auto;
@@ -1715,7 +1715,7 @@
         #importModal .imd-step,
         #linkReportModal .imd-step {
             flex:0 0 auto; font:700 12px/1 var(--imd-font); letter-spacing:.6px;
-            color:var(--imd-accent); background:var(--imd-accent-tint);
+            color:#6fb3ff; background:var(--imd-accent-tint); /* lighter accent for text-on-tint: WCAG AA on the tint composite (re-measured >=4.5:1) */
             border:1px solid var(--imd-accent-line); border-radius:999px; padding:4px 8px;
         }
         #importModal .imd-sectitle,
@@ -1763,7 +1763,7 @@
         }
         #importModal .imd-matchup-preview b { color:var(--imd-txt); font-weight:650; }
         #importModal .imd-vs {
-            font:700 12px/1 var(--imd-font); color:var(--imd-accent);
+            font:700 12px/1 var(--imd-font); color:#6fb3ff; /* lighter accent for text-on-tint: WCAG AA on the tint composite (re-measured >=4.5:1) */
             background:var(--imd-accent-tint); border:1px solid var(--imd-accent-line);
             border-radius:6px; padding:4px 6px; letter-spacing:.5px;
         }
@@ -2047,6 +2047,8 @@ a:focus-visible,button:focus-visible,input:focus-visible,textarea:focus-visible,
 [tabindex]:focus-visible,[role="button"]:focus-visible,.gtow-act-btn:focus-visible,.rc-picker:focus-visible,
 .acct-avatar:focus-visible,.rc-pick-item:focus-visible,.flop-cat-btn:focus-visible,.turn-cat-btn:focus-visible,
 #vsBtn:focus-visible,.m-help-btn:focus-visible{ outline:2px solid var(--focus-ring)!important; outline-offset:2px!important; }
+/* ---- neutral control hover: Material-style 8% white state layer; lightens any base bg (grey/green/red/tint) without clobbering the semantic active colour, and leaves text untouched ---- */
+#vsBtn:hover,.flop-cat-btn:hover,.turn-cat-btn:hover{ box-shadow:inset 0 0 0 999px rgba(255,255,255,.08); }
 /* ---- depth on true overlays only ---- */
 .modal-content,.import-modal,.rc-pick-menu,#handlinePickerMenu,.acct-menu,.notes-drawer{ box-shadow:0 24px 64px -16px rgba(0,0,0,.7)!important; }
 /* ---- radius scale ---- */
@@ -5276,7 +5278,7 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
             // Preserve case: the new grammar disambiguates rank (UPPER) vs suit (lower).
             boardFilterText = input.value.trim();
             window.savedBoardFilterText = input.value;
-            input.style.border = boardFilterText ? '2px solid #f97316' : '1px solid #3a3a3a';
+            if (boardFilterText) input.classList.add('m-filter-active'); else input.classList.remove('m-filter-active');
             if (vsMode && vsFirstFilter && vsSecondFilter) { showVsComparison(vsFirstFilter, vsSecondFilter); return; }
             filterFlopBoard('all');
         }
@@ -5506,7 +5508,12 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                     document.getElementById('dataDisplay').innerHTML = noMatchMsg;
                     document.getElementById('dataDisplay').style.display = 'block';
                 }
-                if (inputEl) inputEl.style.background = input ? '#ef4444' : '#1c1c1c';
+                if (inputEl) {
+                    // Genuine zero-result typed search -> red "no match" cue (the m-filter-noresult
+                    // class; an inline bg here is overridden by the !important sunken-well rule).
+                    if (input) { inputEl.classList.add('m-filter-noresult'); inputEl.classList.remove('m-filter-active'); }
+                    else { inputEl.classList.remove('m-filter-noresult'); inputEl.classList.remove('m-filter-active'); }
+                }
                 return;
             }
 
@@ -7756,7 +7763,7 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                             max: 100,
                             ticks: { 
                                 color: '#c2c6cd', 
-                                font: { size: 11, weight: '500' },
+                                font: { size: 12, weight: '500' },
                                 callback: function(value) {
                                     return value + '%';
                                 }
@@ -8269,7 +8276,7 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                             max: 100,
                             ticks: { 
                                 color: '#c2c6cd', 
-                                font: { size: 11, weight: '500' },
+                                font: { size: 12, weight: '500' },
                                 callback: function(value) {
                                     return value + '%';
                                 }
