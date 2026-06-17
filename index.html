@@ -18,8 +18,8 @@
     
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background-color: #0d0d0d;
-            color: #e0e0e0;
+            background-color: #1c1c1c;
+            color: #ededed;
             display: flex;
             height: 100vh;
             overflow: hidden;
@@ -39,9 +39,9 @@
 
         /* TOP SEARCH BAR */
         .top-search-bar {
-            background-color: #0d0d0d;
+            background-color: #1c1c1c;
             padding: 12px 20px;
-            border-bottom: 1px solid #2a2a2a;
+            border-bottom: 1px solid #3a3a3a;
             display: flex;
             align-items: center;
             gap: 12px;
@@ -49,12 +49,12 @@
         }
 
         .search-input-inline {
-            background-color: #0d0d0d;
-            border: 1px solid #2a2a2a;
+            background-color: #1c1c1c;
+            border: 1px solid #3a3a3a;
             border-radius: 4px;
             padding: 8px 12px;
-            color: #e0e0e0;
-            font-size: 15px;
+            color: #ededed;
+            font-size: 16px;
             min-width: 170px;
             width: 170px;
             height: 34px;
@@ -69,16 +69,16 @@
         }
 
         .search-input-inline::placeholder {
-            color: #666;
+            color: #aab0b8;
             font-size: 12px;
         }
 
         /* Board-filter + turn-search inputs: explicit AA-contrast placeholder
-           (#a0a0a0 on #0d0d0d ~7.4:1). Browser-default placeholder color is
+           (#aab0b8 on #1c1c1c ~7.4:1). Browser-default placeholder color is
            unspecified/low-contrast, so set it explicitly to meet WCAG AA. */
         #boardFilterInput::placeholder,
         #turnCardSearchInput::placeholder {
-            color: #a0a0a0;
+            color: #aab0b8;
         }
 
         .btn-search-inline {
@@ -98,7 +98,7 @@
 
         .btn-clear-inline {
             padding: 8px 16px;
-            background-color: #0d0d0d;
+            background-color: #1c1c1c;
             color: #fff;
             border: none;
             border-radius: 4px;
@@ -108,7 +108,7 @@
         }
 
         .btn-clear-inline:hover {
-            background-color: #0d0d0d;
+            background-color: #1c1c1c;
         }
 
         .saved-reports-dropdown {
@@ -117,10 +117,10 @@
 
         .dropdown-btn {
             padding: 8px 16px;
-            background-color: #0d0d0d;
-            border: 1px solid #2a2a2a;
+            background-color: #1c1c1c;
+            border: 1px solid #3a3a3a;
             border-radius: 4px;
-            color: #e0e0e0;
+            color: #ededed;
             cursor: pointer;
             font-size: 12px;
             font-weight: 500;
@@ -130,7 +130,7 @@
         }
 
         .dropdown-btn:hover {
-            background-color: #0d0d0d;
+            background-color: #1c1c1c;
             border-color: #4a9eff;
         }
 
@@ -140,8 +140,8 @@
             right: 0;
             top: 100%;
             margin-top: 4px;
-            background-color: #0d0d0d;
-            border: 1px solid #2a2a2a;
+            background-color: #1c1c1c;
+            border: 1px solid #3a3a3a;
             border-radius: 6px;
             min-width: 350px;
             max-width: 450px;
@@ -157,16 +157,16 @@
 
         .dropdown-header {
             padding: 12px;
-            border-bottom: 1px solid #2a2a2a;
+            border-bottom: 1px solid #3a3a3a;
             font-weight: 600;
             color: #fff;
-            font-size: 13px;
+            font-size: 14px;
         }
 
         .dropdown-item {
             padding: 10px 12px;
             cursor: pointer;
-            border-bottom: 1px solid #2a2a2a;
+            border-bottom: 1px solid #3a3a3a;
             transition: background-color 0.2s;
             display: flex;
             justify-content: space-between;
@@ -174,7 +174,7 @@
         }
 
         .dropdown-item:hover {
-            background-color: #0d0d0d;
+            background-color: #1c1c1c;
         }
 
         .dropdown-item:last-child {
@@ -187,14 +187,14 @@
 
         .dropdown-item-title {
             color: #fff;
-            font-size: 11px;
+            font-size: 12px;
             margin-bottom: 4px;
             font-weight: 500;
         }
 
         .dropdown-item-meta {
-            color: #888;
-            font-size: 9px;
+            color: #c2c6cd;
+            font-size: 12px;
         }
 
         .dropdown-item-actions {
@@ -236,17 +236,17 @@
         .dropdown-empty {
             padding: 20px;
             text-align: center;
-            color: #666;
-            font-size: 11px;
+            color: #aab0b8;
+            font-size: 12px;
         }
 
         .spot-display-box {
-            background-color: #0d0d0d;
-            border: 1px solid #2a2a2a;
+            background-color: #1c1c1c;
+            border: 1px solid #3a3a3a;
             border-radius: 4px;
             padding: 8px 12px;
-            color: #e0e0e0;
-            font-size: 15px;
+            color: #ededed;
+            font-size: 16px;
             height: 34px;
             min-width: 170px;
             width: 170px;
@@ -263,8 +263,8 @@
          
         .sidebar {
             width: 180px;
-            background-color: #0d0d0d;
-            border-right: 1px solid #2a2a2a;
+            background-color: #1c1c1c;
+            border-right: 1px solid #3a3a3a;
             overflow-y: auto;
             padding: 12px;
             display: flex;
@@ -284,7 +284,7 @@
             position: fixed;
             top: 12px;
             left: 12px;
-            background-color: #0d0d0d;
+            background-color: #1c1c1c;
             z-index: 100;
             padding: 0;
             margin: 0;
@@ -331,7 +331,7 @@
         .filter-section {
             margin-bottom: 12px;
             padding-bottom: 12px;
-            border-bottom: 1px solid #2a2a2a;
+            border-bottom: 1px solid #3a3a3a;
             display: flex;
             flex-direction: column;
         }
@@ -343,7 +343,7 @@
         .filter-header {
             color: #fff;
             margin-bottom: 8px;
-            font-size: 11px;
+            font-size: 12px;
             text-transform: uppercase;
             letter-spacing: 0.5px;
             font-weight: 600;
@@ -359,7 +359,7 @@
         }
 
         .collapse-icon {
-            font-size: 10px;
+            font-size: 12px;
             transition: transform 0.2s;
         }
 
@@ -383,8 +383,8 @@
             grid-template-columns: 1fr 32px 32px;
             gap: 4px;
             margin-bottom: 6px;
-            font-size: 10px;
-            color: #888;
+            font-size: 12px;
+            color: #c2c6cd;
             text-transform: uppercase;
             letter-spacing: 0.5px;
             padding-left: 12px;
@@ -405,7 +405,7 @@
         }
 
         .card-label {
-            color: #b0b0b0;
+            color: #c2c6cd;
             font-size: 12px;
             font-weight: 500;
         }
@@ -414,7 +414,7 @@
         .circle-selector {
             width: 18px;
             height: 18px;
-            border: 2px solid #2a2a2a;
+            border: 2px solid #3a3a3a;
             border-radius: 50%;
             cursor: pointer;
             transition: all 0.15s ease;
@@ -470,43 +470,43 @@
         .clear-filters-btn {
             margin-top: auto;
             padding: 8px 12px;
-            background-color: #0d0d0d;
+            background-color: #1c1c1c;
             color: #fff;
             border: none;
             border-radius: 4px;
             cursor: pointer;
-            font-size: 11px;
+            font-size: 12px;
             font-weight: 500;
             transition: background-color 0.15s;
         }
 
         .clear-filters-btn:hover {
-            background-color: #0d0d0d;
+            background-color: #1c1c1c;
         }
 
        /* BREADCRUMB + AGGREGATE SECTION */
             .breadcrumb-aggregate-section {
-                background-color: #0d0d0d;
+                background-color: #1c1c1c;
                 padding: 8px 12px;
-                border-bottom: 1px solid #2a2a2a;
+                border-bottom: 1px solid #3a3a3a;
             }
 
             .breadcrumb-path {
                 display: flex;
                 align-items: center;
                 gap: 8px;
-                font-size: 13px;
-                color: #888;
+                font-size: 14px;
+                color: #c2c6cd;
                 margin-bottom: 6px;
             }
 
             .breadcrumb-item {
-                color: #e0e0e0;
+                color: #ededed;
                 font-weight: 500;
             }
 
             .breadcrumb-separator {
-                color: #555;
+                color: #aab0b8;
             }
 
             .breadcrumb-current {
@@ -520,8 +520,8 @@
             }
 
         .aggregate-section {
-            background-color: #0d0d0d;
-            border: 1px solid #2a2a2a;
+            background-color: #1c1c1c;
+            border: 1px solid #3a3a3a;
             border-radius: 6px;
             overflow: hidden;
             margin-bottom: 12px;
@@ -533,16 +533,16 @@
             align-items: center;
             padding: 10px 14px;
             cursor: pointer;
-            background-color: #0d0d0d;
-            border-bottom: 1px solid #2a2a2a;
+            background-color: #1c1c1c;
+            border-bottom: 1px solid #3a3a3a;
         }
 
         .aggregate-header:hover {
-            background-color: #0d0d0d;
+            background-color: #1c1c1c;
         }
 
         .aggregate-title {
-            font-size: 11px;
+            font-size: 12px;
             color: #4a9eff;
             font-weight: 600;
             text-transform: uppercase;
@@ -550,8 +550,8 @@
         }
 
         .aggregate-toggle {
-            font-size: 10px;
-            color: #888;
+            font-size: 12px;
+            color: #c2c6cd;
             transition: transform 0.2s;
         }
 
@@ -561,7 +561,7 @@
 
         .aggregate-content {
             padding: 12px 14px;
-            font-size: 11px;
+            font-size: 12px;
             line-height: 1.6;
             max-height: 300px;
             overflow: hidden;
@@ -589,12 +589,12 @@
         }
 
         .action-fold {
-            color: #3b82f6;
+            color: #1d4ed8;
             font-weight: 500;
         }
 
         .action-separator {
-            color: #555;
+            color: #aab0b8;
             margin: 0 4px;
         }
 
@@ -617,8 +617,8 @@
             color: white;
         }
 
-        .action-btn.fold { background-color: #333333; }
-        .action-btn.check { background-color: #888888; }
+        .action-btn.fold { background-color: #3a3a3a; }
+        .action-btn.check { background-color: #9aa0ab; }
         .action-btn.call { background-color: #10b981; }
         .action-btn.bet { background-color: #f59e0b; }
         .action-btn.b30 { background-color: #f59e0b; }
@@ -636,18 +636,18 @@
 
         .back-btn {
             padding: 10px 18px;
-            background-color: #0d0d0d;
+            background-color: #1c1c1c;
             border: none;
             border-radius: 6px;
             color: #fff;
             cursor: pointer;
-            font-size: 13px;
+            font-size: 14px;
             font-weight: 500;
             margin-left: auto;
         }
 
         .back-btn:hover {
-            background-color: #0d0d0d;
+            background-color: #1c1c1c;
         }
     
         .edit-report-btn {
@@ -655,7 +655,7 @@
             color: #fff;
             font-weight: 600;
             min-width: 45px;
-            background-color: #000;
+            background-color: #121212;
             padding: 7px 14px;
             border-radius: 6px;
             font-size: 12px;
@@ -667,7 +667,7 @@
         }
 
         .edit-report-btn:hover {
-            background-color: #0d0d0d;
+            background-color: #1c1c1c;
         }
 
         /* ============================================================
@@ -676,7 +676,7 @@
            report card + board cards (suit-tiles) + position cards
            (vertical action list, taken highlighted / siblings dimmed) +
            green-outlined active decision card. Dark theme; reuses the
-           app's 4-color suit map (h#ef4444 d#3b82f6 c#22c55e s#888888).
+           app's 4-color suit map (h#ef4444 d#1d4ed8 c#22c55e s#9aa0ab).
            No stack/pot numbers (not in the user's data).
            ============================================================ */
         .gtow-handline {
@@ -689,110 +689,110 @@
         /* the header bar uses the SAME visual language as the "Import data" bar (.rc-import) */
         .street-bar {
             display: flex; align-items: center; justify-content: center;
-            background: #0d0d0d; border: 1px solid #2a2a2a; color: #d4d4d9;
+            background: #1c1c1c; border: 1px solid #3a3a3a; color: #ededed;
             border-radius: 6px; padding: 8px 12px;
-            font-size: 12.5px; font-weight: 700; letter-spacing: .6px;
+            font-size: 14px; font-weight: 700; letter-spacing: .6px;
             width: 100%; box-sizing: border-box;
         }
         /* ACTIVE street bar: exact green-outline token of the active action card (.gtow-card.active) */
         .street-bar.active { border: 1.5px solid #5db85c; color: #74c96a; }
-        .street-bar.empty { color: #7a7a80; }
+        .street-bar.empty { color: #aab0b8; }
         .street-cards { display: flex; align-items: stretch; gap: 4px; }
         .gtow-card {
             flex: 0 0 auto; min-width: 84px; min-height: 108px;
-            background: #0d0d0d; border: 1px solid #2a2a2a; border-radius: 7px;
+            background: #1c1c1c; border: 1px solid #3a3a3a; border-radius: 7px;
             padding: 8px 9px; display: flex; flex-direction: column;
         }
         .gtow-card-head {
             display: flex; justify-content: center; align-items: baseline;
-            font-size: 12.5px; margin-bottom: 6px; white-space: nowrap;
+            font-size: 14px; margin-bottom: 6px; white-space: nowrap;
         }
-        .gtow-card-head .pos { font-weight: 700; color: #e9e9ec; letter-spacing: .3px; }
-        .gtow-card-head .street { font-weight: 700; color: #d8d8dc; letter-spacing: .4px; }
+        .gtow-card-head .pos { font-weight: 700; color: #ededed; letter-spacing: .3px; }
+        .gtow-card-head .street { font-weight: 700; color: #c2c6cd; letter-spacing: .4px; }
         .gtow-actions { display: flex; flex-direction: column; gap: 3px; }
         .gtow-act {
-            font-size: 12.5px; line-height: 1.15; padding: 3px 7px; border-radius: 5px;
+            font-size: 14px; line-height: 1.15; padding: 3px 7px; border-radius: 5px;
             white-space: nowrap; text-align: center;
         }
-        .gtow-act.dim { color: #6e6f75; background: transparent; }
+        .gtow-act.dim { color: #aab0b8; background: transparent; }
         .gtow-act.taken {
-            color: #e6e6ea; font-weight: 700;
-            background: #0d0d0d; border: 1px solid #2a2a2a;
+            color: #ededed; font-weight: 700;
+            background: #1c1c1c; border: 1px solid #3a3a3a;
         }
         /* clickable to-act options rendered into the active card by updateActionButtons */
         .gtow-act-btn {
             display: block; width: 100%; text-align: center; background: transparent;
-            color: #cfcfd4; border: 1px solid transparent; border-radius: 5px;
-            padding: 4px 8px; margin: 0; font-size: 12.5px; font-weight: 600;
+            color: #c2c6cd; border: 1px solid transparent; border-radius: 5px;
+            padding: 4px 8px; margin: 0; font-size: 14px; font-weight: 600;
             line-height: 1.15; white-space: nowrap; cursor: pointer;
         }
-        .gtow-act-btn:hover { background: #0d0d0d; color: #fff; border-color: #2a2a2a; }
+        .gtow-act-btn:hover { background: #1c1c1c; color: #fff; border-color: #3a3a3a; }
         .gtow-card.board .gtow-tiles { display: flex; gap: 4px; align-items: center; justify-content: center; }
         .gtow-tile {
             width: 30px; height: 42px; border-radius: 5px;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
             color: #fff; font-weight: 800; line-height: 1; position: relative;
         }
-        .gtow-tile .rank { font-size: 19px; }
-        .gtow-tile .pip { font-size: 10px; margin-top: 1px; opacity: .95; }
+        .gtow-tile .rank { font-size: 20px; }
+        .gtow-tile .pip { font-size: 12px; margin-top: 1px; opacity: .95; }
         .gtow-tile.h { background: #ef4444; }
         .gtow-tile.d { background: #3b82f6; }
         .gtow-tile.c { background: #22c55e; }
         .gtow-tile.s { background: #888888; }
-        .gtow-board-hint { text-align: center; font-size: 12px; color: #8c8c92; font-weight: 700; letter-spacing: 1px; margin-top: auto; }
+        .gtow-board-hint { text-align: center; font-size: 12px; color: #c2c6cd; font-weight: 700; letter-spacing: 1px; margin-top: auto; }
         .gtow-card.active { border: 1.5px solid #5db85c; }
         .gtow-card.active .pos { color: #74c96a; }
         .gtow-pos-card { cursor: pointer; }
-        .gtow-pos-card:hover { border-color: #2a2a2a; }
+        .gtow-pos-card:hover { border-color: #3a3a3a; }
         /* ---------- REPORT CARD (first card: picker + Clear + fields + Edit) ---------- */
         .gtow-report-card {
             flex: 0 0 auto; min-width: 184px; min-height: 108px;
-            background: #0d0d0d; border: 1px solid #2a2a2a; border-radius: 7px;
+            background: #1c1c1c; border: 1px solid #3a3a3a; border-radius: 7px;
             padding: 9px 10px; display: flex; flex-direction: column; gap: 8px;
             margin-right: 6px;
         }
         .gtow-report-card .rc-top { display: flex; align-items: center; gap: 6px; }
         .gtow-report-card .rc-picker {
             flex: 1 1 auto; position: relative;
-            background: #0d0d0d; border: 1px solid #2a2a2a; color: #d4d4d9;
+            background: #1c1c1c; border: 1px solid #3a3a3a; color: #ededed;
             border-radius: 6px; padding: 6px 24px 6px 9px;
             font-size: 12px; font-weight: 600; white-space: nowrap; overflow: visible;
             text-overflow: ellipsis; cursor: pointer; min-width: 0;
         }
         .gtow-report-card .rc-picker::after {
             content: "\25BE"; position: absolute; right: 8px; top: 50%;
-            transform: translateY(-50%); color: #8a8a90; font-size: 11px;
+            transform: translateY(-50%); color: #c2c6cd; font-size: 12px;
         }
         .gtow-report-card .rc-clear {
-            flex: 0 0 auto; background: #0d0d0d; border: 1px solid #2a2a2a;
-            color: #c9c9cf; border-radius: 6px; padding: 6px 11px;
+            flex: 0 0 auto; background: #1c1c1c; border: 1px solid #3a3a3a;
+            color: #c2c6cd; border-radius: 6px; padding: 6px 11px;
             font-size: 12px; font-weight: 600; cursor: pointer;
         }
-        .gtow-report-card .rc-clear:hover { background: #0d0d0d; }
+        .gtow-report-card .rc-clear:hover { background: #1c1c1c; }
         .rc-pick-menu {
             display: none; position: absolute; top: calc(100% + 4px); left: 0;
             min-width: 100%; max-width: 280px; max-height: 260px; overflow-y: auto;
-            background: #0d0d0d; border: 1px solid #2a2a2a; border-radius: 6px;
+            background: #1c1c1c; border: 1px solid #3a3a3a; border-radius: 6px;
             z-index: 200; box-shadow: 0 8px 24px rgba(0,0,0,.6);
         }
         .rc-pick-menu.open { display: block; }
         .rc-pick-item {
-            padding: 8px 10px; font-size: 12px; font-weight: 600; color: #d4d4d9;
-            white-space: nowrap; cursor: pointer; border-bottom: 1px solid #2a2a2a;
+            padding: 8px 10px; font-size: 12px; font-weight: 600; color: #ededed;
+            white-space: nowrap; cursor: pointer; border-bottom: 1px solid #3a3a3a;
         }
         .rc-pick-item:last-child { border-bottom: none; }
-        .rc-pick-item:hover { background: #0d0d0d; color: #fff; }
+        .rc-pick-item:hover { background: #1c1c1c; color: #fff; }
         /* currently-loaded report row: blue highlight + leading checkmark */
         .rc-pick-item.is-current { background: rgba(74,158,255,.12); box-shadow: inset 2px 0 0 #4a9eff; }
         .rc-pick-item.is-current:hover { background: rgba(74,158,255,.18); }
-        .rc-pick-item.is-current .rc-pick-title { color: #f1f4f9; }
+        .rc-pick-item.is-current .rc-pick-title { color: #ededed; }
         .rc-pick-check {
             flex: 0 0 auto; width: 14px; margin-left: 8px;
             text-align: center; font-size: 12px; font-weight: 700; line-height: 1;
             color: transparent; user-select: none;
         }
         .rc-pick-item.is-current .rc-pick-check { color: #4a9eff; }
-        .rc-pick-empty { padding: 8px 10px; font-size: 12px; color: #6e6f75; }
+        .rc-pick-empty { padding: 8px 10px; font-size: 12px; color: #aab0b8; }
         /* FIELD LIST as an aligned 2-column description list: labels col | values col.
            Values share one left edge to scan down. Type tokens kept from the old .rc-row. */
         .gtow-report-card .rc-fields {
@@ -800,11 +800,11 @@
             column-gap: 10px; row-gap: 4px; margin: 1px 0 0; padding: 0;
         }
         .gtow-report-card .rc-fields dt {
-            color: #8c8c92; font-weight: 600; font-size: 12.5px; line-height: 1.2; white-space: nowrap;
+            color: #c2c6cd; font-weight: 600; font-size: 14px; line-height: 1.2; white-space: nowrap;
         }
         .gtow-report-card .rc-fields dt::after { content: ":"; }
         .gtow-report-card .rc-fields dd {
-            color: #ededf0; font-weight: 700; font-size: 12.5px; line-height: 1.2;
+            color: #ededed; font-weight: 700; font-size: 14px; line-height: 1.2;
             white-space: nowrap; margin: 0;
         }
         .gtow-report-card .rc-actions {
@@ -812,10 +812,10 @@
         }
         .gtow-report-card .rc-edit {
             align-self: flex-start;
-            background: #0d0d0d; border: 1px solid #2a2a2a; color: #c9c9cf;
-            border-radius: 6px; padding: 7px 16px; font-size: 12.5px; font-weight: 600; cursor: pointer;
+            background: #1c1c1c; border: 1px solid #3a3a3a; color: #c2c6cd;
+            border-radius: 6px; padding: 7px 16px; font-size: 14px; font-weight: 600; cursor: pointer;
         }
-        .gtow-report-card .rc-edit:hover { background: #0d0d0d; color: #fff; }
+        .gtow-report-card .rc-edit:hover { background: #1c1c1c; color: #fff; }
         .gtow-report-card .rc-edit:focus-visible { outline: 2px solid #4a9eff; outline-offset: 2px; }
         .gtow-report-card .rc-notes {
             display: inline-flex; align-items: center; gap: 6px;
@@ -824,11 +824,11 @@
         /* ---- Import data button (top of report card) ---- */
         .gtow-report-card .rc-import {
             display: flex; align-items: center; justify-content: center; gap: 7px;
-            width: 100%; background: #0d0d0d; border: 1px solid #2a2a2a; color: #d4d4d9;
-            border-radius: 6px; padding: 8px 12px; font-size: 12.5px; font-weight: 600;
+            width: 100%; background: #1c1c1c; border: 1px solid #3a3a3a; color: #ededed;
+            border-radius: 6px; padding: 8px 12px; font-size: 14px; font-weight: 600;
             cursor: pointer;
         }
-        .gtow-report-card .rc-import:hover { background: #0d0d0d; color: #fff; }
+        .gtow-report-card .rc-import:hover { background: #1c1c1c; color: #fff; }
         /* ---- picker rows: name + per-report Export ---- */
         .rc-pick-item {
             display: flex; align-items: center; justify-content: space-between; gap: 8px;
@@ -838,44 +838,44 @@
             display: flex; flex-direction: column; gap: 1px; overflow: hidden;
         }
         .rc-pick-title {
-            font-size: 12px; font-weight: 600; color: #d4d4d9;
+            font-size: 12px; font-weight: 600; color: #ededed;
             white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
         }
         .rc-pick-sub {
-            font-size: 11px; font-weight: 500; color: #8a8a90;
+            font-size: 12px; font-weight: 500; color: #c2c6cd;
             white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
         }
         /* ---- picker search box (top of menu) ---- */
         .rc-pick-search {
             position: sticky; top: 0; z-index: 1;
             display: flex; align-items: center; gap: 7px;
-            padding: 8px 10px; background: #0d0d0d;
-            border-bottom: 1px solid #2a2a2a;
+            padding: 8px 10px; background: #1c1c1c;
+            border-bottom: 1px solid #3a3a3a;
         }
-        .rc-pick-search svg { flex: 0 0 auto; color: #8a8a90; }
+        .rc-pick-search svg { flex: 0 0 auto; color: #c2c6cd; }
         .rc-pick-search input {
             flex: 1 1 auto; min-width: 0;
             background: transparent; border: none; outline: none;
-            color: #d4d4d9; font-size: 12px; font-weight: 600;
+            color: #ededed; font-size: 12px; font-weight: 600;
         }
-        .rc-pick-search input::placeholder { color: #6e6f75; font-weight: 500; }
+        .rc-pick-search input::placeholder { color: #aab0b8; font-weight: 500; }
         /* per-row actions: icon-only Export (arrow UP) + icon-only RED Delete */
         .rc-pick-actions { flex: 0 0 auto; display: flex; align-items: center; gap: 4px; margin: 3px 8px 3px 0; }
         .rc-pick-export, .rc-pick-delete {
             flex: 0 0 auto; display: flex; align-items: center; justify-content: center;
-            padding: 5px; font-size: 11.5px; font-weight: 600;
-            background: #0d0d0d; border: 1px solid #2a2a2a; border-radius: 6px; cursor: pointer;
+            padding: 5px; font-size: 12px; font-weight: 600;
+            background: #1c1c1c; border: 1px solid #3a3a3a; border-radius: 6px; cursor: pointer;
         }
-        .rc-pick-export { color: #c9c9cf; }
-        .rc-pick-export:hover { background: #0d0d0d; color: #fff; }
+        .rc-pick-export { color: #c2c6cd; }
+        .rc-pick-export:hover { background: #1c1c1c; color: #fff; }
         /* RED delete (app danger token #ef4444 / hover #dc2626) */
         .rc-pick-delete { color: #ef4444; }
-        .rc-pick-delete:hover { background: #0d0d0d; color: #dc2626; }
+        .rc-pick-delete:hover { background: #1c1c1c; color: #dc2626; }
         .rc-pick-export svg, .rc-pick-delete svg { display: block; }
         /* ---- thin far-left vertical strip: holds ONLY the avatar ---- */
         .left-strip {
-            flex: 0 0 auto; width: 52px; background-color: #0d0d0d;
-            border-right: 1px solid #2a2a2a; display: flex; flex-direction: column;
+            flex: 0 0 auto; width: 52px; background-color: #1c1c1c;
+            border-right: 1px solid #3a3a3a; display: flex; flex-direction: column;
             align-items: center; padding-top: 14px;
         }
         /* ---- account control: avatar-only on the left strip ---- */
@@ -890,38 +890,38 @@
         .acct-menu {
             display: none; position: absolute; left: calc(100% + 8px); top: 0;
             min-width: 170px; padding: 6px 0; z-index: 1000;
-            background: #0d0d0d; border: 1px solid #2a2a2a; border-radius: 10px;
+            background: #1c1c1c; border: 1px solid #3a3a3a; border-radius: 10px;
             box-shadow: 0 8px 24px rgba(0,0,0,.6);
         }
         .acct-menu-item {
-            padding: 9px 16px; font-size: 12.5px; font-weight: 600; color: #d4d4d9; cursor: pointer;
+            padding: 9px 16px; font-size: 14px; font-weight: 600; color: #ededed; cursor: pointer;
         }
-        .acct-menu-item:hover { background: #0d0d0d; color: #fff; }
+        .acct-menu-item:hover { background: #1c1c1c; color: #fff; }
         /* ---- LOAD A REPORT drop-zone (bottom of picker menu) ---- */
-        .rc-load { border-top: 1px solid #2a2a2a; padding: 10px; }
+        .rc-load { border-top: 1px solid #3a3a3a; padding: 10px; }
         .rc-load-label {
-            font-size: 10.5px; font-weight: 700; letter-spacing: .8px;
-            color: #8c8c92; text-transform: uppercase; margin-bottom: 8px;
+            font-size: 12px; font-weight: 700; letter-spacing: .8px;
+            color: #c2c6cd; text-transform: uppercase; margin-bottom: 8px;
         }
         .rc-load-zone {
             display: flex; flex-direction: column; align-items: center; gap: 6px;
-            border: 1px dashed #2a2a2a; border-radius: 8px; padding: 14px 10px;
-            background: #0d0d0d; text-align: center;
+            border: 1px dashed #3a3a3a; border-radius: 8px; padding: 14px 10px;
+            background: #1c1c1c; text-align: center;
         }
         .rc-load-zone.dragover { border-color: #4a9eff; background: #1d2533; }
-        .rc-load-icon { color: #8c8c92; }
-        .rc-load-hint { font-size: 12px; color: #c4c4ca; }
-        .rc-load-or { font-size: 11px; color: #6e6f75; }
+        .rc-load-icon { color: #c2c6cd; }
+        .rc-load-hint { font-size: 12px; color: #c2c6cd; }
+        .rc-load-or { font-size: 12px; color: #aab0b8; }
         .rc-load-btn {
-            background: #3b82f6; border: none; color: #fff; border-radius: 6px;
+            background: #1d4ed8; border: none; color: #fff; border-radius: 6px;
             padding: 7px 16px; font-size: 12px; font-weight: 600; cursor: pointer;
         }
         .rc-load-btn:hover { background: #4a9eff; }
 
         .header {
-            background-color: #0d0d0d;
+            background-color: #1c1c1c;
             padding: 12px 20px;
-            border-bottom: 1px solid #2a2a2a;
+            border-bottom: 1px solid #3a3a3a;
         }
     
         .header-top {
@@ -937,8 +937,8 @@
         }
     
         .header p {
-            font-size: 10px;
-            color: #888;
+            font-size: 12px;
+            color: #c2c6cd;
         }
     
         .chart-container {
@@ -948,7 +948,7 @@
         }
     
         .chart-wrapper {
-            background-color: #0d0d0d;
+            background-color: #1c1c1c;
             border-radius: 6px;
             padding: 20px;
             width: fit-content;
@@ -957,7 +957,7 @@
         }
     
         .chart-wrapper-main {
-            background-color: #0d0d0d;
+            background-color: #1c1c1c;
             border-radius: 6px;
             padding: 20px;
             width: fit-content;
@@ -965,7 +965,7 @@
         }
 
         .chart-wrapper-detail {
-            background-color: #0d0d0d;
+            background-color: #1c1c1c;
             border-radius: 6px;
             padding: 20px;
             width: fit-content;
@@ -992,14 +992,14 @@
         }
     
         .chart-title {
-            font-size: 18px;
+            font-size: 20px;
             color: #fff;
         }
     
         .legend {
             display: flex;
             gap: 15px;
-            font-size: 10px;
+            font-size: 12px;
         }
     
         .legend-item {
@@ -1053,16 +1053,16 @@
         }
     
         .btn-success:hover {
-            background-color: #059669;
+            background-color: #10b981;
         }
     
         .btn-secondary {
-            background-color: #0d0d0d;
+            background-color: #1c1c1c;
             color: #fff;
         }
     
         .btn-secondary:hover {
-            background-color: #0d0d0d;
+            background-color: #1c1c1c;
         }
     
         .btn-danger {
@@ -1101,14 +1101,14 @@
         }
     
         .modal-content {
-            background-color: #0d0d0d;
+            background-color: #1c1c1c;
             border-radius: 12px;
             padding: 25px;
             max-width: 900px;
             width: 90%;
             max-height: 80vh;
             overflow-y: auto;
-            border: 1px solid #2a2a2a;
+            border: 1px solid #3a3a3a;
         }
     
         .modal-header {
@@ -1127,8 +1127,8 @@
         .close-btn {
             background: none;
             border: none;
-            color: #888;
-            font-size: 24px;
+            color: #c2c6cd;
+            font-size: 28px;
             cursor: pointer;
         }
     
@@ -1147,21 +1147,21 @@
         }
     
         .import-section p {
-            color: #888;
-            font-size: 10px;
+            color: #c2c6cd;
+            font-size: 12px;
             margin-bottom: 12px;
         }
     
         textarea {
             width: 100%;
             min-height: 180px;
-            background-color: #0d0d0d;
-            border: 1px solid #2a2a2a;
+            background-color: #1c1c1c;
+            border: 1px solid #3a3a3a;
             border-radius: 6px;
             padding: 10px;
-            color: #e0e0e0;
+            color: #ededed;
             font-family: 'Courier New', monospace;
-            font-size: 10px;
+            font-size: 12px;
             resize: vertical;
         }
     
@@ -1187,7 +1187,7 @@
     
         .info-banner p {
             color: #b8d4f1;
-            font-size: 10px;
+            font-size: 12px;
             line-height: 1.4;
         }
     
@@ -1199,15 +1199,15 @@
         }
     
         .stat-card {
-            background-color: #0d0d0d;
+            background-color: #1c1c1c;
             padding: 15px;
             border-radius: 6px;
-            border: 1px solid #2a2a2a;
+            border: 1px solid #3a3a3a;
         }
     
         .stat-label {
-            font-size: 9px;
-            color: #888;
+            font-size: 12px;
+            color: #c2c6cd;
             margin-bottom: 3px;
         }
     
@@ -1223,19 +1223,19 @@
     
         .input-group label {
             display: block;
-            color: #888;
-            font-size: 10px;
+            color: #c2c6cd;
+            font-size: 12px;
             margin-bottom: 4px;
         }
     
         .input-group input, .input-group select {
             width: 100%;
-            background-color: #0d0d0d;
-            border: 1px solid #2a2a2a;
+            background-color: #1c1c1c;
+            border: 1px solid #3a3a3a;
             border-radius: 6px;
             padding: 8px;
-            color: #e0e0e0;
-            font-size: 11px;
+            color: #ededed;
+            font-size: 12px;
         }
     
         .input-group input:focus, .input-group select:focus {
@@ -1244,8 +1244,8 @@
         }
     
         .filter-tags-section {
-            background-color: #0d0d0d;
-            border: 1px solid #2a2a2a;
+            background-color: #1c1c1c;
+            border: 1px solid #3a3a3a;
             border-radius: 6px;
             padding: 12px;
             margin-bottom: 15px;
@@ -1268,8 +1268,8 @@
         }
     
         .tag-group-title {
-            color: #888;
-            font-size: 9px;
+            color: #c2c6cd;
+            font-size: 12px;
             text-transform: uppercase;
             margin-bottom: 6px;
             letter-spacing: 0.3px;
@@ -1278,14 +1278,14 @@
         .tag-group select,
         .tag-group input {
             width: 100%;
-            background-color: #0d0d0d;
-            border: 1px solid #2a2a2a;
+            background-color: #1c1c1c;
+            border: 1px solid #3a3a3a;
             border-radius: 4px;
             padding: 6px;
-            color: #e0e0e0;
-            font-size: 10px;
+            color: #ededed;
+            font-size: 12px;
         }
-        .tag-group input::placeholder { color: #6e6f75; }
+        .tag-group input::placeholder { color: #aab0b8; }
     
         #strengthChart {
             min-height: 0;
@@ -1296,22 +1296,22 @@
         .no-data-message {
             text-align: center;
             padding: 50px 20px;
-            color: #888;
+            color: #c2c6cd;
         }
     
         .no-data-message h3 {
-            font-size: 15px;
+            font-size: 16px;
             margin-bottom: 8px;
-            color: #aaa;
+            color: #c2c6cd;
         }
     
         .no-data-message p {
-            font-size: 11px;
+            font-size: 12px;
         }
     
         .additional-filters {
-            background-color: #0d0d0d;
-            border: 1px solid #2a2a2a;
+            background-color: #1c1c1c;
+            border: 1px solid #3a3a3a;
             border-radius: 6px;
             padding: 10px;
             margin-bottom: 10px;
@@ -1334,7 +1334,7 @@
             align-items: center;
             gap: 8px;
             padding: 6px;
-            background-color: #0d0d0d;
+            background-color: #1c1c1c;
             border-radius: 4px;
         }
 
@@ -1345,8 +1345,8 @@
         }
 
         .additional-filter-item label {
-            color: #b0b0b0;
-            font-size: 10px;
+            color: #c2c6cd;
+            font-size: 12px;
             cursor: pointer;
             margin: 0;
         }
@@ -1354,8 +1354,8 @@
         .view-toggle-btn {
             padding: 6px 16px;
             margin: 0 5px;
-            font-size: 13px;
-            background-color: #0d0d0d;
+            font-size: 14px;
+            background-color: #1c1c1c;
             color: #ffffff;
             border: none;
             border-radius: 4px;
@@ -1364,11 +1364,11 @@
         }
 
         .view-toggle-btn:hover {
-            background-color: #0d0d0d;
+            background-color: #1c1c1c;
         }
 
         .view-toggle-btn.active {
-            background-color: #3b82f6;
+            background-color: #1d4ed8;
         }
 
         .bet-input-container {
@@ -1381,12 +1381,12 @@
 
         .bet-input {
             width: 45px;
-            background: #0d0d0d;
-            border: 1px solid #2a2a2a;
+            background: #1c1c1c;
+            border: 1px solid #3a3a3a;
             color: #fff;
             padding: 2px 4px;
             border-radius: 4px;
-            font-size: 11px;
+            font-size: 12px;
             text-align: center;
             -moz-appearance: textfield;
         }
@@ -1399,7 +1399,7 @@
 
         .bet-input:focus {
             outline: none;
-            border-color: #3b82f6;
+            border-color: #1d4ed8;
         }
 
         .lock-icon {
@@ -1414,11 +1414,11 @@
 
         .gto-tooltip {
             position: absolute;
-            background: #000;
+            background: #121212;
             color: #fff;
             padding: 4px 8px;
             border-radius: 4px;
-            font-size: 11px;
+            font-size: 12px;
             white-space: nowrap;
             z-index: 1000;
             pointer-events: none;
@@ -1439,8 +1439,8 @@
         }
 
         .import-modal {
-            background: #0d0d0d;
-            border: 1px solid #2a2a2a;
+            background: #1c1c1c;
+            border: 1px solid #3a3a3a;
             border-radius: 8px;
             padding: 24px;
             max-width: 400px;
@@ -1450,12 +1450,12 @@
         .import-modal h3 {
             margin: 0 0 12px 0;
             color: #fff;
-            font-size: 18px;
+            font-size: 20px;
         }
 
         .import-modal p {
             margin: 0 0 20px 0;
-            color: #aaa;
+            color: #c2c6cd;
             font-size: 14px;
         }
 
@@ -1479,7 +1479,7 @@
         }
 
         .import-modal-btn.cancel {
-            background: #0d0d0d;
+            background: #1c1c1c;
             color: #fff;
         }
 
@@ -1489,16 +1489,16 @@
 
         /* Link Report Modal - Make dropdowns visible */
         #linkReportModal select {
-            background-color: #0d0d0d;
-            color: #e0e0e0;
-            border: 1px solid #2a2a2a;
+            background-color: #1c1c1c;
+            color: #ededed;
+            border: 1px solid #3a3a3a;
             padding: 8px;
             border-radius: 4px;
             font-size: 14px;
         }
 
         #linkReportModal label {
-            color: #e0e0e0;
+            color: #ededed;
             display: block;
             margin-top: 10px;
             margin-bottom: 5px;
@@ -1506,9 +1506,9 @@
         }
 
         #linkReportModal textarea {
-            background-color: #0d0d0d;
-            color: #e0e0e0;
-            border: 1px solid #2a2a2a;
+            background-color: #1c1c1c;
+            color: #ededed;
+            border: 1px solid #3a3a3a;
         }
 
         /* Link Report Modal Styling */
@@ -1518,29 +1518,29 @@
         }
 
         #linkReportModal .filter-group label {
-            color: #e0e0e0;
-            font-size: 13px;
+            color: #ededed;
+            font-size: 14px;
             font-weight: bold;
             margin-bottom: 5px;
         }
 
         #linkReportModal select {
-            background-color: #0d0d0d;
-            color: #e0e0e0;
-            border: 1px solid #2a2a2a;
+            background-color: #1c1c1c;
+            color: #ededed;
+            border: 1px solid #3a3a3a;
             padding: 8px;
             border-radius: 4px;
             font-size: 14px;
         }
 
         #linkReportModal textarea {
-            background-color: #0d0d0d;
-            color: #e0e0e0;
-            border: 1px solid #2a2a2a;
+            background-color: #1c1c1c;
+            color: #ededed;
+            border: 1px solid #3a3a3a;
             padding: 10px;
             border-radius: 4px;
             font-family: monospace;
-            font-size: 13px;
+            font-size: 14px;
         }
 
         #linkReportModal .modal-buttons {
@@ -1583,14 +1583,14 @@
         }
 
         #linkReportModal .btn-secondary:hover {
-            background-color: #0d0d0d;
+            background-color: #1c1c1c;
         }
 
         /* Board Import Modal Styling */
         #dataInput {
-            background-color: #0d0d0d;
-            color: #e0e0e0;
-            border: 1px solid #2a2a2a;
+            background-color: #1c1c1c;
+            color: #ededed;
+            border: 1px solid #3a3a3a;
             padding: 10px;
             border-radius: 4px;
             font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
@@ -1628,7 +1628,7 @@
             --imd-line-soft:  #21242a;
             --imd-txt:        #f3f5f8;          /* primary text       ~16:1 */
             --imd-txt-2:      #aeb4bf;          /* secondary text     ~8.5:1 */
-            --imd-txt-3:      #a3a3a3;          /* labels / muted     ~7:1  (was #6b7280 = 3.68:1 FAIL) */
+            --imd-txt-3:      #aab0b8;          /* labels / muted     ~7:1  (was #aab0b8 = 3.68:1 FAIL) */
             --imd-txt-ph:     #969ba5;          /* placeholder        ~6.7:1 (in scope, must pass 4.5:1) */
             --imd-accent:     #4a9eff;          /* accent TEXT/BORDER/ICON on dark ~6.45:1 */
             --imd-accent-strong:#3a8eef;        /* (legacy accent hover — retained) */
@@ -1666,7 +1666,7 @@
         #linkReportModal .modal-content::-webkit-scrollbar { width: 10px; }
         #importModal .modal-content::-webkit-scrollbar-thumb,
         #linkReportModal .modal-content::-webkit-scrollbar-thumb {
-            background:#2c3038; border-radius:8px; border:3px solid var(--imd-surface);
+            background:#3a3a3a; border-radius:8px; border:3px solid var(--imd-surface);
         }
 
         /* head */
@@ -1677,10 +1677,10 @@
         }
         #importModal .imd-title,
         #linkReportModal .imd-title {
-            font-size:20px; font-weight:700; letter-spacing:-.2px; margin:0; color:var(--imd-txt);
+            font-size: 20px; font-weight:700; letter-spacing:-.2px; margin:0; color:var(--imd-txt);
         }
         #importModal .imd-sub,
-        #linkReportModal .imd-sub { margin:4px 0 0; font-size:13px; line-height:1.5; color:var(--imd-txt-3); }
+        #linkReportModal .imd-sub { margin:4px 0 0; font-size: 14px; line-height:1.5; color:var(--imd-txt-3); }
         #importModal .imd-x,
         #linkReportModal .imd-x {
             flex:0 0 auto; width:36px; height:36px; border-radius:8px; border:0; cursor:pointer;
@@ -1688,7 +1688,7 @@
             transition:.15s; font-size:0; line-height:0; padding:0;
         }
         #importModal .imd-x:hover,
-        #linkReportModal .imd-x:hover { background:#23262c; color:var(--imd-txt); }
+        #linkReportModal .imd-x:hover { background:#2a2a2a; color:var(--imd-txt); }
 
         #importModal .imd-body,
         #linkReportModal .imd-body { padding:8px 24px 0; }
@@ -1714,14 +1714,14 @@
         #linkReportModal .imd-sechead { display:flex; align-items:center; gap:8px; margin-bottom:4px; }
         #importModal .imd-step,
         #linkReportModal .imd-step {
-            flex:0 0 auto; font:700 11px/1 var(--imd-font); letter-spacing:.6px;
+            flex:0 0 auto; font:700 12px/1 var(--imd-font); letter-spacing:.6px;
             color:var(--imd-accent); background:var(--imd-accent-tint);
             border:1px solid var(--imd-accent-line); border-radius:999px; padding:4px 8px;
         }
         #importModal .imd-sectitle,
-        #linkReportModal .imd-sectitle { font-size:16px; font-weight:650; color:var(--imd-txt); }
+        #linkReportModal .imd-sectitle { font-size: 16px; font-weight:650; color:var(--imd-txt); }
         #importModal .imd-help,
-        #linkReportModal .imd-help { margin:8px 0 16px; font-size:13px; line-height:1.5; color:var(--imd-txt-2); max-width:64ch; }
+        #linkReportModal .imd-help { margin:8px 0 16px; font-size: 14px; line-height:1.5; color:var(--imd-txt-2); max-width:64ch; }
         #importModal .imd-help b,
         #linkReportModal .imd-help b { color:var(--imd-txt); }
 
@@ -1759,11 +1759,11 @@
         /* matchup preview */
         #importModal .imd-matchup-preview {
             display:inline-flex; align-items:center; gap:8px; margin-top:12px;
-            font-size:13px; color:var(--imd-txt-2);
+            font-size: 14px; color:var(--imd-txt-2);
         }
         #importModal .imd-matchup-preview b { color:var(--imd-txt); font-weight:650; }
         #importModal .imd-vs {
-            font:700 11px/1 var(--imd-font); color:var(--imd-accent);
+            font:700 12px/1 var(--imd-font); color:var(--imd-accent);
             background:var(--imd-accent-tint); border:1px solid var(--imd-accent-line);
             border-radius:6px; padding:4px 6px; letter-spacing:.5px;
         }
@@ -1802,9 +1802,9 @@
         }
         #importModal .imd-autoname svg { flex:0 0 auto; color:var(--imd-accent); }
         #importModal .imd-autoname .imd-k {
-            font:600 11px/1 var(--imd-font); letter-spacing:.6px; text-transform:uppercase; color:var(--imd-txt-3);
+            font:600 12px/1 var(--imd-font); letter-spacing:.6px; text-transform:uppercase; color:var(--imd-txt-3);
         }
-        #importModal .imd-autoname .imd-v { font-size:14px; font-weight:650; color:var(--imd-txt); }
+        #importModal .imd-autoname .imd-v { font-size: 14px; font-weight:650; color:var(--imd-txt); }
         #importModal .imd-autoname .imd-muted { color:var(--imd-txt-3); font-weight:500; }
 
         /* MODAL 2 — context banner + locked confirmations */
@@ -1815,12 +1815,12 @@
             border-radius:var(--imd-radius-sm);
         }
         #linkReportModal .imd-ctx svg { flex:0 0 auto; color:var(--imd-accent); margin-top:1px; }
-        #linkReportModal .imd-ctx p { margin:0; font-size:13px; line-height:1.5; color:#dbe6f7; }
+        #linkReportModal .imd-ctx p { margin:0; font-size: 14px; line-height:1.5; color:#dbe6f7; }
         #linkReportModal .imd-ctx p b { color:#fff; font-weight:700; }
 
         #linkReportModal .imd-locked-note {
             display:flex; align-items:center; gap:8px; margin:4px 0 16px;
-            font-size:13px; line-height:1.5; color:var(--imd-txt-2);
+            font-size: 14px; line-height:1.5; color:var(--imd-txt-2);
         }
         #linkReportModal .imd-locked-note svg { color:var(--imd-lock); flex:0 0 auto; }
 
@@ -1866,10 +1866,10 @@
         }
         #importModal .imd-btn-secondary,
         #linkReportModal .imd-btn-secondary {
-            background:#23262c; color:var(--imd-txt); border-color:#2f333b;
+            background:#2a2a2a; color:var(--imd-txt); border-color:#3a3a3a;
         }
         #importModal .imd-btn-secondary:hover,
-        #linkReportModal .imd-btn-secondary:hover { background:#2a2e35; }
+        #linkReportModal .imd-btn-secondary:hover { background:#3a3a3a; }
         #importModal .imd-btn-ghost,
         #linkReportModal .imd-btn-ghost {
             background:transparent; color:var(--imd-txt-2); border-color:var(--imd-line);
@@ -1900,24 +1900,24 @@
            REPORT NOTES DRAWER (notes-*) — ADDITIVE, look held to the
            research-backed-UI hard gate. Right-side standard (non-modal)
            drawer ~400px (GitLab Pajamas / Material standard side-sheet),
-           keeps the report visible. Flat-black #0d0d0d surface + #2a2a2a
+           keeps the report visible. Flat-black #1c1c1c surface + #3a3a3a
            hairline borders to match the app; contrast tokens reuse the
            imd modal's WCAG-vetted palette. Every text color is measured
            against its ACTUAL rendered background:
-             editor body  #f3f5f8 on #141414 = 16.87:1  (AAA)
-             title        #f3f5f8 on #0d0d0d = 17.79:1  (AAA)
-             help/sub     #aeb4bf on #0d0d0d =  9.33:1  (AAA)
-             label        #a3a3a3 on #0d0d0d =  7.70:1  (AAA)
-             placeholder  #969ba5 on #141414 =  6.60:1  (passes AA 4.5:1; NOT the failing #9ca3af gray)
-             "Saved" txt  #4ade80 on #0d0d0d = 11.15:1  (AAA)
-             presence dot #4a9eff on #0d0d0d =  7.06:1  (non-text, ≥3:1)
+             editor body  #f3f5f8 on #1c1c1c = 16.87:1  (AAA)
+             title        #f3f5f8 on #1c1c1c = 17.79:1  (AAA)
+             help/sub     #aeb4bf on #1c1c1c =  9.33:1  (AAA)
+             label        #aab0b8 on #1c1c1c =  7.70:1  (AAA)
+             placeholder  #969ba5 on #1c1c1c =  6.60:1  (passes AA 4.5:1; NOT the failing #9ca3af gray)
+             "Saved" txt  #4ade80 on #1c1c1c = 11.15:1  (AAA)
+             presence dot #4a9eff on #1c1c1c =  7.06:1  (non-text, ≥3:1)
            Body text ≥16px, line-height ≥1.5 per WCAG 1.4.12 + 1.4.3.
            ============================================================ */
         .notes-drawer {
             position: fixed; top: 0; right: 0; bottom: 0;
             width: 400px; max-width: 92vw;
-            background: #0d0d0d;
-            border-left: 1px solid #2a2a2a;
+            background: #1c1c1c;
+            border-left: 1px solid #3a3a3a;
             box-shadow: -16px 0 48px -16px rgba(0,0,0,.7);
             display: flex; flex-direction: column;
             transform: translateX(100%);
@@ -1932,15 +1932,15 @@
         .notes-drawer-head {
             display: flex; align-items: flex-start; justify-content: space-between;
             gap: 12px; padding: 20px 20px 14px;
-            border-bottom: 1px solid #2a2a2a;
+            border-bottom: 1px solid #3a3a3a;
         }
         .notes-drawer-titlewrap { min-width: 0; }
         .notes-drawer-title {
-            margin: 0; font-size: 18px; line-height: 1.3; font-weight: 700;
+            margin: 0; font-size: 20px; line-height: 1.3; font-weight: 700;
             color: #f3f5f8;
         }
         .notes-drawer-sub {
-            margin: 4px 0 0; font-size: 13px; line-height: 1.5; color: #aeb4bf;
+            margin: 4px 0 0; font-size: 14px; line-height: 1.5; color: #aeb4bf;
             white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
         }
         .notes-drawer-x {
@@ -1955,7 +1955,7 @@
         }
         .notes-drawer-editor {
             flex: 1 1 auto; width: 100%; box-sizing: border-box; resize: none;
-            background: #141414; border: 1px solid #2a2a2a; border-radius: 8px;
+            background: #1c1c1c; border: 1px solid #3a3a3a; border-radius: 8px;
             color: #f3f5f8;
             font-family: inherit;
             font-size: 16px; line-height: 1.5;
@@ -1970,7 +1970,7 @@
             padding: 10px 2px 0; min-height: 20px;
         }
         .notes-drawer-status {
-            font-size: 13px; line-height: 1.5; font-weight: 600;
+            font-size: 14px; line-height: 1.5; font-weight: 600;
             color: #4ade80; display: inline-flex; align-items: center; gap: 6px;
             opacity: 0; transition: opacity .15s ease;
         }
@@ -1982,23 +1982,156 @@
         .rc-notes-dot {
             position: absolute; top: -3px; right: -3px;
             width: 8px; height: 8px; border-radius: 50%;
-            background: #4a9eff; border: 1px solid #0d0d0d;
+            background: #4a9eff; border: 1px solid #1c1c1c;
             display: none;
         }
         .rc-notes.has-notes .rc-notes-dot { display: block; }
 
     </style>
+<style id="proposal-overrides">
+:root{
+  --surface-sunken:#0d0d0d; --surface-base:#121212; --surface-raised:#1c1c1c; --surface-overlay:#242424;
+  --text-primary:#ededed; --text-secondary:#c2c6cd; --text-muted:#aab0b8; --text-danger:#f94e4e; --text-disabled:#6f6f6f;
+  --border-subtle:#3a3a3a; --border-strong:#6e6e6e; --focus-ring:#4a9eff; --accent:#4a9eff;
+  --btn-primary:#1d4ed8; --btn-primary-hover:#2563eb; --btn-primary-active:#163fae;
+  --btn-success:#0c6342; --btn-success-hover:#0f7a52; --btn-success-active:#094e34;
+  --btn-danger:#c01c1c; --btn-danger-hover:#dc2626; --btn-danger-active:#991b1b;
+  --danger-icon:#ef4444; --avatar:#0f7a52; --info-banner:#13314f;
+  --selected-fill:rgba(74,158,255,0.16); --selected-border:#4a9eff;
+}
+/* ---- surface ramp (best-practice lift off pure black; AA re-measured) ---- */
+html,body{ background:var(--surface-base)!important; color:var(--text-primary); }
+.main-content{ background:var(--surface-base); }
+.left-strip,.sidebar{ background:var(--surface-base)!important; }
+.modal-content,.import-modal,.acct-menu,.dropdown-content,.rc-pick-menu,#handlinePickerMenu,
+#trainerModal>div,.notes-drawer,.gto-tooltip{ background:var(--surface-overlay)!important; }
+/* input wells = sunken + strong boundary (1.4.11) */
+textarea,.search-input-inline,.bet-input,.input-group input,.input-group select,
+.tag-group input,.tag-group select,#dataInput,#boardDataInput,#categoryHandsInput,
+#boardFilterInput,#turnCardSearchInput,#linkReportModal select,#linkReportModal textarea,
+.gtow-report-card .rc-picker,.rc-pick-search,#authEmail,#authPassword,.notes-drawer-editor,
+.imd-text-in,.imd-paste{ background:var(--surface-sunken)!important; border:1px solid var(--border-strong)!important; color:var(--text-primary)!important; }
+::placeholder{ color:var(--text-muted)!important; opacity:1; }
+/* ---- filled buttons (white text, all states proven >=4.5) ---- */
+.btn-primary,.btn-search-inline,#linkReportModal .btn-primary,.imd-btn-primary,
+.rc-load-btn,#loginBtn{ background:var(--btn-primary)!important; color:#fff!important; border-color:var(--btn-primary)!important; }
+.btn-primary:hover,.btn-search-inline:hover,#linkReportModal .btn-primary:hover,
+.imd-btn-primary:hover,.rc-load-btn:hover,#loginBtn:hover{ background:var(--btn-primary-hover)!important; }
+.btn-primary:active,.imd-btn-primary:active,.rc-load-btn:active{ background:var(--btn-primary-active)!important; }
+.btn-success{ background:var(--btn-success)!important; color:#fff!important; border-color:var(--btn-success)!important; }
+.btn-success:hover{ background:var(--btn-success-hover)!important; }
+.btn-success:active{ background:var(--btn-success-active)!important; }
+.btn-danger,.reset-btn{ background:var(--btn-danger)!important; color:#fff!important; }
+.btn-danger:hover,.reset-btn:hover{ background:var(--btn-danger-hover)!important; }
+#authError{ background:var(--btn-danger)!important; color:#fff!important; }
+.acct-avatar{ background:var(--avatar)!important; color:#fff!important; }
+/* disabled (contrast-exempt 1.4.3, kept perceivable) */
+button:disabled,.btn:disabled,.btn-primary:disabled,.btn-success:disabled,.btn-danger:disabled,.imd-btn-primary:disabled{
+  background:#2a2a2a!important; color:var(--text-disabled)!important; border-color:#2a2a2a!important; cursor:not-allowed!important; opacity:1!important; }
+/* red delete icons stay graphic >=3 */
+.rc-pick-delete,.dropdown-delete-btn{ color:var(--danger-icon)!important; background:transparent!important; }
+.rc-pick-delete:hover,.dropdown-delete-btn:hover{ color:#dc2626!important; }
+/* icon-button hit area >=24px (WCAG 2.5.8) */
+.rc-pick-delete,.rc-pick-export,.dropdown-delete-btn{ min-width:24px!important; min-height:24px!important; display:inline-flex!important; align-items:center!important; justify-content:center!important; }
+/* ---- info banner ---- */
+.info-banner{ background:var(--info-banner)!important; border-left-color:var(--accent)!important; }
+.info-banner h4{ color:var(--text-primary)!important; }
+.info-banner p{ color:var(--text-secondary)!important; }
+/* ---- aggregate inline action-text legibility (>=4.5 on raised) ---- */
+.action-fold{ color:var(--accent)!important; }
+.action-raise{ color:var(--text-danger)!important; }
+.action-bet{ color:#f59e0b!important; }
+.action-check,.action-call{ color:#10b981!important; }
+/* ---- FOCUS RING (separate from selected; every control) ---- */
+a:focus-visible,button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible,
+[tabindex]:focus-visible,[role="button"]:focus-visible,.gtow-act-btn:focus-visible,.rc-picker:focus-visible,
+.acct-avatar:focus-visible,.rc-pick-item:focus-visible,.flop-cat-btn:focus-visible,.turn-cat-btn:focus-visible,
+#vsBtn:focus-visible,.m-help-btn:focus-visible{ outline:2px solid var(--focus-ring)!important; outline-offset:2px!important; }
+/* ---- depth on true overlays only ---- */
+.modal-content,.import-modal,.rc-pick-menu,#handlinePickerMenu,.acct-menu,.notes-drawer{ box-shadow:0 24px 64px -16px rgba(0,0,0,.7)!important; }
+/* ---- radius scale ---- */
+.modal-content,.import-modal{ border-radius:16px!important; }
+.acct-menu,.rc-pick-menu,.dropdown-content,#handlinePickerMenu{ border-radius:12px!important; }
+/* ---- import/link modal token unify ---- */
+#importModal,#linkReportModal{
+  --imd-surface:#242424; --imd-surface-2:#2a2a2a; --imd-surface-3:#0d0d0d;
+  --imd-line:#3a3a3a; --imd-line-soft:#3a3a3a;
+  --imd-txt:#ededed; --imd-txt-2:#c2c6cd; --imd-txt-3:#aab0b8; --imd-txt-ph:#aab0b8;
+  --imd-accent:#4a9eff; --imd-accent-strong:#2563eb; --imd-accent-fill:#1d4ed8; --imd-accent-fill-strong:#2563eb;
+}
+/* ---- MOTION: respect reduce-motion globally ---- */
+@media (prefers-reduced-motion: reduce){ *{ transition:none!important; animation:none!important; } }
+
+/* ============ ONE selected/active idiom (blue fill + blue edge; NO tick) ============ */
+.street-bar.active,.gtow-card.active{ background:var(--selected-fill)!important; border:1px solid var(--selected-border)!important; color:var(--text-primary)!important; }
+.street-bar.active .pos,.gtow-card.active .pos,.gtow-card.active .street{ color:var(--text-primary)!important; }
+.gtow-act.taken{ background:var(--selected-fill)!important; border:1px solid var(--selected-border)!important; color:var(--text-primary)!important; }
+.rc-pick-item.is-current{ background:var(--selected-fill)!important; box-shadow:inset 2px 0 0 var(--selected-border)!important; }
+.rc-pick-item.is-current .rc-pick-title{ color:var(--text-primary)!important; }
+.rc-pick-item.is-current .rc-pick-check{ color:var(--selected-border)!important; }
+.gtow-report-card .rc-picker{ background:var(--selected-fill)!important; border:1px solid var(--selected-border)!important; color:var(--text-primary)!important; }
+/* one active-filter-input indicator (accent border on the sunken well) */
+#boardFilterInput.m-filter-active,#turnCardSearchInput.m-filter-active{ border:2px solid var(--accent)!important; }
+#turnCardSearchInput.m-filter-noresult{ border:2px solid var(--danger-icon)!important; }
+
+/* ============ filter box: no overflow; controls wrap ============ */
+#flopFilterBox,#turnFilterBox{ width:100%!important; max-width:100%!important; box-sizing:border-box!important; }
+#flopFilterBox > div:first-child,#turnFilterBox > div:first-child{ flex-wrap:wrap!important; row-gap:8px!important; }
+
+/* ============ "?" help affordance + 1.4.13 popover ============ */
+.m-help-wrap{ position:relative; display:inline-flex; margin-left:8px; flex:0 0 auto; }
+.m-help-btn{ width:24px; height:24px; display:inline-flex; align-items:center; justify-content:center;
+  background:var(--surface-sunken); border:1px solid var(--border-strong); color:var(--text-secondary);
+  border-radius:50%; font-size:14px; font-weight:700; line-height:1; cursor:pointer; padding:0; }
+.m-help-btn:hover{ color:var(--text-primary); border-color:var(--accent); }
+.m-help-pop{ display:none; position:absolute; top:calc(100% + 8px); left:0; right:auto; z-index:600; width:320px;
+  background:var(--surface-overlay); border:1px solid var(--border-subtle); border-radius:12px; padding:12px 16px;
+  box-shadow:0 12px 28px -10px rgba(0,0,0,.7); font-size:12px; line-height:1.5; letter-spacing:.32px; color:var(--text-secondary); white-space:normal; }
+.m-help-wrap:hover .m-help-pop,.m-help-pop.m-open{ display:block; }
+.m-help-pop b{ color:var(--text-primary); }
+
+/* ============ spacing: hand-line re-gridded (street-card spacing 12px) ============ */
+.gtow-handline{ gap:12px!important; }
+.street-group.is-empty{ min-width:0!important; }
+.street-group{ gap:4px!important; }
+.gtow-actions{ gap:4px!important; }
+.gtow-card{ padding:8px!important; }
+.gtow-card-head{ margin-bottom:4px!important; }
+.gtow-report-card{ padding:8px!important; gap:8px!important; margin-right:4px!important; }
+.gtow-report-card .rc-top{ gap:8px!important; }
+
+/* ============ themed dialog + toast ============ */
+.m-dlg-scrim{ position:fixed; inset:0; background:rgba(0,0,0,.6); z-index:12000; display:flex; align-items:center; justify-content:center; }
+.m-dlg{ background:var(--surface-overlay); border:1px solid var(--border-subtle); border-radius:16px; width:420px; max-width:92vw;
+  box-shadow:0 24px 64px -16px rgba(0,0,0,.7); padding:22px 22px 18px; }
+.m-dlg h3{ font-size:16px; font-weight:700; color:var(--text-primary); margin:0 0 8px; }
+.m-dlg p{ font-size:14px; line-height:1.5; color:var(--text-secondary); margin:0 0 18px; }
+.m-dlg p b{ color:var(--text-primary); }
+.m-dlg-row{ display:flex; gap:10px; justify-content:flex-end; }
+.m-dlg-btn{ padding:9px 16px; border-radius:8px; font-size:14px; font-weight:600; cursor:pointer; border:1px solid transparent; }
+.m-dlg-cancel{ background:transparent; color:var(--text-secondary); border-color:var(--border-subtle); }
+.m-dlg-cancel:hover{ color:var(--text-primary); background:#2e2e2e; }
+.m-dlg-danger{ background:var(--btn-danger); color:#fff; } .m-dlg-danger:hover{ background:var(--btn-danger-hover); }
+.m-dlg-primary{ background:var(--btn-primary); color:#fff; } .m-dlg-primary:hover{ background:var(--btn-primary-hover); }
+.m-dlg-btn:focus-visible{ outline:2px solid var(--focus-ring); outline-offset:2px; }
+.m-toast-wrap{ position:fixed; right:20px; bottom:20px; z-index:12050; display:flex; flex-direction:column; gap:10px; align-items:flex-end; }
+.m-toast{ display:flex; align-items:center; gap:10px; background:var(--surface-overlay); border:1px solid var(--border-subtle);
+  border-left:3px solid #10b981; border-radius:10px; padding:12px 14px; min-width:240px; max-width:380px; color:var(--text-primary);
+  font-size:14px; font-weight:600; box-shadow:0 12px 28px -10px rgba(0,0,0,.7); }
+.m-toast.err{ border-left-color:var(--danger-icon); }
+.m-toast .m-toast-ico{ width:18px; height:18px; flex:0 0 auto; }
+</style>
 </head>
 <body>
-    <div class="auth-required-overlay" style="display:flex; position:fixed; top:0; left:0; width:100%; height:100%; background:#0d0d0d; justify-content:center; align-items:center; z-index:9999;">
-        <h2 style="color:#e0e0e0;">Please log in to use this app</h2>
+    <div class="auth-required-overlay" style="display:flex; position:fixed; top:0; left:0; width:100%; height:100%; background:#1c1c1c; justify-content:center; align-items:center; z-index:9999;">
+        <h2 style="color:#ededed;">Please log in to use this app</h2>
     </div>
     <!-- ACCOUNT lives on a thin far-left vertical strip holding ONLY the avatar.
          The old top pill is gone; #authStatus is rendered into this strip by updateAuthUI().
          The strip is hidden alongside #appContent when logged out (both carry app-hidden). -->
     <div class="left-strip app-hidden" id="leftStrip">
         <div id="authStatus">
-            <button id="loginBtn" onclick="openAuthModal()" style="background: #4a9eff; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 11px;">Login</button>
+            <button id="loginBtn" onclick="openAuthModal()" style="background: #4a9eff; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 12px;">Login</button>
         </div>
     </div>
     <div class="main-content app-hidden" id="appContent">
@@ -2021,29 +2154,29 @@
 
         <!-- BREADCRUMB + AGGREGATE SECTION (Hidden by default) -->
         <div class="breadcrumb-aggregate-section" id="breadcrumbAggregateSection" style="display: none;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; padding: 12px 20px; background-color: #0d0d0d; border-bottom: 1px solid #2a2a2a;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; padding: 12px 20px; background-color: #1c1c1c; border-bottom: 1px solid #3a3a3a;">
                 <div>
-                    <div style="font-size: 18px; font-weight: 600; color: #fff; margin-bottom: 4px;">
+                    <div style="font-size: 20px; font-weight: 600; color: #fff; margin-bottom: 4px;">
                         <span id="breadcrumbSituation">3BP IP PFR</span>
-                        <span style="color: #666; margin: 0 8px;">•</span>
+                        <span style="color: #aab0b8; margin: 0 8px;">•</span>
                         <span id="breadcrumbPosition">BB vs SB</span>
                     </div>
-                    <div style="font-size: 12px; color: #888;">
+                    <div style="font-size: 12px; color: #c2c6cd;">
                         <span id="breadcrumbCurrent">FLOP: SB ?</span>
                     </div>
                 </div>
                 
                 <div style="display: flex; gap: 12px;">
-                    <div style="background-color: #0d0d0d; border: 1px solid #2a2a2a; border-radius: 6px; padding: 10px 16px; min-width: 100px;">
-                        <div style="font-size: 9px; color: #888; margin-bottom: 3px;">Total Flops</div>
+                    <div style="background-color: #1c1c1c; border: 1px solid #3a3a3a; border-radius: 6px; padding: 10px 16px; min-width: 100px;">
+                        <div style="font-size: 12px; color: #c2c6cd; margin-bottom: 3px;">Total Flops</div>
                         <div style="font-size: 16px; color: #fff; font-weight: 600;" id="headerFlopCount">0</div>
                     </div>
-                    <div style="background-color: #0d0d0d; border: 1px solid #2a2a2a; border-radius: 6px; padding: 10px 16px; min-width: 100px;">
-                        <div style="font-size: 9px; color: #888; margin-bottom: 3px;">Avg Bet Freq</div>
+                    <div style="background-color: #1c1c1c; border: 1px solid #3a3a3a; border-radius: 6px; padding: 10px 16px; min-width: 100px;">
+                        <div style="font-size: 12px; color: #c2c6cd; margin-bottom: 3px;">Avg Bet Freq</div>
                         <div style="font-size: 16px; color: #ef4444; font-weight: 600;" id="headerAvgBet">0%</div>
                     </div>
-                    <div style="background-color: #0d0d0d; border: 1px solid #2a2a2a; border-radius: 6px; padding: 10px 16px; min-width: 100px;">
-                        <div style="font-size: 9px; color: #888; margin-bottom: 3px;">Avg Check Freq</div>
+                    <div style="background-color: #1c1c1c; border: 1px solid #3a3a3a; border-radius: 6px; padding: 10px 16px; min-width: 100px;">
+                        <div style="font-size: 12px; color: #c2c6cd; margin-bottom: 3px;">Avg Check Freq</div>
                         <div style="font-size: 16px; color: #10b981; font-weight: 600;" id="headerAvgCheck">0%</div>
                     </div>
                 </div>
@@ -2066,7 +2199,7 @@
         
        <!-- MAIN DATA DISPLAY -->
         <div class="chart-container">
-            <div id="breadcrumbSection" style="display: none; margin-bottom: 20px; padding: 15px; background-color: #0d0d0d; border-radius: 8px; position: relative; z-index: 101;"></div>
+            <div id="breadcrumbSection" style="display: none; margin-bottom: 20px; padding: 15px; background-color: #1c1c1c; border-radius: 8px; position: relative; z-index: 101;"></div>
             
             <div id="dataDisplay"></div>
         </div>
@@ -2361,22 +2494,22 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
     </div>
 
     <div id="trainerModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000; justify-content: center; align-items: center;">
-        <div style="background: #0d0d0d; border: 1px solid #2a2a2a; border-radius: 8px; padding: 30px; min-width: 450px; text-align: center;">
+        <div style="background: #1c1c1c; border: 1px solid #3a3a3a; border-radius: 8px; padding: 30px; min-width: 450px; text-align: center;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-                <span id="trainerProgress" style="color: #888;">1 / 1024</span>
-                <button onclick="closeTrainer()" style="background: none; border: none; color: #888; font-size: 24px; cursor: pointer;">&times;</button>
+                <span id="trainerProgress" style="color: #c2c6cd;">1 / 1024</span>
+                <button onclick="closeTrainer()" style="background: none; border: none; color: #c2c6cd; font-size: 28px; cursor: pointer;">&times;</button>
             </div>
             
             <div id="trainerBoardName" style="font-size: 36px; margin: 20px 0;">K♠J♥9♦</div>
-            <div id="trainerCombo" style="font-size: 28px; color: #888; margin: 15px 0;">Q♠8♠</div>
-            <div id="trainerCategory" style="color: #666; margin-bottom: 25px; font-size: 14px;">gutshot</div>
+            <div id="trainerCombo" style="font-size: 28px; color: #c2c6cd; margin: 15px 0;">Q♠8♠</div>
+            <div id="trainerCategory" style="color: #aab0b8; margin-bottom: 25px; font-size: 14px;">gutshot</div>
             
             <div style="display: flex; gap: 10px; justify-content: center; margin-bottom: 20px;">
-                <button onclick="submitBet(0)" style="background: #0d0d0d; color: #fff; border: none; padding: 12px 20px; border-radius: 6px; font-size: 16px; cursor: pointer; min-width: 70px;">Check</button>
-                <button onclick="submitBet(25)" style="background: #0d0d0d; color: #fff; border: none; padding: 12px 20px; border-radius: 6px; font-size: 16px; cursor: pointer; min-width: 70px;">25%</button>
-                <button onclick="submitBet(50)" style="background: #0d0d0d; color: #fff; border: none; padding: 12px 20px; border-radius: 6px; font-size: 16px; cursor: pointer; min-width: 70px;">50%</button>
-                <button onclick="submitBet(75)" style="background: #0d0d0d; color: #fff; border: none; padding: 12px 20px; border-radius: 6px; font-size: 16px; cursor: pointer; min-width: 70px;">75%</button>
-                <button onclick="submitBet(100)" style="background: #0d0d0d; color: #fff; border: none; padding: 12px 20px; border-radius: 6px; font-size: 16px; cursor: pointer; min-width: 70px;">100%</button>
+                <button onclick="submitBet(0)" style="background: #1c1c1c; color: #fff; border: none; padding: 12px 20px; border-radius: 6px; font-size: 16px; cursor: pointer; min-width: 70px;">Check</button>
+                <button onclick="submitBet(25)" style="background: #1c1c1c; color: #fff; border: none; padding: 12px 20px; border-radius: 6px; font-size: 16px; cursor: pointer; min-width: 70px;">25%</button>
+                <button onclick="submitBet(50)" style="background: #1c1c1c; color: #fff; border: none; padding: 12px 20px; border-radius: 6px; font-size: 16px; cursor: pointer; min-width: 70px;">50%</button>
+                <button onclick="submitBet(75)" style="background: #1c1c1c; color: #fff; border: none; padding: 12px 20px; border-radius: 6px; font-size: 16px; cursor: pointer; min-width: 70px;">75%</button>
+                <button onclick="submitBet(100)" style="background: #1c1c1c; color: #fff; border: none; padding: 12px 20px; border-radius: 6px; font-size: 16px; cursor: pointer; min-width: 70px;">100%</button>
             </div>
             
             <div id="trainerResults" style="display: none; margin-top: 20px; text-align: left; max-height: 300px; overflow-y: auto;"></div>
@@ -2583,7 +2716,7 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
 
         function importPioCSV(file, filters) {
             const reader = new FileReader();
-            reader.onload = function(e) {
+            reader.onload = async function(e) {
                 const text = e.target.result;
                 let parsed;
                 try {
@@ -2609,7 +2742,7 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                 
                 if (existingReport) {
                     if (existingReport.perspectives[filters.player]) {
-                        const overwrite = confirm(`${filters.player} data already exists. Overwrite?`);
+                        const overwrite = await mConfirm({title:'Overwrite data?', body:`${filters.player} data already exists. Overwrite?`, ok:'Overwrite'});
                         if (!overwrite) return;
                     }
                     
@@ -2777,11 +2910,11 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
             vsFirstFilter = null;
             const btn = document.getElementById('vsBtn');
             if (vsMode) {
-                btn.style.background = '#f97316';
-                btn.style.color = '#fff';
+                btn.style.background = 'rgba(74,158,255,0.16)'; btn.style.borderColor = '#4a9eff';
+                btn.style.color = '#ededed'; btn.style.background = 'rgba(74,158,255,0.16)'; btn.style.borderColor = '#4a9eff';
             } else {
-                btn.style.background = '#0d0d0d';
-                btn.style.color = '#f97316';
+                btn.style.background = '#1c1c1c'; btn.style.borderColor = 'transparent';
+                btn.style.color = '#c2c6cd'; btn.style.borderColor = '#3a3a3a';
                 // Reset to normal view
                 filterFlopBoard(currentFlopFilter || 'all');
             }
@@ -2916,17 +3049,17 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
 
             const generateStatBoxes = (stats) => {
                 let html = `
-                    <div style="background-color: #0d0d0d; border: 1px solid #2a2a2a; border-radius: 4px; padding: 10px; width: 70px; height: 70px; display: flex; flex-direction: column; justify-content: center; align-items: center;">
-                        <div style="font-size: 9px; color: #fff; margin-bottom: 3px;">Total Flops</div>
+                    <div style="background-color: #1c1c1c; border: 1px solid #3a3a3a; border-radius: 4px; padding: 10px 12px; min-width: 70px; height: 70px; display: flex; flex-direction: column; justify-content: center; align-items: center;">
+                        <div style="font-size: 12px; color: #fff; margin-bottom: 3px; white-space: nowrap;">Total Flops</div>
                         <div style="font-size: 16px; color: #fff; font-weight: 600;">${stats.total}</div>
                     </div>
                 `;
                 
                 for (const [action, value] of Object.entries(stats.actions)) {
-                    const color = getActionColor(action);
+                    const color = getActionStatTextColor(action);
                     html += `
-                        <div style="background-color: #0d0d0d; border: 1px solid #2a2a2a; border-radius: 4px; padding: 10px; width: 70px; height: 70px; display: flex; flex-direction: column; justify-content: center; align-items: center;">
-                            <div style="font-size: 9px; color: #fff; margin-bottom: 3px;">Avg. ${displayActionLabel(action)}</div>
+                        <div style="background-color: #1c1c1c; border: 1px solid #3a3a3a; border-radius: 4px; padding: 10px 12px; min-width: 70px; height: 70px; display: flex; flex-direction: column; justify-content: center; align-items: center;">
+                            <div style="font-size: 12px; color: #fff; margin-bottom: 3px; white-space: nowrap;">Avg. ${displayActionLabel(action)}</div>
                             <div style="font-size: 16px; color: ${color}; font-weight: 600;">${value}%</div>
                         </div>
                     `;
@@ -2939,10 +3072,10 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
             const chart2Height = Math.max(boards2.length * barHeight, 200);
 
             container.innerHTML = `
-                <div style="display: flex; gap: 20px; justify-content: center; width: max-content; margin: 0 auto;">
+                <div style="display: flex; gap: 16px; justify-content: center; width: max-content; margin: 0 auto;">
                     <div style="overflow: visible;">
-                        <div style="text-align: center; margin-bottom: 10px; color: #f97316; font-size: 14px; font-weight: 600;">${filter1}</div>
-                        <div style="display: flex; gap: 8px; margin-bottom: 15px; justify-content: center; flex-wrap: nowrap;">
+                        <div style="text-align: center; margin-bottom: 10px; color: #ededed; font-size: 16px; font-weight: 600;">${filter1}</div>
+                        <div style="display: flex; gap: 8px; margin-bottom: 12px; justify-content: center; flex-wrap: nowrap;">
                             ${generateStatBoxes(stats1)}
                         </div>
                         <div style="height: ${chart1Height}px; position: relative; overflow: visible; z-index: 2; width: 320px;">
@@ -2950,8 +3083,8 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                         </div>
                     </div>
                     <div style="overflow: visible;">
-                        <div style="text-align: center; margin-bottom: 10px; color: #f97316; font-size: 14px; font-weight: 600;">${filter2}</div>
-                        <div style="display: flex; gap: 8px; margin-bottom: 15px; justify-content: center; flex-wrap: nowrap;">
+                        <div style="text-align: center; margin-bottom: 10px; color: #ededed; font-size: 16px; font-weight: 600;">${filter2}</div>
+                        <div style="display: flex; gap: 8px; margin-bottom: 12px; justify-content: center; flex-wrap: nowrap;">
                             ${generateStatBoxes(stats2)}
                         </div>
                         <div style="height: ${chart2Height}px; position: relative; overflow: visible; z-index: 2; width: 320px;">
@@ -2960,7 +3093,7 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                     </div>
                 </div>
                 <div style="text-align: center; margin-top: 15px;">
-                    <button onclick="exitVsMode()" style="background: #ef4444; color: #fff; border: none; border-radius: 4px; padding: 8px 16px; cursor: pointer;">Exit Compare</button>
+                    <button onclick="exitVsMode()" style="background: #c01c1c; color: #fff; border: none; border-radius: 4px; padding: 8px 16px; cursor: pointer;">Exit Compare</button>
                 </div>
             `;
 
@@ -3037,7 +3170,7 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                             
                             if (char === '-') {
                                 ctx.font = `500 ${fontSize}px sans-serif`;
-                                ctx.fillStyle = '#888';
+                                ctx.fillStyle = '#c2c6cd';
                                 ctx.textAlign = 'left';
                                 ctx.fillText('-', currentX, y);
                                 currentX += ctx.measureText('-').width;
@@ -3049,7 +3182,7 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                                 currentX += ctx.measureText(suitSymbols[lowerChar]).width + 1;
                             } else {
                                 ctx.font = `500 ${fontSize}px sans-serif`;
-                                ctx.fillStyle = '#e0e0e0';
+                                ctx.fillStyle = '#ededed';
                                 ctx.textAlign = 'left';
                                 ctx.fillText(char, currentX, y);
                                 currentX += ctx.measureText(char).width;
@@ -3076,8 +3209,8 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                         x: {
                             stacked: true,
                             max: 100,
-                            ticks: { color: '#aaa', callback: v => v + '%' },
-                            grid: { color: '#333' }
+                            ticks: { color: '#c2c6cd', callback: v => v + '%' },
+                            grid: { color: '#3a3a3a' }
                         },
                         y: {
                             stacked: true,
@@ -3111,8 +3244,8 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
             vsFirstFilter = null;
             const btn = document.getElementById('vsBtn');
             if (btn) {
-                btn.style.background = '#0d0d0d';
-                btn.style.color = '#f97316';
+                btn.style.background = '#1c1c1c'; btn.style.borderColor = 'transparent';
+                btn.style.color = '#c2c6cd'; btn.style.borderColor = '#3a3a3a';
             }
             
             // Hide VS charts
@@ -3128,7 +3261,7 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
             
             // Reset button highlights
             document.querySelectorAll('.flop-cat-btn').forEach(btn => {
-                btn.style.background = btn.dataset.category === (currentFlopFilter || 'all') ? '#3b82f6' : '#0d0d0d';
+                btn.style.background = btn.dataset.category === (currentFlopFilter || 'all') ? '#1d4ed8' : '#1c1c1c';
             });
             filterFlopBoard(currentFlopFilter || 'all');
         }
@@ -3159,7 +3292,7 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                     
                     if (char === '-') {
                         ctx.font = `${fontWeight} ${fontSize}px sans-serif`;
-                        ctx.fillStyle = '#888';
+                        ctx.fillStyle = '#c2c6cd';
                         ctx.fillText('-', currentX, y);
                         currentX += ctx.measureText('-').width;
                     } else if (suitSymbols[lowerChar]) {
@@ -3169,7 +3302,7 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                         currentX += ctx.measureText(suitSymbols[lowerChar]).width + 1;
                     } else {
                         ctx.font = `${fontWeight} ${fontSize}px sans-serif`;
-                        ctx.fillStyle = '#e0e0e0';
+                        ctx.fillStyle = '#ededed';
                         ctx.fillText(char, currentX, y);
                         currentX += ctx.measureText(char).width;
                     }
@@ -3192,9 +3325,9 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
             
             // Visual indicator - orange border when active
             if (boardFilterText) {
-                input.style.border = '2px solid #f97316';
+                input.classList.add('m-filter-active');
             } else {
-                input.style.border = '1px solid #2a2a2a';
+                input.classList.remove('m-filter-active');
             }
             
             // If in VS mode with both filters, refresh comparison with text filter
@@ -3213,7 +3346,7 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
             [input1, input2].forEach(input => {
                 if (input) {
                     input.value = '';
-                    input.style.border = '1px solid #2a2a2a';
+                    input.style.border = '1px solid #3a3a3a';
                 }
             });
             
@@ -3453,7 +3586,7 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
             let totalError = 0;
             let resultsHtml = '<h3 style="color: #fff; margin-bottom: 10px;">Results</h3>';
             resultsHtml += '<table style="width: 100%; color: #fff; font-size: 12px;">';
-            resultsHtml += '<tr style="color: #888;"><th>Combo</th><th>Category</th><th>You</th><th>GTO</th><th>Diff</th></tr>';
+            resultsHtml += '<tr style="color: #c2c6cd;"><th>Combo</th><th>Category</th><th>You</th><th>GTO</th><th>Diff</th></tr>';
             
             trainerAnswers.forEach(ans => {
                 const diff = Math.abs(ans.userBet - ans.gtoBet);
@@ -3470,7 +3603,7 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
             
             resultsHtml += '</table>';
             const avgError = (totalError / trainerAnswers.length).toFixed(1);
-            resultsHtml += `<div style="margin-top: 15px; padding: 10px; background: #0d0d0d; border-radius: 4px; color: #fff;">Average Error: <strong>${avgError}%</strong></div>`;
+            resultsHtml += `<div style="margin-top: 15px; padding: 10px; background: #1c1c1c; border-radius: 4px; color: #fff;">Average Error: <strong>${avgError}%</strong></div>`;
             
             document.getElementById('trainerResults').innerHTML = resultsHtml;
             document.getElementById('trainerResults').style.display = 'block';
@@ -3685,8 +3818,8 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
             document.getElementById('reportsDropdown').classList.remove('active');
         }
 
-        function deleteReport(index) {
-            if (!confirm('Are you sure you want to delete this report?')) return;
+        async function deleteReport(index) {
+            if (!(await mConfirm({title:'Delete report?', body:'Are you sure you want to delete this report?', danger:true, ok:'Delete'}))) return;
             
             // Store reference BEFORE deleting
             const reportToDelete = allReports[index];
@@ -3704,10 +3837,10 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
 
         // Delete from the hand-line report picker (per-row red trash button). Same confirm +
         // removal as deleteReport, but always re-renders the hand-line so the row disappears.
-        function deleteReportFromDropdown(index) {
+        async function deleteReportFromDropdown(index) {
             const report = allReports[index];
             if (!report) return;
-            if (!confirm(`Delete "${report.name || 'this report'}"? This cannot be undone.`)) return;
+            if (!(await mConfirm({title:'Delete report?', body:`Delete <b>"${report.name || 'this report'}"</b>? This cannot be undone.`, danger:true, ok:'Delete'}))) return;
 
             const wasCurrent = currentReport && (report === currentReport ||
                 (report.id != null && currentReport.id === report.id));
@@ -4211,7 +4344,7 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
 
             // Reset filter button styles
             document.querySelectorAll('.flop-cat-btn').forEach(btn => {
-                btn.style.background = btn.dataset.category === 'all' ? '#3b82f6' : '#0d0d0d';
+                btn.style.background = btn.dataset.category === 'all' ? '#1d4ed8' : '#1c1c1c';
             });
             
             // Clear text filter input
@@ -4612,7 +4745,7 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                 }
                 const noMatchMsg = `
                     <div style="text-align: center; padding: 60px 20px; color: #fff;">
-                        <div style="font-size: 18px;">No boards match this filter</div>
+                        <div style="font-size: 20px;">No boards match this filter</div>
                     </div>
                 `;
                 // Target the PERSISTENT chart-area wrapper (#strengthChartArea), NOT the canvas.
@@ -4804,7 +4937,7 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
             const boardInput = document.getElementById('boardFilterInput');
             if (boardInput) {
                 boardInput.value = '';
-                boardInput.style.border = '1px solid #2a2a2a';
+                boardInput.style.border = '1px solid #3a3a3a';
             }
             
             // If in VS mode, keep VS mode active but refresh with cleared filters
@@ -4813,9 +4946,9 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                 // Keep VS button highlights
                 document.querySelectorAll('.flop-cat-btn').forEach(btn => {
                     if (btn.dataset.category === vsFirstFilter || btn.dataset.category === vsSecondFilter) {
-                        btn.style.background = '#f97316';
+                        btn.style.background = 'rgba(74,158,255,0.16)'; btn.style.borderColor = '#4a9eff';
                     } else {
-                        btn.style.background = '#0d0d0d';
+                        btn.style.background = '#1c1c1c'; btn.style.borderColor = 'transparent';
                     }
                 });
             } else if (!vsMode) {
@@ -4874,9 +5007,9 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                     // Re-highlight VS selections after filtering
                     document.querySelectorAll('.flop-cat-btn').forEach(btn => {
                         if (btn.dataset.category === vsFirstFilter || btn.dataset.category === vsSecondFilter) {
-                            btn.style.background = '#f97316';
+                            btn.style.background = 'rgba(74,158,255,0.16)'; btn.style.borderColor = '#4a9eff';
                         } else {
-                            btn.style.background = '#0d0d0d';
+                            btn.style.background = '#1c1c1c'; btn.style.borderColor = 'transparent';
                         }
                     });
                 } else if (vsMode) {
@@ -4885,7 +5018,7 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                 } else {
                     // Clear main category button highlights when using sidebar filters
                     document.querySelectorAll('.flop-cat-btn').forEach(btn => {
-                        btn.style.background = '#0d0d0d';
+                        btn.style.background = '#1c1c1c'; btn.style.borderColor = 'transparent';
                     });
                     
                     filterFlopBoard(categoryFilter, true);
@@ -4893,7 +5026,7 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                     // FORCE clear main buttons after everything completes (only when NOT in VS mode)
                     setTimeout(() => {
                         document.querySelectorAll('.flop-cat-btn').forEach(btn => {
-                            btn.style.background = '#0d0d0d';
+                            btn.style.background = '#1c1c1c'; btn.style.borderColor = 'transparent';
                         });
                     }, 100);
                 }
@@ -5064,9 +5197,9 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                     vsFirstFilter = filter;
                     document.querySelectorAll('.flop-cat-btn').forEach(btn => {
                         if (btn.dataset.category === filter) {
-                            btn.style.background = '#f97316';
+                            btn.style.background = 'rgba(74,158,255,0.16)'; btn.style.borderColor = '#4a9eff';
                         } else {
-                            btn.style.background = '#0d0d0d';
+                            btn.style.background = '#1c1c1c'; btn.style.borderColor = 'transparent';
                         }
                     });
                 } else {
@@ -5075,9 +5208,9 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                     
                     document.querySelectorAll('.flop-cat-btn').forEach(btn => {
                         if (btn.dataset.category === vsFirstFilter || btn.dataset.category === vsSecondFilter) {
-                            btn.style.background = '#f97316';
+                            btn.style.background = 'rgba(74,158,255,0.16)'; btn.style.borderColor = '#4a9eff';
                         } else {
-                            btn.style.background = '#0d0d0d';
+                            btn.style.background = '#1c1c1c'; btn.style.borderColor = 'transparent';
                         }
                     });
                 }
@@ -5093,7 +5226,7 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
         function flopToggleBtnStyle(state) {
             if (state === 'include') return 'background: #157D3C; color: #fff; border: 1px solid #1f9d4d;';
             if (state === 'exclude') return 'background: #b91c1c; color: #fff; border: 1px solid #ef4444;';
-            return 'background: #0d0d0d; color: #fff; border: 1px solid transparent;';
+            return 'background: #1c1c1c; color: #fff; border: 1px solid transparent;';
         }
 
         // Button label with state icon (✓ include, ✗ exclude)
@@ -5108,12 +5241,12 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
         function updateFlopTextureButtonStyles() {
             document.querySelectorAll('.flop-cat-btn').forEach(btn => {
                 const cat = btn.dataset.category;
-                if (cat === 'all') { btn.style.background = '#0d0d0d'; btn.style.border = '1px solid transparent'; return; }
+                if (cat === 'all') { var _an=Object.keys(flopTextureToggles).some(function(k){return flopTextureToggles[k]&&flopTextureToggles[k]!=='off';}); btn.style.background=_an?'#1c1c1c':'rgba(74,158,255,0.16)'; btn.style.border='1px solid '+(_an?'transparent':'#4a9eff'); btn.style.color='#ededed'; return; }
                 if (!(cat in flopTextureToggles)) return;
                 const state = flopTextureToggles[cat];
                 if (state === 'include') { btn.style.background = '#157D3C'; btn.style.border = '1px solid #1f9d4d'; }
                 else if (state === 'exclude') { btn.style.background = '#b91c1c'; btn.style.border = '1px solid #ef4444'; }
-                else { btn.style.background = '#0d0d0d'; btn.style.border = '1px solid transparent'; }
+                else { btn.style.background = '#1c1c1c'; btn.style.borderColor = 'transparent'; btn.style.border = '1px solid transparent'; }
                 btn.textContent = flopToggleLabel(cat, state);
             });
         }
@@ -5143,7 +5276,7 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
             // Preserve case: the new grammar disambiguates rank (UPPER) vs suit (lower).
             boardFilterText = input.value.trim();
             window.savedBoardFilterText = input.value;
-            input.style.border = boardFilterText ? '2px solid #f97316' : '1px solid #2a2a2a';
+            input.style.border = boardFilterText ? '2px solid #f97316' : '1px solid #3a3a3a';
             if (vsMode && vsFirstFilter && vsSecondFilter) { showVsComparison(vsFirstFilter, vsSecondFilter); return; }
             filterFlopBoard('all');
         }
@@ -5241,7 +5374,7 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
         function turnToggleBtnStyle(state) {
             if (state === 'include') return 'background: #157D3C; color: #fff; border: 1px solid #1f9d4d;';
             if (state === 'exclude') return 'background: #b91c1c; color: #fff; border: 1px solid #ef4444;';
-            return 'background: #0d0d0d; color: #fff; border: 1px solid transparent;';
+            return 'background: #1c1c1c; color: #fff; border: 1px solid transparent;';
         }
 
         // Button label with state icon (✓ include, ✗ exclude).
@@ -5257,12 +5390,12 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
         function updateTurnTextureButtonStyles() {
             document.querySelectorAll('.turn-cat-btn').forEach(btn => {
                 const cat = btn.dataset.category;
-                if (cat === 'all') { btn.style.background = '#0d0d0d'; btn.style.border = '1px solid transparent'; return; }
+                if (cat === 'all') { var _an=Object.keys(turnTextureToggles).some(function(k){return turnTextureToggles[k]&&turnTextureToggles[k]!=='off';}); btn.style.background=_an?'#1c1c1c':'rgba(74,158,255,0.16)'; btn.style.border='1px solid '+(_an?'transparent':'#4a9eff'); btn.style.color='#ededed'; return; }
                 if (!(cat in turnTextureToggles)) return;
                 const state = turnTextureToggles[cat];
                 if (state === 'include') { btn.style.background = '#157D3C'; btn.style.border = '1px solid #1f9d4d'; }
                 else if (state === 'exclude') { btn.style.background = '#b91c1c'; btn.style.border = '1px solid #ef4444'; }
-                else { btn.style.background = '#0d0d0d'; btn.style.border = '1px solid transparent'; }
+                else { btn.style.background = '#1c1c1c'; btn.style.borderColor = 'transparent'; btn.style.border = '1px solid transparent'; }
                 btn.textContent = turnToggleLabel(cat, state);
             });
         }
@@ -5356,7 +5489,7 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                 if (window.mainChartInstance) { window.mainChartInstance.destroy(); window.mainChartInstance = null; }
                 const noMatchMsg = `
                     <div style="text-align: center; padding: 60px 20px; color: #fff;">
-                        <div style="font-size: 18px;">No turns match this filter</div>
+                        <div style="font-size: 20px;">No turns match this filter</div>
                     </div>
                 `;
                 // Target the PERSISTENT chart-area wrapper (#strengthChartArea), NOT the canvas.
@@ -5373,7 +5506,7 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                     document.getElementById('dataDisplay').innerHTML = noMatchMsg;
                     document.getElementById('dataDisplay').style.display = 'block';
                 }
-                if (inputEl) inputEl.style.background = input ? '#ef4444' : '#0d0d0d';
+                if (inputEl) inputEl.style.background = input ? '#ef4444' : '#1c1c1c';
                 return;
             }
 
@@ -5383,9 +5516,9 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
             setTimeout(() => {
                 const el = document.getElementById('turnCardSearchInput');
                 if (!el) return;
-                if (input && turnFilteredData.length === 0) el.style.background = '#ef4444';
-                else if (input) el.style.background = '#3b82f6';
-                else el.style.background = '#0d0d0d';
+                if (input && turnFilteredData.length === 0) { el.classList.add('m-filter-noresult'); el.classList.remove('m-filter-active'); }
+                else if (input) { el.classList.add('m-filter-active'); el.classList.remove('m-filter-noresult'); }
+                else { el.classList.remove('m-filter-active'); el.classList.remove('m-filter-noresult'); }
             }, 50);
         }
 
@@ -5704,7 +5837,7 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
             if (!file) return;
             
             const reader = new FileReader();
-            reader.onload = function(e) {
+            reader.onload = async function(e) {
                 const text = e.target.result;
                 const lines = text.split('\n').map(line => line.trim()).filter(line => line);
                 
@@ -5936,7 +6069,7 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
             document.getElementById('saveBtn').textContent = 'Save';
         }
 
-        function saveReport() {
+        async function saveReport() {
             const dataText = document.getElementById('dataInput').value.trim();
             const position = document.getElementById('tagPosition').value;
             const potType = document.getElementById('tagPotType').value;
@@ -6144,7 +6277,7 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                     } else {
                         // NORMAL MODE: Adding new perspective or overwriting
                         if (existingReport.perspectives[player]) {
-                            const overwrite = confirm(`${player} data already exists for this report. Overwrite?`);
+                            const overwrite = await mConfirm({title:'Overwrite data?', body:`${player} data already exists for this report. Overwrite?`, ok:'Overwrite'});
                             if (!overwrite) return;
                         }
                         
@@ -6314,7 +6447,7 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                 return;
             }
             const reader = new FileReader();
-            reader.onload = function(e) {
+            reader.onload = async function(e) {
                 try {
                     const imported = JSON.parse(e.target.result);
                     if (ingestReportData(imported)) location.reload();
@@ -6487,7 +6620,7 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
         function interpolateColor(value, maxValue) {
             const position = Math.min(value / maxValue, 1);
             const startColor = { r: 251, g: 191, b: 36 };  // Light orange
-            const endColor = { r: 220, g: 38, b: 38 };      // Red
+            const endColor = { r: 168, g: 84, b: 22 };      // deep-orange big-bet end #a85416 (>=3:1 vs #1c1c1c)
             const r = Math.round(startColor.r + (endColor.r - startColor.r) * position);
             const g = Math.round(startColor.g + (endColor.g - startColor.g) * position);
             const b = Math.round(startColor.b + (endColor.b - startColor.b) * position);
@@ -6499,10 +6632,10 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
             const actionLower = raw.toLowerCase();
 
             if (actionLower === 'fold') return '#9ca3af';
-            if (actionLower === 'check') return '#888888';
-            if (actionLower === 'call') return '#059669';
+            if (actionLower === 'check') return '#9aa0ab';
+            if (actionLower === 'call') return '#10b981';
             if (actionLower === 'ai' || actionLower === 'allin' ||
-                actionLower === 'all-in' || actionLower === 'all in') return '#a855f7';
+                actionLower === 'all-in' || actionLower === 'all in') return '#ac59fb';
 
             // Bet sizes arrive in two label formats: normalized CSV ("b30", "b75") and
             // raw pasted/linked headers ("Bet 30", "Bet 5.4", "Bet"). The old code did
@@ -6535,11 +6668,12 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                 return interpolateColor(60, 100);
             }
 
-            return '#888888';
+            return '#9aa0ab';
         }
 
         // Pick black or white text for a given background so the action label always clears
         // WCAG AA (>=4.5:1). Accepts "#rrggbb" or "rgb(r, g, b)" (interpolateColor output).
+        function getActionStatTextColor(action){ var c = getActionColor(action); return /^rgb/i.test(c) ? '#f97316' : c; }
         function getActionTextColor(bg) {
             let r = 0, g = 0, b = 0;
             const hex = /^#?([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})$/i.exec(bg);
@@ -6552,7 +6686,7 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
             const lin = c => { c /= 255; return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4); };
             const L = 0.2126 * lin(r) + 0.7152 * lin(g) + 0.0722 * lin(b);
             // White text passes 4.5:1 when L <= ~0.179; otherwise black gives more contrast.
-            return L > 0.179 ? '#111' : '#fff';
+            return L > 0.179 ? '#1a1a1a' : '#fff';
         }
 
         // Inline fallback style for a "to act" option inside the green active card.
@@ -6567,8 +6701,8 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
         // Subtle locked "pill" for an action already TAKEN in a street's line (GTOw language:
         // taken = muted grey pill, not the bright semantic color of the live to-act buttons).
         function takenActionPillStyle() {
-            return `background-color: #0d0d0d; color: #c9c9cf; padding: 6px 12px; ` +
-                `min-height: 30px; border: 1px solid #2a2a2a; border-radius: 6px; ` +
+            return `background-color: #1c1c1c; color: #c2c6cd; padding: 6px 12px; ` +
+                `min-height: 30px; border: 1px solid #3a3a3a; border-radius: 6px; ` +
                 `cursor: pointer; font-size: 12px; font-weight: 600; white-space: nowrap; ` +
                 `flex-shrink: 0; line-height: 1.1;`;
         }
@@ -6865,10 +6999,10 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
             if (sequence && sequence.needsOpponentData) {
                 // Show waiting message instead of chart
                 document.getElementById('dataDisplay').innerHTML = `
-                    <div style="text-align: center; padding: 60px 20px; color: #888;">
-                        <div style="font-size: 18px; margin-bottom: 12px;">⏳ Waiting for ${sequence.opponent} to act</div>
-                        <div style="font-size: 14px; color: #666;">No strategy data available until ${sequence.opponent} makes a decision</div>
-                        <div style="margin-top: 24px; font-size: 13px; color: #555;">Use the action buttons above to simulate ${sequence.opponent}'s action</div>
+                    <div style="text-align: center; padding: 60px 20px; color: #c2c6cd;">
+                        <div style="font-size: 20px; margin-bottom: 12px;">⏳ Waiting for ${sequence.opponent} to act</div>
+                        <div style="font-size: 14px; color: #aab0b8;">No strategy data available until ${sequence.opponent} makes a decision</div>
+                        <div style="margin-top: 24px; font-size: 14px; color: #aab0b8;">Use the action buttons above to simulate ${sequence.opponent}'s action</div>
                     </div>
                 `;
                 showBreadcrumbSection();
@@ -6905,8 +7039,8 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
             const limited = sorted.slice(0, 100);
                 if (limited.length === 0) {
                 document.getElementById('dataDisplay').innerHTML = `
-                    <div style="text-align: center; padding: 60px 20px; color: #888;">
-                        <div style="font-size: 18px; margin-bottom: 12px;">No boards match this filter</div>
+                    <div style="text-align: center; padding: 60px 20px; color: #c2c6cd;">
+                        <div style="font-size: 20px; margin-bottom: 12px;">No boards match this filter</div>
                     </div>
                 `;
                 showBreadcrumbSection();
@@ -6937,8 +7071,8 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
             <div class="chart-wrapper-main">
                     <div class="chart-header" style="justify-content: flex-start;">
                        <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap; max-width: 600px;">
-                            <div style="background-color: #0d0d0d; border: 1px solid #2a2a2a; border-radius: 4px; padding: 10px; width: 70px; height: 70px; display: flex; flex-direction: column; justify-content: center; align-items: center;">
-                                <div style="font-size: 9px; color: #fff; margin-bottom: 3px;">Total Flops</div>
+                            <div style="background-color: #1c1c1c; border: 1px solid #3a3a3a; border-radius: 4px; padding: 10px 12px; min-width: 70px; height: 70px; display: flex; flex-direction: column; justify-content: center; align-items: center;">
+                                <div style="font-size: 12px; color: #fff; margin-bottom: 3px; white-space: nowrap;">Total Flops</div>
                                 <div id="totalFlopsCount" style="font-size: 16px; color: #fff; font-weight: 600;">${data.length}</div>
                             </div>
                             ${perspectiveData.availableActions.map(action => {
@@ -6947,10 +7081,10 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                                     const value = h.actions?.[actionKey] || h[actionKey] || 0;
                                     return sum + value;
                                 }, 0) / data.length;
-                                const color = getActionColor(action);
+                                const color = getActionStatTextColor(action);
                                 return `
-                                    <div style="background-color: #0d0d0d; border: 1px solid #2a2a2a; border-radius: 4px; padding: 10px; width: 70px; height: 70px; display: flex; flex-direction: column; justify-content: center; align-items: center;">
-                                        <div style="font-size: 9px; color: #fff; margin-bottom: 3px;">Avg. ${displayActionLabel(action)}</div>
+                                    <div style="background-color: #1c1c1c; border: 1px solid #3a3a3a; border-radius: 4px; padding: 10px 12px; min-width: 70px; height: 70px; display: flex; flex-direction: column; justify-content: center; align-items: center;">
+                                        <div style="font-size: 12px; color: #fff; margin-bottom: 3px; white-space: nowrap;">Avg. ${displayActionLabel(action)}</div>
                                         <div class="avgStatValue" style="font-size: 16px; color: ${color}; font-weight: 600;">${avgValue.toFixed(1)}%</div>
                                     </div>
                                 `;
@@ -6959,50 +7093,46 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                     </div>
 
                    <!-- Flop Filter Box -->
-                    <div id="flopFilterBox" style="display: none; background: #0d0d0d; border: 1px solid #2a2a2a; border-radius: 6px; padding: 12px; margin-bottom: 10px; width: fit-content;">
+                    <div id="flopFilterBox" style="display: none; background: #1c1c1c; border: 1px solid #3a3a3a; border-radius: 6px; padding: 12px; margin-bottom: 10px; width: fit-content;">
                         <div style="display: flex; gap: 6px; flex-wrap: nowrap; align-items: center;">
-                            <button class="flop-cat-btn" data-category="all" onclick="resetFlopTextures()" style="background: #0d0d0d; color: #fff; border: 1px solid transparent; border-radius: 4px; padding: 4px 10px; font-size: 11px; cursor: pointer; white-space: nowrap; flex-shrink: 0;">All</button>
-                            <button class="flop-cat-btn" data-category="rainbow" onclick="cycleFlopTexture('rainbow')" style="${flopToggleBtnStyle(flopTextureToggles.rainbow)} border-radius: 4px; padding: 4px 10px; font-size: 11px; cursor: pointer; white-space: nowrap; flex-shrink: 0;">${flopToggleLabel('rainbow', flopTextureToggles.rainbow)}</button>
-                            <button class="flop-cat-btn" data-category="flushdraw" title="Flush Draw" onclick="cycleFlopTexture('flushdraw')" style="${flopToggleBtnStyle(flopTextureToggles.flushdraw)} border-radius: 4px; padding: 4px 10px; font-size: 11px; cursor: pointer; white-space: nowrap; flex-shrink: 0;">${flopToggleLabel('flushdraw', flopTextureToggles.flushdraw)}</button>
-                            <button class="flop-cat-btn" data-category="monotone" title="Monotone" onclick="cycleFlopTexture('monotone')" style="${flopToggleBtnStyle(flopTextureToggles.monotone)} border-radius: 4px; padding: 4px 10px; font-size: 11px; cursor: pointer; white-space: nowrap; flex-shrink: 0;">${flopToggleLabel('monotone', flopTextureToggles.monotone)}</button>
-                            <button class="flop-cat-btn" data-category="straight" onclick="cycleFlopTexture('straight')" style="${flopToggleBtnStyle(flopTextureToggles.straight)} border-radius: 4px; padding: 4px 10px; font-size: 11px; cursor: pointer; white-space: nowrap; flex-shrink: 0;">${flopToggleLabel('straight', flopTextureToggles.straight)}</button>
-                            <button class="flop-cat-btn" data-category="paired" onclick="cycleFlopTexture('paired')" style="${flopToggleBtnStyle(flopTextureToggles.paired)} border-radius: 4px; padding: 4px 10px; font-size: 11px; cursor: pointer; white-space: nowrap; flex-shrink: 0;">${flopToggleLabel('paired', flopTextureToggles.paired)}</button>
-                            <button class="flop-cat-btn" data-category="trips" title="Three-of-a-kind flop" onclick="cycleFlopTexture('trips')" style="${flopToggleBtnStyle(flopTextureToggles.trips)} border-radius: 4px; padding: 4px 10px; font-size: 11px; cursor: pointer; white-space: nowrap; flex-shrink: 0;">${flopToggleLabel('trips', flopTextureToggles.trips)}</button>
-                            <button id="vsBtn" onclick="toggleVsMode()" style="background: #0d0d0d; color: #f97316; border: 1px solid #f97316; border-radius: 4px; padding: 4px 10px; font-size: 11px; cursor: pointer; margin-left: 10px;">VS</button>
-                            <input type="text" id="boardFilterInput" value="${savedFlopFilterInput}" placeholder="A, K · BBL · AcKs · no A" title="Flop card filter. Ranks A K Q J T 9-2 (T=ten), suits c d h s (e.g. Ac), groups B=broadway L=low. Comma = OR, no comma = AND on distinct cards. Prefix 'no' to exclude." oninput="liveBoardFilter()" style="background: #0d0d0d; color: #fff; border: ${savedFlopFilterInput ? '2px solid #f97316' : '1px solid #2a2a2a'}; border-radius: 4px; padding: 4px 8px; font-size: 12px; width: 220px; margin-left: 10px;">
+                            <button class="flop-cat-btn" data-category="all" onclick="resetFlopTextures()" style="${mAllBtnStyle(flopTextureToggles)} border-radius: 4px; padding: 4px 10px; font-size: 12px; cursor: pointer; white-space: nowrap; flex-shrink: 0;">All</button>
+                            <button class="flop-cat-btn" data-category="rainbow" onclick="cycleFlopTexture('rainbow')" style="${flopToggleBtnStyle(flopTextureToggles.rainbow)} border-radius: 4px; padding: 4px 10px; font-size: 12px; cursor: pointer; white-space: nowrap; flex-shrink: 0;">${flopToggleLabel('rainbow', flopTextureToggles.rainbow)}</button>
+                            <button class="flop-cat-btn" data-category="flushdraw" title="Flush Draw" onclick="cycleFlopTexture('flushdraw')" style="${flopToggleBtnStyle(flopTextureToggles.flushdraw)} border-radius: 4px; padding: 4px 10px; font-size: 12px; cursor: pointer; white-space: nowrap; flex-shrink: 0;">${flopToggleLabel('flushdraw', flopTextureToggles.flushdraw)}</button>
+                            <button class="flop-cat-btn" data-category="monotone" title="Monotone" onclick="cycleFlopTexture('monotone')" style="${flopToggleBtnStyle(flopTextureToggles.monotone)} border-radius: 4px; padding: 4px 10px; font-size: 12px; cursor: pointer; white-space: nowrap; flex-shrink: 0;">${flopToggleLabel('monotone', flopTextureToggles.monotone)}</button>
+                            <button class="flop-cat-btn" data-category="straight" onclick="cycleFlopTexture('straight')" style="${flopToggleBtnStyle(flopTextureToggles.straight)} border-radius: 4px; padding: 4px 10px; font-size: 12px; cursor: pointer; white-space: nowrap; flex-shrink: 0;">${flopToggleLabel('straight', flopTextureToggles.straight)}</button>
+                            <button class="flop-cat-btn" data-category="paired" onclick="cycleFlopTexture('paired')" style="${flopToggleBtnStyle(flopTextureToggles.paired)} border-radius: 4px; padding: 4px 10px; font-size: 12px; cursor: pointer; white-space: nowrap; flex-shrink: 0;">${flopToggleLabel('paired', flopTextureToggles.paired)}</button>
+                            <button class="flop-cat-btn" data-category="trips" title="Three-of-a-kind flop" onclick="cycleFlopTexture('trips')" style="${flopToggleBtnStyle(flopTextureToggles.trips)} border-radius: 4px; padding: 4px 10px; font-size: 12px; cursor: pointer; white-space: nowrap; flex-shrink: 0;">${flopToggleLabel('trips', flopTextureToggles.trips)}</button>
+                            <button id="vsBtn" onclick="toggleVsMode()" style="background: #1c1c1c; color: #c2c6cd; border: 1px solid #3a3a3a; border-radius: 4px; padding: 4px 10px; font-size: 12px; cursor: pointer; margin-left: 10px;">VS</button>
+                            <input type="text" id="boardFilterInput" class="${savedFlopFilterInput ? 'm-filter-active' : ''}" value="${savedFlopFilterInput}" placeholder="A, K · BBL · AcKs · no A" title="Flop card filter. Ranks A K Q J T 9-2 (T=ten), suits c d h s (e.g. Ac), groups B=broadway L=low. Comma = OR, no comma = AND on distinct cards. Prefix 'no' to exclude." oninput="liveBoardFilter()" style="background: #1c1c1c; color: #fff; border: ${savedFlopFilterInput ? '2px solid #f97316' : '1px solid #3a3a3a'}; border-radius: 4px; padding: 4px 8px; font-size: 12px; width: 220px; margin-left: 10px;"><div class="m-help-wrap"><button type="button" class="m-help-btn" aria-label="Filter syntax help" aria-expanded="false" onclick="toggleFilterHelp(this)">?</button><div class="m-help-pop" role="tooltip">Ranks <b>A K Q J T 9-2</b> &middot; suits <b>c d h s</b> (e.g. <b>Ac</b>) &middot; groups <b>B</b>=broadway <b>L</b>=low. Comma = OR, no comma = AND (distinct cards), prefix <b>no</b> = exclude. e.g. <b>BBL</b>, <b>AK</b>, <b>A, K</b>, <b>no A</b>.</div></div>
                         </div>
-                        <div style="margin-top: 8px; font-size: 11px; color: #c2c2c2; line-height: 1.5; max-width: 620px;">
-                            Ranks <b style="color:#fff;">A K Q J T 9-2</b> · suits <b style="color:#fff;">c d h s</b> (e.g. <b style="color:#fff;">Ac</b>) · groups <b style="color:#fff;">B</b>=broadway <b style="color:#fff;">L</b>=low. Comma = OR, no comma = AND (distinct cards), prefix <b style="color:#fff;">no</b> = exclude. e.g. <b style="color:#fff;">BBL</b>, <b style="color:#fff;">AK</b>, <b style="color:#fff;">A, K</b>, <b style="color:#fff;">no A</b>.
-                        </div>
+                        
                     </div>
 
                     <div id="flopChartContainer" style="margin-top: 15px;"></div>
                     
                    <!-- Turn Filter Box -->
-                            <div id="turnFilterBox" style="display: none; background: #0d0d0d; border: 1px solid #2a2a2a; border-radius: 6px; padding: 12px; margin-bottom: 10px; width: fit-content;">
+                            <div id="turnFilterBox" style="display: none; background: #1c1c1c; border: 1px solid #3a3a3a; border-radius: 6px; padding: 12px; margin-bottom: 10px; width: fit-content;">
                                 <div style="display: flex; gap: 6px; flex-wrap: nowrap; align-items: center;">
-                                    <button class="turn-cat-btn" data-category="all" onclick="resetTurnTextures()" style="background: #0d0d0d; color: #fff; border: 1px solid transparent; border-radius: 4px; padding: 4px 10px; font-size: 11px; cursor: pointer; white-space: nowrap; flex-shrink: 0;">All</button>
-                                    <button class="turn-cat-btn" data-category="flush" onclick="cycleTurnTexture('flush')" style="${turnToggleBtnStyle(turnTextureToggles.flush)} border-radius: 4px; padding: 4px 10px; font-size: 11px; cursor: pointer; white-space: nowrap; flex-shrink: 0;">${turnToggleLabel('flush', turnTextureToggles.flush)}</button>
-                                    <button class="turn-cat-btn" data-category="pairing" onclick="cycleTurnTexture('pairing')" style="${turnToggleBtnStyle(turnTextureToggles.pairing)} border-radius: 4px; padding: 4px 10px; font-size: 11px; cursor: pointer; white-space: nowrap; flex-shrink: 0;">${turnToggleLabel('pairing', turnTextureToggles.pairing)}</button>
-                                    <button class="turn-cat-btn" data-category="straight" onclick="cycleTurnTexture('straight')" style="${turnToggleBtnStyle(turnTextureToggles.straight)} border-radius: 4px; padding: 4px 10px; font-size: 11px; cursor: pointer; white-space: nowrap; flex-shrink: 0;">${turnToggleLabel('straight', turnTextureToggles.straight)}</button>
-                                    <button class="turn-cat-btn" data-category="broadway" onclick="cycleTurnTexture('broadway')" style="${turnToggleBtnStyle(turnTextureToggles.broadway)} border-radius: 4px; padding: 4px 10px; font-size: 11px; cursor: pointer; white-space: nowrap; flex-shrink: 0;">${turnToggleLabel('broadway', turnTextureToggles.broadway)}</button>
-                                    <button class="turn-cat-btn" data-category="blank" onclick="cycleTurnTexture('blank')" style="${turnToggleBtnStyle(turnTextureToggles.blank)} border-radius: 4px; padding: 4px 10px; font-size: 11px; cursor: pointer; white-space: nowrap; flex-shrink: 0;">${turnToggleLabel('blank', turnTextureToggles.blank)}</button>
-                                    <input type="text" id="turnCardSearchInput" value="${savedSearchInput}" placeholder="BBL-L · noA-B · K43-A" title="Turn filter, split by '-' : [flop rules] - [turn rules]. Same syntax as the flop box on each side; either side blank = any. e.g. BBL-L, noA-B, K43-A." oninput="searchTurnCards()" style="background: ${savedSearchInput ? '#3b82f6' : '#0d0d0d'}; color: #fff; border: 1px solid #2a2a2a; border-radius: 4px; padding: 4px 8px; font-size: 12px; width: 200px; margin-left: 10px;">
+                                    <button class="turn-cat-btn" data-category="all" onclick="resetTurnTextures()" style="${mAllBtnStyle(turnTextureToggles)} border-radius: 4px; padding: 4px 10px; font-size: 12px; cursor: pointer; white-space: nowrap; flex-shrink: 0;">All</button>
+                                    <button class="turn-cat-btn" data-category="flush" onclick="cycleTurnTexture('flush')" style="${turnToggleBtnStyle(turnTextureToggles.flush)} border-radius: 4px; padding: 4px 10px; font-size: 12px; cursor: pointer; white-space: nowrap; flex-shrink: 0;">${turnToggleLabel('flush', turnTextureToggles.flush)}</button>
+                                    <button class="turn-cat-btn" data-category="pairing" onclick="cycleTurnTexture('pairing')" style="${turnToggleBtnStyle(turnTextureToggles.pairing)} border-radius: 4px; padding: 4px 10px; font-size: 12px; cursor: pointer; white-space: nowrap; flex-shrink: 0;">${turnToggleLabel('pairing', turnTextureToggles.pairing)}</button>
+                                    <button class="turn-cat-btn" data-category="straight" onclick="cycleTurnTexture('straight')" style="${turnToggleBtnStyle(turnTextureToggles.straight)} border-radius: 4px; padding: 4px 10px; font-size: 12px; cursor: pointer; white-space: nowrap; flex-shrink: 0;">${turnToggleLabel('straight', turnTextureToggles.straight)}</button>
+                                    <button class="turn-cat-btn" data-category="broadway" onclick="cycleTurnTexture('broadway')" style="${turnToggleBtnStyle(turnTextureToggles.broadway)} border-radius: 4px; padding: 4px 10px; font-size: 12px; cursor: pointer; white-space: nowrap; flex-shrink: 0;">${turnToggleLabel('broadway', turnTextureToggles.broadway)}</button>
+                                    <button class="turn-cat-btn" data-category="blank" onclick="cycleTurnTexture('blank')" style="${turnToggleBtnStyle(turnTextureToggles.blank)} border-radius: 4px; padding: 4px 10px; font-size: 12px; cursor: pointer; white-space: nowrap; flex-shrink: 0;">${turnToggleLabel('blank', turnTextureToggles.blank)}</button>
+                                    <input type="text" id="turnCardSearchInput" class="${savedSearchInput ? 'm-filter-active' : ''}" value="${savedSearchInput}" placeholder="BBL-L · noA-B · K43-A" title="Turn filter, split by '-' : [flop rules] - [turn rules]. Same syntax as the flop box on each side; either side blank = any. e.g. BBL-L, noA-B, K43-A." oninput="searchTurnCards()" style="background: ${savedSearchInput ? '#1d4ed8' : '#1c1c1c'}; color: #fff; border: 1px solid #3a3a3a; border-radius: 4px; padding: 4px 8px; font-size: 12px; width: 200px; margin-left: 10px;"><div class="m-help-wrap"><button type="button" class="m-help-btn" aria-label="Filter syntax help" aria-expanded="false" onclick="toggleFilterHelp(this)">?</button><div class="m-help-pop" role="tooltip">Same syntax split by <b>-</b> : <b>[flop] - [turn]</b>. Either side blank = any. e.g. <b>BBL-L</b> (2 broadway + 1 low flop, low turn), <b>noA-B</b> (no ace on flop, broadway turn), <b>K43-A</b>.</div></div>
                                 </div>
-                                <div style="margin-top: 8px; font-size: 11px; color: #c2c2c2; line-height: 1.5; max-width: 620px;">
-                                    Same syntax split by <b style="color:#fff;">-</b> : <b style="color:#fff;">[flop] - [turn]</b>. Either side blank = any. e.g. <b style="color:#fff;">BBL-L</b> (2 broadway + 1 low flop, low turn), <b style="color:#fff;">noA-B</b> (no ace on flop, broadway turn), <b style="color:#fff;">K43-A</b>.
-                                </div>
+                                
                             </div>
 
                         <div id="strengthChartArea" style="position: relative;">
-                            <div id="avgLabel" style="position: absolute; left: 0; top: 15px; background-color: #fbbf24; color: #000; font-size: 10px; font-weight: bold; padding: 3px 6px; border-radius: 3px; transform: translateX(-50%); z-index: 100;">Avg</div>
+                            <div id="avgLabel" style="position: absolute; left: 0; top: 15px; background-color: #fbbf24; color: #121212; font-size: 12px; font-weight: bold; padding: 3px 6px; border-radius: 3px; transform: translateX(-50%); z-index: 100;">Avg</div>
                             <canvas id="strengthChart"></canvas>
                         </div>
                 </div>
                 
                 <div id="boardDetailContainer" style="display: none; margin-top: 20px; position: relative;">
                     <!-- Aggregate Button (top-left corner) -->
-                    <button onclick="showAggregateDetails()" style="position: absolute; top: 0; left: 0; width: 40px; height: 40px; background-color: #0d0d0d; border: none; border-radius: 6px; cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 0; z-index: 10;">
+                    <button onclick="showAggregateDetails()" style="position: absolute; top: 0; left: 0; width: 40px; height: 40px; background-color: #1c1c1c; border: none; border-radius: 6px; cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 0; z-index: 10;">
                         <svg width="24" height="24" viewBox="0 0 100 100" fill="none" stroke="white" stroke-width="3">
                             <circle cx="50" cy="30" r="25"/>
                             <circle cx="30" cy="65" r="25"/>
@@ -7020,56 +7150,56 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                         <!-- Single Board Detail -->
                         <div id="singleBoardDetail" style="flex: 1;">
                             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                                <h3 id="boardDetailTitle" style="color: #fff; font-size: 18px; margin: 0;"></h3>
+                                <h3 id="boardDetailTitle" style="color: #fff; font-size: 20px; margin: 0;"></h3>
                                 <div style="display: flex; gap: 10px;">
-                                    <button id="resetAdjustmentsBtn" onclick="resetBoardDetailAdjustments()" style="background-color: #3b82f6; color: white; padding: 8px 16px; border-radius: 6px; font-size: 13px; font-weight: 600; border: none; cursor: pointer;">Unlock</button>                                    
-                                    <button id="resetBoardBtn" onclick="resetBoardDetail()" style="background-color: #0d0d0d; color: white; padding: 8px 16px; border-radius: 6px; font-size: 13px; font-weight: 600; border: none; cursor: pointer;">Close</button>
-                                    <button id="deleteBoardBtn" onclick="deleteBoardDetail()" style="background-color: #dc2626; color: white; padding: 8px 16px; border-radius: 6px; font-size: 13px; font-weight: 600; border: none; cursor: pointer;">Delete Data</button>
+                                    <button id="resetAdjustmentsBtn" onclick="resetBoardDetailAdjustments()" style="background-color: #1d4ed8; color: white; padding: 8px 16px; border-radius: 6px; font-size: 14px; font-weight: 600; border: none; cursor: pointer;">Unlock</button>                                    
+                                    <button id="resetBoardBtn" onclick="resetBoardDetail()" style="background-color: #1c1c1c; color: white; padding: 8px 16px; border-radius: 6px; font-size: 14px; font-weight: 600; border: none; cursor: pointer;">Close</button>
+                                    <button id="deleteBoardBtn" onclick="deleteBoardDetail()" style="background-color: #dc2626; color: white; padding: 8px 16px; border-radius: 6px; font-size: 14px; font-weight: 600; border: none; cursor: pointer;">Delete Data</button>
                                 </div>
                             </div>
                             <div style="display: flex; gap: 10px; margin-bottom: 15px;">
-                                <div style="background-color: #0d0d0d; border: 1px solid #2a2a2a; border-radius: 4px; padding: 10px; flex: 1; text-align: center;">
-                                    <div style="font-size: 11px; color: #aaa; margin-bottom: 5px;">Avg Bet</div>
+                                <div style="background-color: #1c1c1c; border: 1px solid #3a3a3a; border-radius: 4px; padding: 10px; flex: 1; text-align: center;">
+                                    <div style="font-size: 12px; color: #c2c6cd; margin-bottom: 5px;">Avg Bet</div>
                                     <div style="display: flex; align-items: center; justify-content: center; gap: 5px;">
                                         <div style="display: flex; align-items: center; justify-content: center; gap: 5px;">
-                                            <span id="boardBetFreq" style="font-size: 18px; font-weight: 600;"></span>
-                                            <span style="color: #fff; font-size: 18px; font-weight: 600;">(<a id="selectedBoardBetLink" href="#" style="color: #fff; font-size: 18px; font-weight: 600;" onclick="openBoardDetail(selectedBoardName); return false;"></a>)</span>
+                                            <span id="boardBetFreq" style="font-size: 20px; font-weight: 600;"></span>
+                                            <span style="color: #fff; font-size: 20px; font-weight: 600;">(<a id="selectedBoardBetLink" href="#" style="color: #fff; font-size: 20px; font-weight: 600;" onclick="openBoardDetail(selectedBoardName); return false;"></a>)</span>
                                         </div>
-                                        <span id="boardBetParens" style="font-size: 18px; font-weight: 600;"></span>
+                                        <span id="boardBetParens" style="font-size: 20px; font-weight: 600;"></span>
                                     </div>
-                                    <div id="boardOriginalBetFreq" style="font-size: 11px; color: #888;"></div>
+                                    <div id="boardOriginalBetFreq" style="font-size: 12px; color: #c2c6cd;"></div>
                                 </div>
-                                <div style="background-color: #0d0d0d; border: 1px solid #2a2a2a; border-radius: 4px; padding: 10px; flex: 1; text-align: center;">
-                                    <div style="font-size: 11px; color: #aaa; margin-bottom: 5px;">Avg Check</div>
-                                    <div id="boardCheckFreq" style="font-size: 18px; font-weight: 600;"></div>
+                                <div style="background-color: #1c1c1c; border: 1px solid #3a3a3a; border-radius: 4px; padding: 10px; flex: 1; text-align: center;">
+                                    <div style="font-size: 12px; color: #c2c6cd; margin-bottom: 5px;">Avg Check</div>
+                                    <div id="boardCheckFreq" style="font-size: 20px; font-weight: 600;"></div>
                                 </div>
                             </div>
                             <div style="position: relative;">
                                 <canvas id="boardDetailChart"></canvas>
-                                <div id="boardAvgLabel" style="position: absolute; top: -25px; background-color: #fbbf24; color: #000; padding: 2px 6px; border-radius: 3px; font-size: 11px; font-weight: 600; transform: translateX(-50%);">Avg</div>
+                                <div id="boardAvgLabel" style="position: absolute; top: -25px; background-color: #fbbf24; color: #121212; padding: 2px 6px; border-radius: 3px; font-size: 12px; font-weight: 600; transform: translateX(-50%);">Avg</div>
                             </div>
                         </div>
                         
                         <!-- Aggregate Chart (hidden by default) -->
                         <div id="aggregateDetail" style="flex: 1; display: none;">
                             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                                <h3 id="aggregateTitle" style="color: #fff; font-size: 18px; margin: 0;"></h3>
-                                <button onclick="hideAggregateDetails()" style="background-color: #0d0d0d; color: white; padding: 8px 16px; border-radius: 6px; font-size: 13px; font-weight: 600; border: none; cursor: pointer;">Close</button>
+                                <h3 id="aggregateTitle" style="color: #fff; font-size: 20px; margin: 0;"></h3>
+                                <button onclick="hideAggregateDetails()" style="background-color: #1c1c1c; color: white; padding: 8px 16px; border-radius: 6px; font-size: 14px; font-weight: 600; border: none; cursor: pointer;">Close</button>
                             </div>
                             <div style="display: flex; gap: 10px; margin-bottom: 15px;">
-                                <div style="background-color: #0d0d0d; border: 1px solid #2a2a2a; border-radius: 4px; padding: 10px; flex: 1; text-align: center;">
-                                    <div style="font-size: 11px; color: #aaa; margin-bottom: 5px;">Avg Bet</div>
-                                    <div id="aggregateBetFreq" style="font-size: 18px; font-weight: 600;"></div>
-                                    <div id="aggregateOriginalBetFreq" style="font-size: 11px; color: #888;"></div>
+                                <div style="background-color: #1c1c1c; border: 1px solid #3a3a3a; border-radius: 4px; padding: 10px; flex: 1; text-align: center;">
+                                    <div style="font-size: 12px; color: #c2c6cd; margin-bottom: 5px;">Avg Bet</div>
+                                    <div id="aggregateBetFreq" style="font-size: 20px; font-weight: 600;"></div>
+                                    <div id="aggregateOriginalBetFreq" style="font-size: 12px; color: #c2c6cd;"></div>
                                 </div>
-                                <div style="background-color: #0d0d0d; border: 1px solid #2a2a2a; border-radius: 4px; padding: 10px; flex: 1; text-align: center;">
-                                    <div style="font-size: 11px; color: #aaa; margin-bottom: 5px;">Avg Check</div>
-                                    <div id="aggregateCheckFreq" style="font-size: 18px; font-weight: 600;"></div>
+                                <div style="background-color: #1c1c1c; border: 1px solid #3a3a3a; border-radius: 4px; padding: 10px; flex: 1; text-align: center;">
+                                    <div style="font-size: 12px; color: #c2c6cd; margin-bottom: 5px;">Avg Check</div>
+                                    <div id="aggregateCheckFreq" style="font-size: 20px; font-weight: 600;"></div>
                                 </div>
                             </div>
                             <div style="position: relative;">
                                 <canvas id="aggregateChart"></canvas>
-                                <div id="aggregateAvgLabel" style="position: absolute; top: -25px; background-color: #fbbf24; color: #000; padding: 2px 6px; border-radius: 3px; font-size: 11px; font-weight: 600; transform: translateX(-50%);">Avg</div>
+                                <div id="aggregateAvgLabel" style="position: absolute; top: -25px; background-color: #fbbf24; color: #121212; padding: 2px 6px; border-radius: 3px; font-size: 12px; font-weight: 600; transform: translateX(-50%);">Avg</div>
                             </div>
                         </div>
                     </div>
@@ -7181,7 +7311,7 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                         const y = tickY - 5;
                         
                         ctx.save();
-                        ctx.strokeStyle = '#e0e0e0';
+                        ctx.strokeStyle = '#ededed';
                         ctx.lineWidth = 1;
                         
                         // Draw file outline with folded corner
@@ -7238,10 +7368,10 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                         plugins: {
                             legend: { display: false },
                             tooltip: {
-                                backgroundColor: '#0d0d0d',
+                                backgroundColor: '#1c1c1c',
                                 titleColor: '#fff',
-                                bodyColor: '#e0e0e0',
-                                borderColor: '#333',
+                                bodyColor: '#ededed',
+                                borderColor: '#3a3a3a',
                                 borderWidth: 1,
                                 titleFont: { size: 14 },
                                 bodyFont: { size: 13 }
@@ -7273,11 +7403,11 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                                 stacked: true,
                                 max: 100,
                                 grid: { 
-                                    color: '#333',
+                                    color: '#3a3a3a',
                                     offset: false
                                 },
                                 ticks: {
-                                    color: '#888',
+                                    color: '#c2c6cd',
                                     font: { size: 12 },
                                     callback: value => value + '%'
                                 }
@@ -7502,7 +7632,7 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
             const labels = validCategories.map(c => c.name);
             
             const betColor = window.strengthChartInstance?.data?.datasets?.[0]?.backgroundColor || '#f97316';
-            const checkColor = window.strengthChartInstance?.data?.datasets?.[1]?.backgroundColor || '#6b7280';
+            const checkColor = window.strengthChartInstance?.data?.datasets?.[1]?.backgroundColor || '#aab0b8';
             debugLog('Adopted colors:', betColor, checkColor);
 
             // Use adjusted values if available
@@ -7625,13 +7755,13 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                             stacked: true,
                             max: 100,
                             ticks: { 
-                                color: '#888', 
+                                color: '#c2c6cd', 
                                 font: { size: 11, weight: '500' },
                                 callback: function(value) {
                                     return value + '%';
                                 }
                             },
-                            grid: { color: '#333' }
+                            grid: { color: '#3a3a3a' }
                         },
                         y: {
                             stacked: true,
@@ -8001,7 +8131,7 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
             const aggregateCheckFreq = document.getElementById('aggregateCheckFreq');
 
             const betColor = window.strengthChartInstance?.data?.datasets?.[0]?.backgroundColor || '#f97316';
-            const checkColor = window.strengthChartInstance?.data?.datasets?.[1]?.backgroundColor || '#6b7280';
+            const checkColor = window.strengthChartInstance?.data?.datasets?.[1]?.backgroundColor || '#aab0b8';
 
             if (aggregateBetFreq && aggregateCheckFreq) {
                 aggregateBetFreq.textContent = avgBoardBet.toFixed(1) + '%';
@@ -8138,13 +8268,13 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                             stacked: true,
                             max: 100,
                             ticks: { 
-                                color: '#888', 
+                                color: '#c2c6cd', 
                                 font: { size: 11, weight: '500' },
                                 callback: function(value) {
                                     return value + '%';
                                 }
                             },
-                            grid: { color: '#333' }
+                            grid: { color: '#3a3a3a' }
                         },
                         y: {
                             stacked: true,
@@ -8529,7 +8659,7 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                 `;
                 if (leftStrip) leftStrip.classList.remove('app-hidden');
             } else {
-                authStatus.innerHTML = `<button id="loginBtn" onclick="openAuthModal()" style="background: #4a9eff; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 11px;">Login</button>`;
+                authStatus.innerHTML = `<button id="loginBtn" onclick="openAuthModal()" style="background: #4a9eff; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 12px;">Login</button>`;
                 if (leftStrip) leftStrip.classList.add('app-hidden');
             }
         }
@@ -8842,6 +8972,73 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
         </div>
     </div>
 
-    </body>
+    <div class="m-toast-wrap" id="m-toast-wrap"></div>
+<script>
+(function(){
+  function mToast(msg, kind){
+    var w = document.getElementById('m-toast-wrap'); if(!w) return;
+    var t = document.createElement('div'); t.className = 'm-toast' + (kind==='err'?' err':'');
+    t.setAttribute('role', kind==='err'?'alert':'status');
+    var ok = '<svg class="m-toast-ico" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2.4"><path d="M20 6 9 17l-5-5"/></svg>';
+    var er = '<svg class="m-toast-ico" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2.4"><path d="M12 8v5M12 16h.01"/><circle cx="12" cy="12" r="9"/></svg>';
+    t.innerHTML = (kind==='err'?er:ok) + '<span></span>';
+    t.querySelector('span').textContent = String(msg);
+    w.appendChild(t);
+    setTimeout(function(){ t.style.opacity='0'; t.style.transition='opacity .3s'; setTimeout(function(){ t.remove(); },320); }, 3600);
+  }
+  function mConfirm(opts){
+    opts = opts || {};
+    return new Promise(function(res){
+      var prevFocus = document.activeElement;
+      var scrim = document.createElement('div'); scrim.className='m-dlg-scrim';
+      scrim.setAttribute('role','alertdialog'); scrim.setAttribute('aria-modal','true');
+      var dlg = document.createElement('div'); dlg.className='m-dlg';
+      var h = document.createElement('h3'); h.textContent = opts.title || 'Are you sure?';
+      var p = document.createElement('p'); p.innerHTML = opts.body || '';
+      var row = document.createElement('div'); row.className='m-dlg-row';
+      var cancel = document.createElement('button'); cancel.className='m-dlg-btn m-dlg-cancel'; cancel.textContent = opts.cancel || 'Cancel';
+      var okb = document.createElement('button'); okb.className='m-dlg-btn ' + (opts.danger?'m-dlg-danger':'m-dlg-primary'); okb.textContent = opts.ok || 'Confirm';
+      row.appendChild(cancel); row.appendChild(okb);
+      dlg.appendChild(h); dlg.appendChild(p); dlg.appendChild(row); scrim.appendChild(dlg);
+      document.body.appendChild(scrim);
+      cancel.focus(); // safe option pre-focused
+      function done(v){ scrim.remove(); try{ if(prevFocus && prevFocus.focus) prevFocus.focus(); }catch(e){} res(v); }
+      cancel.onclick = function(){ done(false); };
+      okb.onclick = function(){ done(true); };
+      scrim.addEventListener('mousedown', function(e){ if(e.target===scrim) done(false); });
+      scrim.addEventListener('keydown', function(e){
+        if(e.key==='Escape') done(false);
+        if(e.key==='Tab'){ // focus trap
+          var f=[cancel, okb]; var i=f.indexOf(document.activeElement);
+          if(e.shiftKey){ if(i<=0){ okb.focus(); e.preventDefault(); } }
+          else { if(i>=f.length-1){ cancel.focus(); e.preventDefault(); } }
+        }
+      });
+    });
+  }
+  window.mToast = mToast; window.mConfirm = mConfirm;
+  // alerts -> non-blocking themed toasts (one-way notifications)
+  window.alert = function(m){ mToast(String(m).replace(/^\u2713\s*/,''), /error|fail|invalid|no valid|already|please|not found|cannot/i.test(String(m)) && !/^\u2713/.test(String(m)) ? 'err' : 'ok'); };
+  // "All" selected-by-default style helper (used by the filter templates)
+  window.mAllBtnStyle = function(toggles){
+    var any = toggles && Object.keys(toggles).some(function(k){ return toggles[k] && toggles[k] !== 'off'; });
+    return any ? 'background: #1c1c1c; color: #ededed; border: 1px solid transparent;'
+               : 'background: rgba(74,158,255,0.16); color: #ededed; border: 1px solid #4a9eff;';
+  };
+  // filter "?" popover (Dismissible / Hoverable / Persistent — WCAG 1.4.13)
+  window.toggleFilterHelp = function(btn){
+    var pop = btn.nextElementSibling; if(!pop) return;
+    var open = pop.classList.toggle('m-open');
+    btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+  };
+  document.addEventListener('keydown', function(e){
+    if(e.key==='Escape'){ document.querySelectorAll('.m-help-pop.m-open').forEach(function(p){ p.classList.remove('m-open'); var b=p.previousElementSibling; if(b) b.setAttribute('aria-expanded','false'); }); }
+  });
+  document.addEventListener('click', function(e){
+    if(!e.target.closest('.m-help-wrap')){ document.querySelectorAll('.m-help-pop.m-open').forEach(function(p){ p.classList.remove('m-open'); var b=p.previousElementSibling; if(b) b.setAttribute('aria-expanded','false'); }); }
+  });
+})();
+</script>
+</body>
 </html>
 
