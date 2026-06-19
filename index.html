@@ -771,7 +771,7 @@
         .gtow-report-card .rc-clear:hover { box-shadow: inset 0 0 0 999px rgba(255,255,255,.08); }
         .rc-pick-menu {
             display: none; position: absolute; top: calc(100% + 4px); left: 0;
-            min-width: 100%; max-width: 280px; max-height: 260px; overflow-y: auto;
+            min-width: 300px; max-width: 360px; max-height: 260px; overflow-y: auto;
             background: #1c1c1c; border: 1px solid #3a3a3a; border-radius: 6px;
             z-index: 200; box-shadow: 0 8px 24px rgba(0,0,0,.6);
         }
@@ -844,6 +844,19 @@
         .rc-pick-sub {
             font-size: 12px; font-weight: 500; color: #c2c6cd;
             white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        }
+        /* separator between the size-line segments — lighter muted grey (AA-verified on
+           menu bg #242424, hover #1c1c1c, and the composited selected-fill). NOT #6f6f6f. */
+        .rc-pick-sub .rc-pick-sep { color: #aab0b8; padding: 0 2px; }
+        /* comment on its own line, verbatim (user's own parentheses) */
+        .rc-pick-cmt {
+            font-size: 12px; font-weight: 500; color: #aab0b8;
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        }
+        /* flop-count chip: right-aligned number on the row (Option C) */
+        .rc-pick-count {
+            flex: 0 0 auto; font-size: 11px; font-weight: 700; color: #aab0b8;
+            font-variant-numeric: tabular-nums; padding: 0 2px; user-select: none;
         }
         /* ---- picker search box (top of menu) ---- */
         .rc-pick-search {
@@ -1735,6 +1748,11 @@
         #importModal .imd-lbl .imd-hint {
             text-transform:none; letter-spacing:0; font-weight:500; color:var(--imd-txt-2); margin-left:8px;
         }
+        /* two text inputs side-by-side (Table Size + Comment) — saves vertical space so the
+           modal stays scroll-free on a standard desktop viewport */
+        #importModal .imd-field-2col { display:flex; gap:16px; }
+        #importModal .imd-field-2col .imd-subfield { flex:1 1 0; min-width:0; }
+        #importModal .imd-field-2col .imd-subfield .imd-lbl { margin-bottom:8px; }
 
         /* segmented control */
         #importModal .imd-seg {
@@ -1806,6 +1824,24 @@
         }
         #importModal .imd-autoname .imd-v { font-size: 14px; font-weight:650; color:var(--imd-txt); }
         #importModal .imd-autoname .imd-muted { color:var(--imd-txt-3); font-weight:500; }
+
+        /* ===== §6 DENSITY — keep the Import Data modal scroll-free on a normal desktop screen
+           after adding Table Size + Comment. Scoped to #importModal ONLY so the Link modal
+           keeps its original spacing. Type sizes unchanged (>=12px floor); contrast unchanged. ===== */
+        #importModal .imd-head { padding:8px 24px 4px; }
+        #importModal .imd-sub { margin-top:2px; }
+        #importModal .imd-body { padding:2px 24px 0; }
+        #importModal .imd-section { padding:11px 16px; margin-bottom:5px; }
+        #importModal .imd-sechead { margin-bottom:2px; }
+        #importModal .imd-help { margin:2px 0 6px; }
+        #importModal .imd-field { margin-bottom:6px; }
+        #importModal .imd-lbl { margin-bottom:4px; }
+        #importModal .imd-matchup-preview { margin-top:5px; }
+        #importModal .imd-autoname { margin-top:4px; padding:6px 14px; }
+        #importModal .imd-foot { padding:6px 24px 10px; margin-top:2px; }
+        #importModal .imd-paste { min-height:60px; }
+        /* segmented control: shave vertical padding without dropping below comfortable tap size */
+        #importModal .imd-seg button { padding:7px 14px; }
 
         /* MODAL 2 — context banner + locked confirmations */
         #linkReportModal .imd-ctx {
@@ -2233,12 +2269,21 @@ a:focus-visible,button:focus-visible,input:focus-visible,textarea:focus-visible,
                     </div>
                     <p class="imd-help">Select the filters that apply to this specific report. The name will be auto-generated.</p>
 
-                    <div class="imd-field">
-                        <label class="imd-lbl" id="imdLblPot">Pot Type</label>
-                        <div class="imd-seg" id="impPotSeg" data-target="tagPotType" role="group" aria-labelledby="imdLblPot">
-                            <button type="button" aria-pressed="false" data-val="2BP">2BP</button>
-                            <button type="button" aria-pressed="false" data-val="3BP">3BP</button>
-                            <button type="button" aria-pressed="false" data-val="4BP">4BP</button>
+                    <div class="imd-field imd-field-2col">
+                        <div class="imd-subfield">
+                            <label class="imd-lbl" id="imdLblPot">Pot Type</label>
+                            <div class="imd-seg imd-fill" id="impPotSeg" data-target="tagPotType" role="group" aria-labelledby="imdLblPot">
+                                <button type="button" aria-pressed="false" data-val="2BP">2BP</button>
+                                <button type="button" aria-pressed="false" data-val="3BP">3BP</button>
+                                <button type="button" aria-pressed="false" data-val="4BP">4BP</button>
+                            </div>
+                        </div>
+                        <div class="imd-subfield">
+                            <label class="imd-lbl" id="imdLblInit">Initiative</label>
+                            <div class="imd-seg imd-fill" id="impInitSeg" data-target="tagInitiative" role="group" aria-labelledby="imdLblInit">
+                                <button type="button" aria-pressed="false" data-val="PFR">PFR</button>
+                                <button type="button" aria-pressed="false" data-val="PFC">PFC</button>
+                            </div>
                         </div>
                     </div>
 
@@ -2264,16 +2309,26 @@ a:focus-visible,button:focus-visible,input:focus-visible,textarea:focus-visible,
                     </div>
 
                     <div class="imd-field">
-                        <label class="imd-lbl" id="imdLblInit">Initiative</label>
-                        <div class="imd-seg" id="impInitSeg" data-target="tagInitiative" role="group" aria-labelledby="imdLblInit">
-                            <button type="button" aria-pressed="false" data-val="PFR">PFR</button>
-                            <button type="button" aria-pressed="false" data-val="PFC">PFC</button>
-                        </div>
-                    </div>
-
-                    <div class="imd-field">
                         <label class="imd-lbl" for="tagBoardsCategory">Board Category</label>
                         <input class="imd-text-in" type="text" id="tagBoardsCategory" placeholder="e.g. KLL, Ace-high, paired…" autocomplete="off">
+                    </div>
+
+                    <div class="imd-field imd-field-2col">
+                        <div class="imd-subfield">
+                            <label class="imd-lbl" for="tagTableSize">Table Size</label>
+                            <input class="imd-text-in" type="text" id="tagTableSize" list="tableSizeOptions" placeholder="pick or type…" autocomplete="off">
+                            <datalist id="tableSizeOptions">
+                                <option value="HU"></option>
+                                <option value="3-max"></option>
+                                <option value="4-max"></option>
+                                <option value="5-max"></option>
+                                <option value="6-max"></option>
+                            </datalist>
+                        </div>
+                        <div class="imd-subfield">
+                            <label class="imd-lbl" for="tagComment">Comment <span class="imd-hint">optional</span></label>
+                            <input class="imd-text-in" type="text" id="tagComment" placeholder="e.g. (no donks)" autocomplete="off">
+                        </div>
                     </div>
 
                     <div class="imd-autoname">
@@ -2602,6 +2657,10 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
             const initiative = document.getElementById('tagInitiative').value;
             const bcEl = document.getElementById('tagBoardsCategory');
             const boardsCategory = bcEl ? bcEl.value.trim() : '';
+            const tsEl = document.getElementById('tagTableSize');
+            const tableSize = tsEl ? tsEl.value.trim() : '';
+            const cmtEl = document.getElementById('tagComment');
+            const comment = cmtEl ? cmtEl.value.trim() : '';
 
             if (!position || !potType || !player || !initiative) {
                 alert('Please select POT TYPE, POSITION, PLAYER, and INITIATIVE first');
@@ -2613,7 +2672,7 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
             input.accept = '.csv';
             input.onchange = (e) => {
                 if (e.target.files[0]) {
-                    importPioCSV(e.target.files[0], { position, potType, player, initiative, boardsCategory });
+                    importPioCSV(e.target.files[0], { position, potType, player, initiative, boardsCategory, tableSize, comment });
                 }
             };
             input.click();
@@ -2761,6 +2820,12 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                     // seed the field if missing so the row always has a key to render).
                     if (filters.boardsCategory) existingReport.flopTexture = filters.boardsCategory;
                     else if (existingReport.flopTexture == null) existingReport.flopTexture = '';
+                    // Table Size + Comment — same own-property pattern (only overwrite when typed;
+                    // seed when missing so they round-trip as plain own-properties).
+                    if (filters.tableSize) existingReport.tableSize = filters.tableSize;
+                    else if (existingReport.tableSize == null) existingReport.tableSize = '';
+                    if (filters.comment) existingReport.comment = filters.comment;
+                    else if (existingReport.comment == null) existingReport.comment = '';
                 } else {
                     const newReport = {
                         id: Date.now() + Math.random(),
@@ -2769,6 +2834,8 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                         potType: filters.potType,
                         position: normalizedPosition,
                         flopTexture: filters.boardsCategory || '',  // Boards Category, typed at import
+                        tableSize: filters.tableSize || '',         // Table Size, typed/picked at import
+                        comment: filters.comment || '',             // Comment, free text at import
                         perspectives: {
                             [filters.player]: {
                                 postflopPosition: posInfo.postflopPosition,
@@ -3919,14 +3986,28 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                     // so MAX gives the distinct count and avoids double-counting on summing).
                     const flopCount = Math.max(0, ...Object.values(r.perspectives || {})
                         .map(p => (p && p.action1 && p.action1.data ? p.action1.data.length : 0)));
-                    const sub = flopCount + (flopCount === 1 ? ' flop' : ' flops');
+                    // SIZE LINE (Option C): "<TableSize> · <size>". Omit either segment (and its
+                    // separator) when absent; the auto size descriptor is null when undeterminable.
+                    const tableSize = (r.tableSize != null && String(r.tableSize).trim())
+                        ? String(r.tableSize).trim() : '';
+                    const sizeDesc = computeSizeDescriptor(r);
+                    const sizeSegs = [];
+                    if (tableSize) sizeSegs.push(escapeHtml(tableSize));
+                    if (sizeDesc) sizeSegs.push(escapeHtml(sizeDesc));
+                    const subHtml = sizeSegs.length
+                        ? `<div class="rc-pick-sub">${sizeSegs.join(' <span class="rc-pick-sep">·</span> ')}</div>`
+                        : '';
+                    // COMMENT on its own line, verbatim (user's own parentheses), only when present.
+                    const comment = (r.comment != null && String(r.comment).trim())
+                        ? String(r.comment).trim() : '';
+                    const cmtHtml = comment ? `<div class="rc-pick-cmt">${escapeHtml(comment)}</div>` : '';
                     const isCurrent = !!currentReport && (r === currentReport || (r.id != null && r.id === currentReport.id));
                     // Export = ICON-ONLY using the Import-data icon family (tray + line) but with
                     // the arrow pointing UP (export = out). Delete = ICON-ONLY red trash (danger token),
                     // behind an are-you-sure confirm.
                     const exportSvg = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 17v2a2 2 0 002 2h12a2 2 0 002-2v-2"/><path d="M7 9l5-5 5 5"/><path d="M12 4v12"/></svg>`;
                     const deleteSvg = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M8 6V4a1 1 0 011-1h6a1 1 0 011 1v2"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/></svg>`;
-                    return `<div class="rc-pick-item${isCurrent ? ' is-current' : ''}" data-search="${escapeHtml(nm)}"><span class="rc-pick-check" aria-hidden="true">${isCurrent ? '✓' : ''}</span><div class="rc-pick-name" onclick="event.stopPropagation(); selectReportFromDropdown(${i}); toggleHandlinePicker(false);"><div class="rc-pick-title">${escapeHtml(nm)}</div><div class="rc-pick-sub">${escapeHtml(sub)}</div></div><div class="rc-pick-actions"><button class="rc-pick-export" title="Export this report to a JSON file" onclick="event.stopPropagation(); exportSingleReport(${i});">${exportSvg}</button><button class="rc-pick-delete" title="Delete this report" onclick="event.stopPropagation(); deleteReportFromDropdown(${i});">${deleteSvg}</button></div></div>`;
+                    return `<div class="rc-pick-item${isCurrent ? ' is-current' : ''}" data-search="${escapeHtml(nm)}"><span class="rc-pick-check" aria-hidden="true">${isCurrent ? '✓' : ''}</span><div class="rc-pick-name" onclick="event.stopPropagation(); selectReportFromDropdown(${i}); toggleHandlinePicker(false);"><div class="rc-pick-title">${escapeHtml(nm)}</div>${subHtml}${cmtHtml}</div><span class="rc-pick-count" title="${flopCount} ${flopCount === 1 ? 'flop' : 'flops'}">${flopCount}</span><div class="rc-pick-actions"><button class="rc-pick-export" title="Export this report to a JSON file" onclick="event.stopPropagation(); exportSingleReport(${i});">${exportSvg}</button><button class="rc-pick-delete" title="Delete this report" onclick="event.stopPropagation(); deleteReportFromDropdown(${i});">${deleteSvg}</button></div></div>`;
                 }).join('')
                 : '<div class="rc-pick-empty">No saved reports yet</div>';
 
@@ -3955,10 +4036,14 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
             let fields = '';
             if (hasReport) {
                 const boardCat = currentReport.flopTexture && String(currentReport.flopTexture).trim();
+                const tableSz = currentReport.tableSize && String(currentReport.tableSize).trim();
+                const cmt = currentReport.comment && String(currentReport.comment).trim();
                 const rows = [
-                    `<dt>SPOT</dt><dd>${escapeHtml(currentReport.potType || '—')}</dd>`,
+                    `<dt>Spot</dt><dd>${escapeHtml(currentReport.potType || '—')}</dd>`,
                     `<dt>Positions</dt><dd>${escapeHtml(currentReport.position || '—')}</dd>`,
-                    `<dt>Boards Category</dt><dd>${boardCat ? escapeHtml(boardCat) : '—'}</dd>`
+                    `<dt>Table Size</dt><dd>${tableSz ? escapeHtml(tableSz) : '—'}</dd>`,
+                    `<dt>Boards Category</dt><dd>${boardCat ? escapeHtml(boardCat) : '—'}</dd>`,
+                    `<dt>Comment</dt><dd>${cmt ? escapeHtml(cmt) : '—'}</dd>`
                 ];
                 fields = `<dl class="rc-fields">${rows.join('')}</dl>`;
             }
@@ -4007,7 +4092,7 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                     // names + sublines always render in full even when the card is at its min width.
                     const card = menu.closest('.gtow-report-card');
                     const anchorR = card ? card.getBoundingClientRect() : r;
-                    const MIN_W = 212; // measured: longest name+subline fit without truncation, no sprawl
+                    const MIN_W = 300; // measured: name + "<TableSize> · <size>" line + flop-count chip + per-row actions fit without truncation, no sprawl
                     const w = Math.max(MIN_W, Math.round(anchorR.width));
                     // keep the menu's left edge aligned to the card; nudge left if the floor pushed it
                     // past the right edge of the viewport so it doesn't overflow off-screen.
@@ -4401,6 +4486,54 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
             return action;
         }
 
+        // Auto-detected bet-size descriptor for the report picker's "size line" (NOT stored,
+        // NOT editable; recomputed each render). Rules (user-validated against real reports):
+        //  - Classifying node = perspectives[firstToAct].action1. If its availableActions are
+        //    check-only (every label /^check$/i), walk to the opponent's response node (the single
+        //    key matching /^action2_/i across perspectives).
+        //  - Count "size tokens" at the classifying node: a label /^[br]\d/i (b/r + number) OR an
+        //    all-in token /^(ai|allin|all-in|jam|shove)$/i.
+        //  - exactly 1 size token -> SINGLE-SIZE: that one label via displayActionLabel (B30, R3x),
+        //    EXCEPT all-in -> 'AI' (special-cased here, not in displayActionLabel).
+        //  - 2+ size tokens -> 'multi-size'.
+        //  - check-first AND no action2_* node exists yet (incomplete) -> null (omit the segment).
+        //  - check-check (both nodes check-only / zero size tokens) -> null (omit).
+        // Returns the display string, or null when the size is undeterminable (caller omits it).
+        function computeSizeDescriptor(report) {
+            if (!report || !report.perspectives || !report.firstToAct) return null;
+            const firstPersp = report.perspectives[report.firstToAct];
+            if (!firstPersp || !firstPersp.action1) return null;
+            const isCheckOnly = (acts) => Array.isArray(acts) && acts.length > 0
+                && acts.every(a => /^check$/i.test(String(a)));
+            const isSizeToken = (a) => /^[br]\d/i.test(String(a))
+                || /^(ai|allin|all-in|jam|shove)$/i.test(String(a));
+            const isAllIn = (a) => /^(ai|allin|all-in|jam|shove)$/i.test(String(a));
+
+            let node = firstPersp.action1;
+            if (isCheckOnly(node.availableActions)) {
+                // Walk to the opponent's response node: the single key matching /^action2_/i
+                // across all perspectives. If none exists yet, the report is incomplete -> omit.
+                let respNode = null;
+                for (const pk in report.perspectives) {
+                    const persp = report.perspectives[pk];
+                    if (!persp) continue;
+                    for (const key in persp) {
+                        if (/^action2_/i.test(key)) { respNode = persp[key]; break; }
+                    }
+                    if (respNode) break;
+                }
+                if (!respNode) return null;
+                node = respNode;
+            }
+
+            const acts = Array.isArray(node.availableActions) ? node.availableActions : [];
+            const sizeTokens = acts.filter(isSizeToken);
+            if (sizeTokens.length === 0) return null;       // check-check / no size -> omit
+            if (sizeTokens.length >= 2) return 'multi-size';
+            const tok = sizeTokens[0];
+            return isAllIn(tok) ? 'AI' : displayActionLabel(tok);
+        }
+
         function editCurrentReport() {
             debugLog('🟢 editCurrentReport START');
             
@@ -4453,6 +4586,8 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
             document.getElementById('tagPlayer').value = currentPerspective || '';
             document.getElementById('tagInitiative').value = currentReport.perspectives[currentPerspective]?.initiative || '';
             { const bc = document.getElementById('tagBoardsCategory'); if (bc) bc.value = currentReport.flopTexture || ''; }
+            { const ts = document.getElementById('tagTableSize'); if (ts) ts.value = currentReport.tableSize || ''; }
+            { const cm = document.getElementById('tagComment'); if (cm) cm.value = currentReport.comment || ''; }
 
             // Pre-fill with existing data from report
             document.getElementById('dataInput').value = rawData;
@@ -6029,6 +6164,8 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                 document.getElementById('tagInitiative').value = ''; // Will need to be set based on perspective
                 // Prefill Boards Category from the report so Edit can change it.
                 { const bc = document.getElementById('tagBoardsCategory'); if (bc) bc.value = report.flopTexture || ''; }
+                { const ts = document.getElementById('tagTableSize'); if (ts) ts.value = report.tableSize || ''; }
+                { const cm = document.getElementById('tagComment'); if (cm) cm.value = report.comment || ''; }
 
                 // Load rawData into textarea
                 const perspective = Object.keys(report.perspectives)[0];
@@ -6053,6 +6190,8 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                 document.getElementById('tagPlayer').value = '';
                 document.getElementById('tagInitiative').value = '';
                 { const bc = document.getElementById('tagBoardsCategory'); if (bc) bc.value = ''; }
+                { const ts = document.getElementById('tagTableSize'); if (ts) ts.value = ''; }
+                { const cm = document.getElementById('tagComment'); if (cm) cm.value = ''; }
             }
             
             debugLog('Adding active class to modal');
@@ -6086,6 +6225,12 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
             // the same field the report card's "Boards Category" row reads). Optional/free-text.
             const boardsCategoryEl = document.getElementById('tagBoardsCategory');
             const boardsCategory = boardsCategoryEl ? boardsCategoryEl.value.trim() : '';
+            // Table Size (pick-or-type) and Comment (free text) — stored as plain own-properties
+            // on the report, mirroring flopTexture. Optional.
+            const tableSizeEl = document.getElementById('tagTableSize');
+            const tableSize = tableSizeEl ? tableSizeEl.value.trim() : '';
+            const commentEl = document.getElementById('tagComment');
+            const comment = commentEl ? commentEl.value.trim() : '';
 
             if (!dataText) {
                 alert('Please paste your data first');
@@ -6258,6 +6403,11 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                         // Persist any edited Boards Category on the report (Edit can change it).
                         if (boardsCategory) existingReport.flopTexture = boardsCategory;
                         else if (existingReport.flopTexture == null) existingReport.flopTexture = '';
+                        // Table Size + Comment — same own-property pattern.
+                        if (tableSize) existingReport.tableSize = tableSize;
+                        else if (existingReport.tableSize == null) existingReport.tableSize = '';
+                        if (comment) existingReport.comment = comment;
+                        else if (existingReport.comment == null) existingReport.comment = '';
 
                         localStorage.setItem('gtoReports', JSON.stringify(allReports));
 
@@ -6302,6 +6452,11 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                         // existing category); seed missing field so the row always has a key.
                         if (boardsCategory) existingReport.flopTexture = boardsCategory;
                         else if (existingReport.flopTexture == null) existingReport.flopTexture = '';
+                        // Table Size + Comment — same own-property pattern.
+                        if (tableSize) existingReport.tableSize = tableSize;
+                        else if (existingReport.tableSize == null) existingReport.tableSize = '';
+                        if (comment) existingReport.comment = comment;
+                        else if (existingReport.comment == null) existingReport.comment = '';
 
                         localStorage.setItem('gtoReports', JSON.stringify(allReports));
                         alert(`✓ Added ${player} data (${data.length} flops)`);
@@ -6315,6 +6470,8 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                         potType: potType,
                         position: normalizedPosition,
                         flopTexture: boardsCategory,  // Boards Category, typed at import
+                        tableSize: tableSize,         // Table Size, typed/picked at import
+                        comment: comment,             // Comment, free text at import
                         perspectives: {
                             [player]: {
                                 postflopPosition: posInfo.postflopPosition,
