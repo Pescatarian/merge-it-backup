@@ -1668,12 +1668,14 @@
             border: 1px solid var(--imd-line);
             border-radius: var(--imd-radius);
             box-shadow: 0 24px 64px -16px rgba(0,0,0,.7), 0 0 0 1px rgba(255,255,255,.03);
-            max-height: calc(100vh - 96px);
-            overflow: auto;
             font-family: var(--imd-font);
             color: var(--imd-txt);
             animation: imd-modal-in .18s ease;
         }
+        /* Link modal keeps its original scroll fallback (unchanged behavior). The import
+           modal removes it entirely below — see the §6 density block — so a window/modal
+           scrollbar provably cannot appear there. */
+        #linkReportModal .modal-content { max-height: calc(100vh - 96px); overflow: auto; }
         @keyframes imd-modal-in { from { opacity:0; transform:translateY(8px) scale(.99); } to { opacity:1; transform:none; } }
         #importModal .modal-content::-webkit-scrollbar,
         #linkReportModal .modal-content::-webkit-scrollbar { width: 10px; }
@@ -1828,6 +1830,11 @@
         /* ===== §6 DENSITY — keep the Import Data modal scroll-free on a normal desktop screen
            after adding Table Size + Comment. Scoped to #importModal ONLY so the Link modal
            keeps its original spacing. Type sizes unchanged (>=12px floor); contrast unchanged. ===== */
+        /* HARD no-scroll: the import modal card has NO max-height scroll-cap and NO overflow:auto,
+           so a window/modal scrollbar can never appear. (overflow:visible also beats the generic
+           .modal-content{max-height:80vh;overflow-y:auto} base rule.) The paste box below is sized
+           to the leftover viewport height (calc) so the whole card still fits 1366×768 with margin. */
+        #importModal .modal-content { max-height:none; overflow:visible; }
         #importModal .imd-head { padding:8px 24px 4px; }
         #importModal .imd-sub { margin-top:2px; }
         #importModal .imd-body { padding:2px 24px 0; }
@@ -1839,9 +1846,16 @@
         #importModal .imd-matchup-preview { margin-top:5px; }
         #importModal .imd-autoname { margin-top:4px; padding:6px 14px; }
         #importModal .imd-foot { padding:6px 24px 10px; margin-top:2px; }
-        #importModal .imd-paste { min-height:60px; }
-        /* segmented control: shave vertical padding without dropping below comfortable tap size */
-        #importModal .imd-seg button { padding:7px 14px; }
+        /* Paste box = ALL leftover vertical space. height = 100vh minus the measured fixed parts
+           (header, filter segs, Board Category/Comment, Table Size, auto-name, Step-2 header,
+           footer, paddings/margins) plus a top/bottom safety margin, so the card always fits
+           1366×768 (and 1920×1080) with NO modal scroll. The box keeps its OWN internal scroll
+           (overflow:auto) for long pastes; the drag-resize handle is removed (resize:none) so it
+           can't be stretched to force a modal scroll. 16px mono / 1.55 line-height kept (WCAG 1.4.12). */
+        #importModal .imd-paste { resize:none; min-height:0; height:calc(100vh - 680px); overflow:auto; }
+        /* segmented control: shave vertical padding for a tight desktop-mouse target,
+           kept comfortably above WCAG 2.5.8 (≥24×24 CSS px). */
+        #importModal .imd-seg button { padding:6px 12px; }
 
         /* MODAL 2 — context banner + locked confirmations */
         #linkReportModal .imd-ctx {
@@ -2267,7 +2281,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,textarea:focus-visible,
                         <span class="imd-step">STEP 1</span>
                         <span class="imd-sectitle">Report filters</span>
                     </div>
-                    <p class="imd-help">Select the filters that apply to this specific report. The name will be auto-generated.</p>
+                    <p class="imd-help">Select the filters that apply to this specific report.</p>
 
                     <div class="imd-field imd-field-2col">
                         <div class="imd-subfield">
@@ -2309,21 +2323,20 @@ a:focus-visible,button:focus-visible,input:focus-visible,textarea:focus-visible,
                     </div>
 
                     <div class="imd-field">
-                        <label class="imd-lbl" for="tagBoardsCategory">Board Category</label>
-                        <input class="imd-text-in" type="text" id="tagBoardsCategory" placeholder="e.g. KLL, Ace-high, paired…" autocomplete="off">
+                        <label class="imd-lbl" id="imdLblTableSize">Table Size</label>
+                        <div class="imd-seg imd-fill" id="impTableSizeSeg" data-target="tagTableSize" role="group" aria-labelledby="imdLblTableSize">
+                            <button type="button" aria-pressed="false" data-val="HU">HU</button>
+                            <button type="button" aria-pressed="false" data-val="3-max">3-max</button>
+                            <button type="button" aria-pressed="false" data-val="4-max">4-max</button>
+                            <button type="button" aria-pressed="false" data-val="5-max">5-max</button>
+                            <button type="button" aria-pressed="false" data-val="6-max">6-max</button>
+                        </div>
                     </div>
 
                     <div class="imd-field imd-field-2col">
                         <div class="imd-subfield">
-                            <label class="imd-lbl" for="tagTableSize">Table Size</label>
-                            <input class="imd-text-in" type="text" id="tagTableSize" list="tableSizeOptions" placeholder="pick or type…" autocomplete="off">
-                            <datalist id="tableSizeOptions">
-                                <option value="HU"></option>
-                                <option value="3-max"></option>
-                                <option value="4-max"></option>
-                                <option value="5-max"></option>
-                                <option value="6-max"></option>
-                            </datalist>
+                            <label class="imd-lbl" for="tagBoardsCategory">Board Category</label>
+                            <input class="imd-text-in" type="text" id="tagBoardsCategory" placeholder="e.g. KLL, Ace-high, paired…" autocomplete="off">
                         </div>
                         <div class="imd-subfield">
                             <label class="imd-lbl" for="tagComment">Comment <span class="imd-hint">optional</span></label>
@@ -2344,7 +2357,6 @@ a:focus-visible,button:focus-visible,input:focus-visible,textarea:focus-visible,
                         <span class="imd-step">STEP 2</span>
                         <span class="imd-sectitle">Paste your data</span>
                     </div>
-                    <p class="imd-help">Copy your aggregate report from GTO+ / Simple Postflop and paste it below.</p>
                     <textarea class="imd-paste" id="dataInput" aria-label="Paste your aggregate report" placeholder="Tree(*)    Equity   EV      Bet 5.4   Check&#10;Ad9h7h     54.759   10.128  40.507    59.493&#10;Ad9h6h     53.560   10.217  52.333    47.667"></textarea>
                 </div>
 
@@ -2362,6 +2374,9 @@ a:focus-visible,button:focus-visible,input:focus-visible,textarea:focus-visible,
                  above mirror their selections into these controls. DO NOT remove. -->
             <div style="display:none;" aria-hidden="true">
                 <input type="text" id="reportName" readonly>
+                <!-- Table Size source-of-truth: the visible #impTableSizeSeg segmented buttons
+                     write the picked value here; saveReport/openImportModal read .value as before. -->
+                <input type="text" id="tagTableSize" readonly>
                 <select id="tagPotType" required onchange="updateReportName()">
                     <option value="">Select Pot Type</option>
                     <option value="2BP">2BP</option>
@@ -8986,10 +9001,12 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
             var pot = document.getElementById('impPotSeg');
             var player = document.getElementById('impPlayerSeg');
             var init = document.getElementById('impInitSeg');
+            var tsize = document.getElementById('impTableSizeSeg');
             var posSeg = document.getElementById('impPosSeg');
             if(pot) imdSetSeg(pot, (document.getElementById('tagPotType')||{}).value || '');
             if(player) imdSetSeg(player, (document.getElementById('tagPlayer')||{}).value || '');
             if(init) imdSetSeg(init, (document.getElementById('tagInitiative')||{}).value || '');
+            if(tsize) imdSetSeg(tsize, (document.getElementById('tagTableSize')||{}).value || '');
 
             if(posSeg){
                 var posVal = (document.getElementById('tagPosition')||{}).value || '';
@@ -9029,6 +9046,7 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
             wireSingleSeg('impPotSeg');
             wireSingleSeg('impPlayerSeg');
             wireSingleSeg('impInitSeg');
+            wireSingleSeg('impTableSizeSeg');
             wireMatchupSeg();
 
             // Close-X on the link modal mirrors Cancel (pops the action + closes).
