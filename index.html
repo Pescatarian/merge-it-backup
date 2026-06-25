@@ -5816,8 +5816,15 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
             const message = `${actingPlayer} selected "${action}". Import ${sequence.opponent}'s response data:`;
             document.getElementById('linkReportMessage').textContent = message;
             
-            // Pre-fill filters (suggest opposite of current report)
-            document.getElementById('linkPotType').value = currentReport.potType;
+            // Pre-fill filters (suggest opposite of current report). The IMPORT modal labels a
+            // single-raised pot "2BP" while the LINK modal's select offers "SRP" for the same
+            // thing (the app treats them as identical — see getPlayerPosition "In SRP (2BP)").
+            // Without mapping, a 2BP report sets #linkPotType to a non-existent option → empty →
+            // saveLinkReport bails with "Please fill all filter fields". Map 2BP→SRP so the locked
+            // pot-type chip shows the correct option and validation passes (potType is only used
+            // for that validation gate, never for storing/matching the linked data).
+            document.getElementById('linkPotType').value =
+                currentReport.potType === '2BP' ? 'SRP' : currentReport.potType;
             
             // Keep the SAME position (we're adding opponent's perspective to same report)
             document.getElementById('linkPosition').value = currentReport.position;
