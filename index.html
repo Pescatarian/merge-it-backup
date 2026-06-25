@@ -2699,7 +2699,7 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
         // re-saved without a second parser (KI #24). Returns null if the position/player is invalid
         // (getPlayerPositionInfo already alerts); throws Error(msg) for CSV-structure problems so the
         // caller can alert with the message.
-        function parsePioCSVText(text, position, player) {
+        function parsePioCSVText(text, position, player, opts) {
             // Split on ANY line-ending style. PioViewer "Aggregation analysis" exports use
             // CR-only (\r) line breaks; older flop exports use \n or \r\n — handle all three.
             const lines = text.split(/\r\n|\r|\n/).map(line => line.trim()).filter(line => line);
@@ -2719,8 +2719,16 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
             // position string + player to postflopPosition ("OOP" | "IP"); that is exactly
             // how the report is built downstream, so reading the matching equity column keeps
             // the equity consistent with the report's perspective.
-            const posInfo = getPlayerPositionInfo(position, player);
-            if (!posInfo) return null; // getPlayerPositionInfo already alerts on a bad position/player
+            // The link-import path knows the perspective directly (the link modal's IP/OOP
+            // select) rather than a position+player pair, so it passes opts.postflopPosition to
+            // reuse this same parser. The normal import path derives it from the chosen player.
+            let posInfo;
+            if (opts && opts.postflopPosition) {
+                posInfo = { postflopPosition: opts.postflopPosition === 'IP' ? 'IP' : 'OOP' };
+            } else {
+                posInfo = getPlayerPositionInfo(position, player);
+                if (!posInfo) return null; // getPlayerPositionInfo already alerts on a bad position/player
+            }
 
             // ----- Locate columns BY HEADER NAME (PioViewer 3.5.2.6 inserts extra columns:
             // Matchups, separate OOP/IP Equity, OOP/IP EV, OOP/IP EQR — so fixed indices break) -----
@@ -2904,7 +2912,18 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                 
                 // Display the report
                 const report = allReports.find(r => r.name === reportName);
-                if (report) displayReport(report.id);
+                if (report) {
+                    // A currentPerspective left over from a previously-viewed report can be absent
+                    // from this freshly-imported report; displayReport then dereferences an undefined
+                    // perspective and throws ("Cannot convert undefined or null to object"), leaving
+                    // the chart area blank even though the import succeeded. If the leftover
+                    // perspective isn't valid for this report, land on the just-imported player
+                    // (whose data definitely exists) so the imported boards always render.
+                    if (currentPerspective && !report.perspectives[currentPerspective]) {
+                        currentPerspective = filters.player;
+                    }
+                    displayReport(report.id);
+                }
             };
             
             reader.readAsText(file);
@@ -6022,101 +6041,32 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
             if (!file) return;
             
             const reader = new FileReader();
-            reader.onload = async function(e) {
+            reader.onload = function(e) {
                 const text = e.target.result;
-                const lines = text.split('\n').map(line => line.trim()).filter(line => line);
-                
-                // Find column headers
-                let headerIndex = lines.findIndex(line => line.startsWith('Flop,'));
-                if (headerIndex === -1) {
-                    alert('Invalid PioSOLVER CSV: Could not find column headers');
-                    return;
-                }
-                
-                const headers = parseCSVLine(lines[headerIndex]).map(h => h.trim());
-                const dataRows = lines.slice(headerIndex + 1);
 
-                // ----- Locate columns BY HEADER NAME (PioViewer 3.5.2.6 inserts extra columns:
-                // Matchups, separate OOP/IP Equity, OOP/IP EV, OOP/IP EQR — so the old fixed
-                // indices (equity=col 2, actions from col 8 stepping +2) read garbage. This mirrors
-                // the main importPioCSV header-name logic. -----
-                const findCol = (predicate) => headers.findIndex(h => predicate(h.toLowerCase()));
-
-                const flopCol = findCol(h => h === 'flop');
-                if (flopCol === -1) {
-                    alert('Invalid PioSOLVER CSV: Could not find a "Flop" column');
-                    return;
-                }
-
-                // Equity column for THIS import's perspective. The Link modal imports the OPPONENT's
-                // response, whose perspective is the #linkPostflopPosition select (IP/OOP). New CSVs
-                // have "OOP Equity" / "IP Equity"; older single-perspective exports have a plain
-                // "Equity" — fall back to that.
+                // Use the SAME shared Pio-CSV parser as the main import path, so the link import
+                // accepts every format the main import does (old "Flop,"/"OOP Equity"/" freq"
+                // exports AND new "Aggregation analysis" exports: CR-only line endings, "board,"
+                // header, "EQ OOP"/"EQ IP" equity, bare CHECK/B25/RAISE columns). The link modal
+                // knows the perspective directly via the #linkPostflopPosition select, so pass it
+                // through opts.postflopPosition rather than a position+player pair.
                 const linkPos = (document.getElementById('linkPostflopPosition').value || '').toUpperCase();
-                const wantEquity = linkPos === 'IP' ? 'ip equity' : 'oop equity';
-                let equityCol = findCol(h => h === wantEquity);
-                if (equityCol === -1) equityCol = findCol(h => h === 'equity');
-                if (equityCol === -1) equityCol = findCol(h => h.endsWith('equity')); // last-resort
-
-                // Action columns: ANY header ending in " freq" is an action. Read each by its own
-                // index (freq columns sit at odd indices in 3.5.2.6, so a fixed +2 step misses them).
-                const actions = [];       // normalized action keys, in column order
-                const actionFreqCol = []; // parallel array of freq-column indices
-                headers.forEach((h, i) => {
-                    if (/ freq$/i.test(h)) {
-                        const rawAction = h.replace(/ freq$/i, '').trim();
-                        actions.push(normalizePioAction(rawAction));
-                        actionFreqCol.push(i);
-                    }
-                });
-                if (actions.length === 0) {
-                    alert('Invalid PioSOLVER CSV: no action ("… freq") columns found');
+                let parsed;
+                try {
+                    parsed = parsePioCSVText(text, null, null, { postflopPosition: linkPos === 'IP' ? 'IP' : 'OOP' });
+                } catch (err) {
+                    alert(err.message);
                     return;
                 }
+                if (!parsed) return;
+                const { data, actions } = parsed;
 
-                // Parse board data
-                const data = [];
-                for (const row of dataRows) {
-                    const cols = parseCSVLine(row);
-
-                    // Skip rows too short, and the trailing aggregate row (blank Flop cell).
-                    const maxCol = Math.max(flopCol, equityCol, ...actionFreqCol);
-                    if (cols.length <= maxCol) continue;
-
-                    const flop = (cols[flopCol] || '').trim();
-                    if (!flop) continue;
-
-                    const boardData = {
-                        tree: flop.replace(/\s+/g, ''),
-                        equity: equityCol !== -1 ? (parseFloat(cols[equityCol]) || 0) : 0,
-                        actions: {}
-                    };
-
-                    for (let k = 0; k < actions.length; k++) {
-                        const freq = parseFloat(cols[actionFreqCol[k]]) || 0;
-                        boardData.actions[actions[k]] = freq;
-                    }
-
-                    // Set bet/check for chart compatibility
-                    let totalBet = 0;
-                    for (const [key, value] of Object.entries(boardData.actions)) {
-                        if (key.startsWith('b') && key !== 'check') {
-                            totalBet += value;
-                        }
-                    }
-                    boardData.bet = totalBet;
-                    boardData.check = boardData.actions['check'] || 0;
-                    
-                    data.push(boardData);
-                }
-                
                 if (data.length === 0) {
                     alert('No valid board data found in CSV');
                     return;
                 }
-                
-                // Convert to format expected by saveLinkReport
-                // Build text format that saveLinkReport can parse
+
+                // Convert to the tab-delimited format saveLinkReport parses (Tree, Equity, actions).
                 let textOutput = 'Tree(*)\tEquity\t' + actions.join('\t') + '\n';
                 for (const board of data) {
                     let line = board.tree + '\t' + board.equity;
@@ -6125,13 +6075,13 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                     }
                     textOutput += line + '\n';
                 }
-                
+
                 // Put it in the textarea
                 document.getElementById('linkDataInput').value = textOutput;
-                
+
                 alert(`✓ Loaded ${data.length} boards from CSV. Now click "Import & Link" to save.`);
             };
-            
+
             reader.readAsText(file);
         }
 
