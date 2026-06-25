@@ -2700,10 +2700,13 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
         // (getPlayerPositionInfo already alerts); throws Error(msg) for CSV-structure problems so the
         // caller can alert with the message.
         function parsePioCSVText(text, position, player) {
-            const lines = text.split('\n').map(line => line.trim()).filter(line => line);
+            // Split on ANY line-ending style. PioViewer "Aggregation analysis" exports use
+            // CR-only (\r) line breaks; older flop exports use \n or \r\n — handle all three.
+            const lines = text.split(/\r\n|\r|\n/).map(line => line.trim()).filter(line => line);
 
-            // Find column headers
-            let headerIndex = lines.findIndex(line => line.startsWith('Flop,'));
+            // Find column headers. Old flop exports start the header row with "Flop,";
+            // new "Aggregation analysis" exports start it with "board,". Match either (any case).
+            let headerIndex = lines.findIndex(line => /^(?:flop|board)\s*,/i.test(line));
             if (headerIndex === -1) {
                 throw new Error('Invalid PioSOLVER CSV: Could not find column headers');
             }
@@ -2723,15 +2726,21 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
             // Matchups, separate OOP/IP Equity, OOP/IP EV, OOP/IP EQR — so fixed indices break) -----
             const findCol = (predicate) => headers.findIndex(h => predicate(h.toLowerCase()));
 
-            const flopCol = findCol(h => h === 'flop');
+            // Board-identifier column. Old exports label it "Flop"; new "Aggregation
+            // analysis" exports label it "board" — accept either.
+            const flopCol = findCol(h => h === 'flop' || h === 'board');
             if (flopCol === -1) {
-                throw new Error('Invalid PioSOLVER CSV: Could not find a "Flop" column');
+                throw new Error('Invalid PioSOLVER CSV: Could not find a "Flop"/"board" column');
             }
 
             // Equity column for the report's perspective. New CSVs have "OOP Equity" / "IP Equity";
             // older single-perspective exports may have a plain "Equity" — fall back to that.
             const wantEquity = posInfo.postflopPosition === 'IP' ? 'ip equity' : 'oop equity';
-            let equityCol = findCol(h => h === wantEquity);
+            // New "Aggregation analysis" exports label equity "EQ OOP" / "EQ IP" (and also carry
+            // EV/EQR columns, which we ignore). Match the perspective's EQ column exactly so we
+            // never pick up the unrelated "EQR OOP"/"EQR IP" columns.
+            const wantEquityNew = posInfo.postflopPosition === 'IP' ? 'eq ip' : 'eq oop';
+            let equityCol = findCol(h => h === wantEquity || h === wantEquityNew);
             if (equityCol === -1) equityCol = findCol(h => h === 'equity');
             if (equityCol === -1) equityCol = findCol(h => h.endsWith('equity')); // last-resort
 
@@ -2746,9 +2755,28 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                     actionFreqCol.push(i);
                 }
             });
+            // New "Aggregation analysis" exports list bare action columns (CHECK / B25 / B50 /
+            // RAISE 50) with NO " freq" suffix. Only scan for these when the old freq-suffixed
+            // detection found nothing, so existing freq-format files behave exactly as before.
+            // Accepts: CHECK / CALL / FOLD; bet columns B<n> or BET <n>; raise columns R<n> or
+            // RAISE <n> (optional space, fractional ok) — normalized to the app's b<n>/r<n> keys.
             if (actions.length === 0) {
-                throw new Error('Invalid PioSOLVER CSV: no action ("… freq") columns found');
+                headers.forEach((h, i) => {
+                    const up = h.trim().toUpperCase();
+                    let key = null;
+                    if (up === 'CHECK' || up === 'CALL' || up === 'FOLD') {
+                        key = up.toLowerCase();
+                    } else {
+                        let m = up.match(/^B(?:ET)?\s*([\d.]+)$/);
+                        if (m) key = 'b' + Math.round(parseFloat(m[1]));
+                        else if ((m = up.match(/^R(?:AISE)?\s*([\d.]+)$/))) key = 'r' + Math.round(parseFloat(m[1]));
+                    }
+                    if (key) { actions.push(key); actionFreqCol.push(i); }
+                });
             }
+            // No throw on zero actions here: an empty / no-data export (e.g. a CHECK-CHECK node
+            // with no board rows) falls through to the caller's "No valid board data found in CSV"
+            // message instead of crashing. Files with real boards always have action columns.
 
             // Parse board data
             const data = [];
