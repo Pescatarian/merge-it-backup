@@ -2776,8 +2776,20 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                         key = up.toLowerCase();
                     } else {
                         let m = up.match(/^B(?:ET)?\s*([\d.]+)$/);
-                        if (m) key = 'b' + Math.round(parseFloat(m[1]));
-                        else if ((m = up.match(/^R(?:AISE)?\s*([\d.]+)$/))) key = 'r' + Math.round(parseFloat(m[1]));
+                        if (m) {
+                            key = 'b' + Math.round(parseFloat(m[1]));
+                        } else if ((m = up.match(/^R(?:AISE)?\s*([\d.]+)(X?)$/))) {
+                            // Two raise flavors, disambiguated by a trailing "x" — mirrors the
+                            // app's r<n>x convention used by getActionColor / isSizeToken /
+                            // displayActionLabel:
+                            //   MULTIPLIER raise "R3x"/"R5.5x" -> keep the number verbatim + "x"
+                            //     (r3x / r5.5x) so the multiplier semantics survive. Without this,
+                            //     the trailing X failed the old digits-only regex and the whole
+                            //     raise column was silently dropped (e.g. CHECK BET 25% response
+                            //     files lost R3x/R4x/R5.5x, leaving only fold/call).
+                            //   POT-% raise "R30" -> round to an int percent (r30), same as bets.
+                            key = m[2] ? 'r' + m[1] + 'x' : 'r' + Math.round(parseFloat(m[1]));
+                        }
                     }
                     if (key) { actions.push(key); actionFreqCol.push(i); }
                 });
