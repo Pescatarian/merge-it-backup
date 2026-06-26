@@ -1012,8 +1012,11 @@
         /* >< / <> collapse-expand control at the right end of the stat-cards row.
            Matches the app's card palette (#1c1c1c bg, #3a3a3a border) and adds the
            hover/focus/active states the inline-styled cards lack. Glyph color #c2c6cd on
-           #1c1c1c = 9.9:1 (WCAG AAA); hover/focus #fff on #1c1c1c = 16:1 (AAA);
-           focus ring #f97316 on #1c1c1c = 6.0:1 (passes WCAG 1.4.11 non-text >=3:1). */
+           #1c1c1c = 9.9:1 (WCAG AAA); hover/focus glyph #fff on #1c1c1c = 16:1 (AAA).
+           The focus ring itself is the app-wide blue (#4a9eff via --focus-ring), painted by
+           the shared `button:focus-visible` rule's !important outline below — measured 6.19:1
+           on #1c1c1c (passes WCAG 1.4.11 non-text >=3:1). This control deliberately inherits
+           that ring for app consistency rather than defining its own. */
         .stat-collapse-btn {
             background-color: #1c1c1c;
             border: 1px solid #3a3a3a;
@@ -1038,7 +1041,9 @@
         }
         .stat-collapse-btn:hover { background-color: #262626; border-color: #4a4a4a; color: #fff; }
         .stat-collapse-btn:active { background-color: #303030; }
-        .stat-collapse-btn:focus-visible { outline: 2px solid #f97316; outline-offset: 2px; color: #fff; }
+        /* Focus ring comes from the shared `button:focus-visible` rule (blue, !important);
+           here we only brighten the glyph to #fff to echo the hover affordance. */
+        .stat-collapse-btn:focus-visible { color: #fff; }
     
         .legend {
             display: flex;
