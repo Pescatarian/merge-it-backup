@@ -6785,27 +6785,39 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
         function getActionSequence(report) {
             if (!report || !report.filters) return null;
             
-            // Extract player names from position
+            // Extract the two seats from the position string.
             const positionParts = report.filters.position.split(' vs ');
-            let reportPlayer = positionParts[0].trim();
-            let opponent = positionParts[1].trim();
-            
-            // Determine who acts first based on postflop position
-            const reportPlayerIsOOP = report.filters.postflopPosition === 'OOP';
-            const reportPlayerIsIP = report.filters.postflopPosition === 'IP';
-            
-            // Fix position swap if needed
-            if (reportPlayer === 'BB' && reportPlayerIsOOP) {
-                [reportPlayer, opponent] = [opponent, reportPlayer];
-            } else if (reportPlayer === 'SB' && reportPlayerIsIP) {
-                [reportPlayer, opponent] = [opponent, reportPlayer];
+            const seatA = positionParts[0].trim();
+            const seatB = positionParts[1].trim();
+
+            // First-to-act is ALWAYS the OOP player, which the report already stores correctly at
+            // import time (firstToAct = OOP from the position map). Trust that authoritative value.
+            //
+            // The previous code re-derived this with a name-based heuristic that swapped the seats
+            // whenever the first-named seat was 'BB' and OOP (or 'SB' and IP). That is WRONG: BB and
+            // SB are legitimately the OOP / first-to-act player against later positions (e.g. BB vs
+            // BU, BB vs CO, SB vs BU). The bad swap made the app treat BB as acting second, so a
+            // single BB-vs-BU import fell straight into the "Waiting for BB to act" branch with no
+            // visuals until the opponent's data was imported. Trusting report.firstToAct fixes it.
+            let firstToAct;
+            if (currentReport && currentReport.firstToAct &&
+                (currentReport.firstToAct === seatA || currentReport.firstToAct === seatB)) {
+                firstToAct = currentReport.firstToAct;
+            } else {
+                // Fallback (no stored firstToAct): the current perspective is first iff it is OOP.
+                firstToAct = (report.filters.postflopPosition === 'OOP')
+                    ? (currentPerspective || seatA)
+                    : ((currentPerspective || seatA) === seatA ? seatB : seatA);
             }
-            
-            const reportPlayerActsFirst = reportPlayerIsOOP;
-            const opponentActsFirst = reportPlayerIsIP;
-            
-            const firstToAct = reportPlayerActsFirst ? reportPlayer : opponent;
-            const secondToAct = reportPlayerActsFirst ? opponent : reportPlayer;
+            const secondToAct = (firstToAct === seatA) ? seatB : seatA;
+
+            // reportPlayer = the perspective currently being viewed (who takes the action);
+            // opponent = the other seat. Used for the link-modal messaging.
+            const reportPlayer = currentPerspective || firstToAct;
+            const opponent = (reportPlayer === seatA) ? seatB : seatA;
+
+            const reportPlayerActsFirst = (firstToAct === reportPlayer);
+            const opponentActsFirst = !reportPlayerActsFirst;
             
             // Determine who should act next based on action history
             let nextToAct = firstToAct;
