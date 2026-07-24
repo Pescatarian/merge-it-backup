@@ -1744,6 +1744,18 @@
         #importModal .imd-body,
         #linkReportModal .imd-body { padding:8px 24px 0; }
 
+        /* Inline form validation message (WCAG: amber text is a very light tone measured
+           >=4.5:1 on the modal surface; role="alert" + literal text, not colour alone -> 1.4.1). */
+        #importModal .imd-formmsg {
+            margin:0 24px 6px; padding:10px 14px;
+            font:600 13px/1.45 var(--imd-font);
+            color:#fde68a;
+            background:rgba(245,158,11,0.12);
+            border:1px solid rgba(245,158,11,0.45);
+            border-radius:var(--imd-radius-xs);
+        }
+        #importModal .imd-formmsg[hidden] { display:none; }
+
         #importModal .imd-foot,
         #linkReportModal .imd-foot {
             position:sticky; bottom:0;
@@ -2398,6 +2410,11 @@ a:focus-visible,button:focus-visible,input:focus-visible,textarea:focus-visible,
 
             </div>
 
+            <!-- Inline validation message (same idiom as the link modal's #linkReportMessage):
+                 shown in-modal instead of a native alert, e.g. when a BB-vs-SB matchup needs a
+                 Table Size before its postflop roles can be resolved (HU vs 6-max flip who acts first). -->
+            <p id="importModalMsg" class="imd-formmsg" role="alert" aria-live="assertive" hidden></p>
+
             <div class="imd-foot">
                 <button type="button" class="imd-btn imd-btn-ghost" onclick="selectPioCSV()"><svg class="imd-csv-ico" width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M4 1.6h5l3 3V14a.4.4 0 01-.4.4H4a.4.4 0 01-.4-.4V2a.4.4 0 01.4-.4z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/><path d="M9 1.6V4.6h3" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/></svg> PIO CSV</button>
                 <span class="imd-spacer"></span>
@@ -2723,6 +2740,10 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                 return;
             }
 
+            // Same BB-vs-SB / Table Size gate as the Save path (this imports directly, no Save).
+            if (typeof requireTableSizeForBBvsSB === 'function' && !requireTableSizeForBBvsSB(position, tableSize)) return;
+            if (typeof setImportModalMsg === 'function') setImportModalMsg('');
+
             const input = document.createElement('input');
             input.type = 'file';
             input.accept = '.csv';
@@ -2767,7 +2788,9 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
             if (opts && opts.postflopPosition) {
                 posInfo = { postflopPosition: opts.postflopPosition === 'IP' ? 'IP' : 'OOP' };
             } else {
-                posInfo = getPlayerPositionInfo(position, player);
+                // Pass the import modal's Table Size (opts.tableSize) so the HU BB-vs-SB flip is
+                // applied when picking the EQ OOP/EQ IP equity column below (SB is IP in HU).
+                posInfo = getPlayerPositionInfo(position, player, opts && opts.tableSize);
                 if (!posInfo) return null; // getPlayerPositionInfo already alerts on a bad position/player
             }
 
@@ -2885,7 +2908,7 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                 const text = e.target.result;
                 let parsed;
                 try {
-                    parsed = parsePioCSVText(text, filters.position, filters.player);
+                    parsed = parsePioCSVText(text, filters.position, filters.player, { tableSize: filters.tableSize });
                 } catch (err) {
                     alert(err.message);
                     return;
@@ -2920,6 +2943,10 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                             rawData: text
                         }
                     };
+                    // Re-derive who acts first from THIS import's posInfo (HU-aware). For every
+                    // non-HU report this equals the existing value; for a BB-vs-SB report re-imported
+                    // as HU it corrects firstToAct to BB (the migration path for old HU reports).
+                    existingReport.firstToAct = posInfo.firstToAct;
                     // Carry the typed Boards Category onto the report (only overwrite when typed;
                     // seed the field if missing so the row always has a key to render).
                     if (filters.boardsCategory) existingReport.flopTexture = filters.boardsCategory;
@@ -5997,23 +6024,10 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                 hands.push(hand);
             }
             
-            // Parse position to get OOP and IP players
-            const posMap = {
-                "BB vs SB": { OOP: "SB", IP: "BB" },
-                "SB vs BB": { OOP: "SB", IP: "BB" },
-                "BB vs BU": { OOP: "BB", IP: "BU" },
-                "BU vs BB": { OOP: "BB", IP: "BU" },
-                "SB vs BU": { OOP: "SB", IP: "BU" },
-                "BU vs SB": { OOP: "SB", IP: "BU" },
-                "BB vs CO": { OOP: "BB", IP: "CO" },
-                "CO vs BB": { OOP: "BB", IP: "CO" },
-                "SB vs CO": { OOP: "SB", IP: "CO" },
-                "CO vs SB": { OOP: "SB", IP: "CO" },
-                "CO vs BU": { OOP: "CO", IP: "BU" },
-                "BU vs CO": { OOP: "CO", IP: "BU" }
-            };
-
-            const positions = posMap[position];
+            // Parse position to get OOP and IP players — via the shared resolver so the linked
+            // opponent's seat obeys the same HU BB-vs-SB flip as the rest of the app. The report
+            // being linked (pendingLinkReport) carries the tableSize that disambiguates it.
+            const positions = resolvePositions(position, pendingLinkReport && pendingLinkReport.tableSize);
             if (!positions) {
                 alert(`Invalid position: ${position}`);
                 return;
@@ -6145,16 +6159,60 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
             reader.readAsText(file);
         }
 
-        function getPlayerPosition(position, player, potType, initiative) {
-            // Parse position string (e.g., "BB vs SB" means BB is OOP, SB is IP)
-            const [oop, ip] = position.split(' vs ');
-            
+        // SINGLE SOURCE OF TRUTH for mapping a "A vs B" position string to the two seats'
+        // postflop IP/OOP roles. Applies the HEADS-UP exception: in heads-up the SB has the
+        // button, so postflop the SB is IN POSITION and the BB acts first — the reverse of a
+        // 6-max blind-vs-blind spot (where the SB is OOP). tableSize is the disambiguator:
+        // ONLY tableSize === 'HU' flips the BB-vs-SB pairing; every other table size (3/4/5/6-max)
+        // and every non-blind pairing keeps the base map. Returns {OOP, IP} or null (unknown
+        // position). Used by getPlayerPositionInfo, getPlayerPosition and saveLinkReport so the
+        // report NAME, the stored data model, and the linked-opponent path can never disagree.
+        function resolvePositions(positionString, tableSize) {
+            const posMap = {
+                "BB vs SB": { OOP: "SB", IP: "BB" },
+                "SB vs BB": { OOP: "SB", IP: "BB" },
+                "BB vs BU": { OOP: "BB", IP: "BU" },
+                "BU vs BB": { OOP: "BB", IP: "BU" },
+                "SB vs BU": { OOP: "SB", IP: "BU" },
+                "BU vs SB": { OOP: "SB", IP: "BU" },
+                "BB vs CO": { OOP: "BB", IP: "CO" },
+                "CO vs BB": { OOP: "BB", IP: "CO" },
+                "SB vs CO": { OOP: "SB", IP: "CO" },
+                "CO vs SB": { OOP: "SB", IP: "CO" },
+                "CO vs BU": { OOP: "CO", IP: "BU" },
+                "BU vs CO": { OOP: "CO", IP: "BU" }
+            };
+            const base = posMap[positionString];
+            if (!base) return null;
+            const isHU = String(tableSize || '').trim().toUpperCase() === 'HU';
+            const isBBvsSB = positionString === 'BB vs SB' || positionString === 'SB vs BB';
+            if (isHU && isBBvsSB) {
+                // Heads-up: SB on the button = SB IP, BB first to act.
+                return { OOP: 'BB', IP: 'SB' };
+            }
+            return { OOP: base.OOP, IP: base.IP };
+        }
+
+        function getPlayerPosition(position, player, potType, initiative, tableSize) {
+            // Route OOP/IP determination through the shared resolver (including the HU BB-vs-SB
+            // flip) so the generated report NAME can never disagree with the stored data model.
+            // The 3BP/4BP initiative -> first-to-act logic is unchanged.
+            const resolved = resolvePositions(position, tableSize);
+            let oop, ip;
+            if (resolved) {
+                oop = resolved.OOP;
+                ip = resolved.IP;
+            } else {
+                // Defensive fallback for an unrecognized position string (no HU exception known).
+                [oop, ip] = position.split(' vs ');
+            }
+
             // Determine if this player is IP or OOP
             const isIP = (player === ip);
-            
+
             // Determine if this player is first to act
             let isFirstToAct = false;
-            
+
             if (potType === '3BP') {
                 // In 3BP: PFR acts first (they called the 3bet)
                 isFirstToAct = (initiative === 'PFR');
@@ -6165,7 +6223,7 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                 // In SRP (2BP): OOP acts first
                 isFirstToAct = !isIP;
             }
-            
+
             return {
                 isIP: isIP,
                 isFirstToAct: isFirstToAct,
@@ -6178,10 +6236,11 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
             const initiative = document.getElementById('tagInitiative').value;
             const position = document.getElementById('tagPosition').value;
             const player = document.getElementById('tagPlayer').value;
+            const tableSize = (document.getElementById('tagTableSize') || {}).value || '';
 
             if (potType && initiative && position && player) {
-                // Determine IP/OOP based on player and position
-                const playerPos = getPlayerPosition(position, player, potType, initiative);
+                // Determine IP/OOP based on player and position (HU-aware via tableSize)
+                const playerPos = getPlayerPosition(position, player, potType, initiative, tableSize);
                 const postflopPosition = playerPos.isIP ? 'IP' : 'OOP';
                 
                 const name = `${potType} ${postflopPosition} ${initiative}; ${position}`;
@@ -6248,6 +6307,7 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
             }
             
             debugLog('Adding active class to modal');
+            if (typeof setImportModalMsg === 'function') setImportModalMsg('');
             modal.classList.add('active');
             // Mirror the hidden form controls into the imd-* chips (look-only).
             if (window.__imdSyncImport) window.__imdSyncImport();
@@ -6256,6 +6316,7 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
 
         function closeImportModal() {
             document.getElementById('importModal').classList.remove('active');
+            if (typeof setImportModalMsg === 'function') setImportModalMsg('');
             editingIndex = null;
             
             // Reset edit mode
@@ -6266,6 +6327,27 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
             // Reset modal title and button text
             document.getElementById('modalTitle').textContent = 'Import Data';
             document.getElementById('saveBtn').textContent = 'Save';
+        }
+
+        // Show/clear the import modal's inline validation message (idiom parallel to the link
+        // modal's #linkReportMessage). Passing a falsy value hides it.
+        function setImportModalMsg(text) {
+            const el = document.getElementById('importModalMsg');
+            if (!el) return;
+            if (text) { el.textContent = text; el.hidden = false; }
+            else { el.textContent = ''; el.hidden = true; }
+        }
+
+        // A BB-vs-SB matchup is the ONLY pairing whose postflop roles depend on table size
+        // (heads-up: SB has the button = SB IP / BB first; 6-max blind-vs-blind: SB OOP first).
+        // Require an explicit Table Size before we can resolve it. Returns true if OK to proceed.
+        function requireTableSizeForBBvsSB(position, tableSize) {
+            const isBBvsSB = position === 'BB vs SB' || position === 'SB vs BB';
+            if (isBBvsSB && !String(tableSize || '').trim()) {
+                setImportModalMsg('Select a Table Size for BB vs SB — heads-up (SB in position) and 6-max (SB acts first) flip who acts first postflop.');
+                return false;
+            }
+            return true;
         }
 
         async function saveReport() {
@@ -6295,8 +6377,13 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                 return;
             }
 
-            const posInfo = getPlayerPositionInfo(position, player);
-            
+            // BB-vs-SB needs a Table Size to resolve postflop roles (HU vs 6-max flip). Inline
+            // message in the modal (not a native alert) so the user can fix it in place.
+            if (!requireTableSizeForBBvsSB(position, tableSize)) return;
+            setImportModalMsg('');
+
+            const posInfo = getPlayerPositionInfo(position, player, tableSize);
+
             if (!posInfo) {
                 alert('Invalid position configuration');
                 return;
@@ -6307,13 +6394,16 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                 let availableActions;
 
                 // Pio-CSV reports store the raw comma-delimited PioViewer CSV as rawData, so when one
-                // is edited the textarea holds CSV — not a GTO+ whitespace paste. Detect that (a header
-                // line beginning "Flop,") and parse with the SHARED Pio parser, so editing + saving a
-                // Pio-CSV report works (KI #24). Anything else is the GTO+ whitespace paste below.
-                const isPioCSV = dataText.split('\n').some(l => l.trim().startsWith('Flop,'));
+                // is edited the textarea holds CSV — not a GTO+ whitespace paste. Detect that by a
+                // header line beginning "Flop," (old flop exports) OR "board," (new "Aggregation
+                // analysis" exports) — the SAME two headers parsePioCSVText accepts — and parse with
+                // the SHARED Pio parser, so editing + saving EITHER Pio-CSV format works (KI #24, and
+                // the HU migration path #5 where re-saving must re-derive the perspective's equity).
+                // Anything else is the GTO+ whitespace paste below.
+                const isPioCSV = dataText.split('\n').some(l => /^(?:flop|board)\s*,/i.test(l.trim()));
 
                 if (isPioCSV) {
-                    const parsed = parsePioCSVText(dataText, position, player);
+                    const parsed = parsePioCSVText(dataText, position, player, { tableSize });
                     if (!parsed) return; // bad position/player — getPlayerPositionInfo already alerted
                     data = parsed.data;
                     availableActions = parsed.actions;
@@ -6499,6 +6589,10 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                                 availableActions: availableActions,
                                 rawData: dataInput.value                            }
                         };
+                        // Re-derive firstToAct from this save's posInfo (HU-aware). No-op for
+                        // every non-HU report; corrects an old BB-vs-SB report to BB-first when it
+                        // is edited/re-saved with Table Size = HU (the user's migration path, #5).
+                        existingReport.firstToAct = posInfo.firstToAct;
 
                         // Carry the typed Boards Category onto the report. Only overwrite when the
                         // user typed one (so re-importing with the field blank won't wipe an
@@ -6555,26 +6649,13 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
             }
         }
   
-        function getPlayerPositionInfo(positionString, player) {
+        function getPlayerPositionInfo(positionString, player, tableSize) {
             // positionString examples: "BB vs SB", "BB vs BU", "SB vs BU", "CO vs BU"
             // player: "BB", "SB", "BU", or "CO"
-            
-            const posMap = {
-                "BB vs SB": { OOP: "SB", IP: "BB" },
-                "SB vs BB": { OOP: "SB", IP: "BB" },
-                "BB vs BU": { OOP: "BB", IP: "BU" },
-                "BU vs BB": { OOP: "BB", IP: "BU" },
-                "SB vs BU": { OOP: "SB", IP: "BU" },
-                "BU vs SB": { OOP: "SB", IP: "BU" },
-                "BB vs CO": { OOP: "BB", IP: "CO" },
-                "CO vs BB": { OOP: "BB", IP: "CO" },
-                "SB vs CO": { OOP: "SB", IP: "CO" },
-                "CO vs SB": { OOP: "SB", IP: "CO" },
-                "CO vs BU": { OOP: "CO", IP: "BU" },
-                "BU vs CO": { OOP: "CO", IP: "BU" }
-            };
-            
-            const positions = posMap[positionString];
+            // tableSize: 'HU' | '3-max' | ... — disambiguates the BB-vs-SB pairing (HU flips
+            // the SB to IN POSITION / BB first; every other size keeps the base blind-vs-blind map).
+
+            const positions = resolvePositions(positionString, tableSize);
             if (!positions) {
                 console.error("Unknown position string:", positionString);
                 alert(`Position "${positionString}" is not recognized. Please contact support.`);
@@ -9055,6 +9136,7 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                 imdSetSeg(seg, val);
                 var sel = document.getElementById(targetId);
                 if(sel){ sel.value = val; }
+                if(typeof setImportModalMsg === 'function') setImportModalMsg('');
                 callUpdateReportName();
                 updateImpAutoName();
             });
@@ -9075,6 +9157,7 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                     if(sel.length >= 2) sel[0].setAttribute('aria-pressed','false');
                     btn.setAttribute('aria-pressed','true');
                 }
+                if(typeof setImportModalMsg === 'function') setImportModalMsg('');
                 applyMatchup();
             });
         }
