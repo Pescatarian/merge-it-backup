@@ -2269,41 +2269,42 @@ input, textarea, select, .ds-cell, .ds-table { border-radius: 6px !important; }
 .gtow-card.empty-street { opacity: .55; justify-content: flex-start; }
 .gtow-empty-hint { color: var(--text-muted); font-size: 12px; text-align: center; margin-top: 8px; white-space: nowrap; }
 
-/* Report card: fixed by WIDTH (~460px), not vertical squeezing. All 5 fields visible at >=12px
-   in a clean 2-column grid; full-size Edit/Notes. Only a genuinely long Comment truncates
-   (with the full-field tooltip on the list). */
+/* Report card: LEGACY narrow width (~232px, ~half the old 460px). The strip is already ~221px
+   tall to fit 7 action rows without scrolling, so at that height a narrow single-column card
+   holds all 5 fields comfortably. Fields are one `label: value` row each; long values (Boards
+   Category / Comment) truncate to one line with ellipsis, with the full text in the dl `title`
+   tooltip (no clipping without a tooltip, no horizontal scroll). Full-size Edit/Notes kept. */
 .gtow-report-card {
-  width: 460px !important; min-width: 460px !important;
+  width: 232px !important; min-width: 232px !important;
   height: auto !important; min-height: 0 !important;
-  padding: 10px 12px !important; gap: 7px !important;
+  padding: 7px 11px !important; gap: 4px !important;
   display: flex !important; flex-direction: column !important;
   border-radius: 6px !important; margin-right: 8px !important; overflow: visible !important;
 }
 .gtow-report-card .rc-import {
-  width: auto !important; align-self: flex-start !important; order: 0 !important;
-  padding: 5px 11px !important; font-size: 12px !important; gap: 6px !important;
+  width: 100% !important; justify-content: center !important; order: 0 !important;
+  padding: 4px 11px !important; font-size: 12px !important; gap: 6px !important;
 }
-.gtow-report-card .rc-top { gap: 8px !important; }
-.gtow-report-card .rc-picker { padding: 5px 24px 5px 10px !important; font-size: 13px !important; }
-.gtow-report-card .rc-clear { padding: 5px 12px !important; font-size: 12px !important; }
+.gtow-report-card .rc-top { gap: 6px !important; }
+/* Constrain the picker summary so a long "Pot · Positions · Category" label truncates with the
+   ellipsis (base rc-picker uses overflow:visible, which spilled the text over the Clear button at
+   this narrow width). The dropdown menu is position:fixed on open, so it still escapes this clip. */
+.gtow-report-card .rc-picker { padding: 4px 22px 4px 9px !important; font-size: 12px !important; overflow: hidden !important; min-width: 0 !important; }
+.gtow-report-card .rc-clear { padding: 4px 10px !important; font-size: 12px !important; flex: 0 0 auto !important; }
 .gtow-report-card .rc-fields {
   display: grid !important;
-  grid-template-columns: max-content minmax(0,1fr) max-content minmax(0,1fr) !important;
-  column-gap: 12px !important; row-gap: 5px !important; align-items: baseline !important;
-  margin: 2px 0 0 !important; max-height: none !important; overflow: visible !important;
+  grid-template-columns: max-content minmax(0,1fr) !important;
+  column-gap: 8px !important; row-gap: 2px !important; align-items: baseline !important;
+  margin: 0 !important; max-height: none !important; overflow: visible !important;
 }
-.gtow-report-card .rc-fields dt { font-size: 12px !important; color: var(--text-muted) !important; line-height: 1.35 !important; white-space: nowrap !important; }
+.gtow-report-card .rc-fields dt { font-size: 12px !important; color: var(--text-muted) !important; line-height: 1.25 !important; white-space: nowrap !important; }
 .gtow-report-card .rc-fields dd {
   font-size: 12px !important; color: var(--text-secondary) !important; font-weight: 600 !important;
-  line-height: 1.35 !important; margin: 0 !important;
-  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  line-height: 1.25 !important; margin: 0 !important; min-width: 0 !important;
+  overflow: hidden !important; text-overflow: ellipsis !important; white-space: nowrap !important;
 }
-.gtow-report-card .rc-fields dt:nth-of-type(4),
-.gtow-report-card .rc-fields dt:nth-of-type(5) { grid-column: 1 !important; }
-.gtow-report-card .rc-fields dd:nth-of-type(4),
-.gtow-report-card .rc-fields dd:nth-of-type(5) { grid-column: 2 / -1 !important; }
-.gtow-report-card .rc-actions { margin-top: 3px !important; gap: 8px !important; }
-.gtow-report-card .rc-edit { padding: 5px 16px !important; font-size: 12px !important; }
+.gtow-report-card .rc-actions { margin-top: 2px !important; gap: 8px !important; }
+.gtow-report-card .rc-edit { padding: 4px 16px !important; font-size: 12px !important; }
 
 /* ---------- ONE consolidated DeepSolver-style board table ---------- */
 /* the base app caps .chart-wrapper-main at 600px; the consolidated table is wider and the page
