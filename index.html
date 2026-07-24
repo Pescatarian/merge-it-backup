@@ -18,8 +18,8 @@
     
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background-color: #1c1c1c;
-            color: #ededed;
+            background-color: #181a19;
+            color: #edefee;
             display: flex;
             height: 100vh;
             overflow: hidden;
@@ -39,9 +39,9 @@
 
         /* TOP SEARCH BAR */
         .top-search-bar {
-            background-color: #1c1c1c;
+            background-color: #181a19;
             padding: 12px 20px;
-            border-bottom: 1px solid #3a3a3a;
+            border-bottom: 1px solid #2a2c2b;
             display: flex;
             align-items: center;
             gap: 12px;
@@ -49,11 +49,11 @@
         }
 
         .search-input-inline {
-            background-color: #1c1c1c;
-            border: 1px solid #3a3a3a;
+            background-color: #181a19;
+            border: 1px solid #2a2c2b;
             border-radius: 4px;
             padding: 8px 12px;
-            color: #ededed;
+            color: #edefee;
             font-size: 16px;
             min-width: 170px;
             width: 170px;
@@ -69,16 +69,16 @@
         }
 
         .search-input-inline::placeholder {
-            color: #aab0b8;
+            color: #989a99;
             font-size: 12px;
         }
 
         /* Board-filter + turn-search inputs: explicit AA-contrast placeholder
-           (#aab0b8 on #1c1c1c ~7.4:1). Browser-default placeholder color is
+           (#989a99 on #181a19 ~7.4:1). Browser-default placeholder color is
            unspecified/low-contrast, so set it explicitly to meet WCAG AA. */
         #boardFilterInput::placeholder,
         #turnCardSearchInput::placeholder {
-            color: #aab0b8;
+            color: #989a99;
         }
 
         .btn-search-inline {
@@ -98,7 +98,7 @@
 
         .btn-clear-inline {
             padding: 8px 16px;
-            background-color: #1c1c1c;
+            background-color: #181a19;
             color: #fff;
             border: none;
             border-radius: 4px;
@@ -108,7 +108,7 @@
         }
 
         .btn-clear-inline:hover {
-            background-color: #1c1c1c;
+            background-color: #181a19;
         }
 
         .saved-reports-dropdown {
@@ -117,10 +117,10 @@
 
         .dropdown-btn {
             padding: 8px 16px;
-            background-color: #1c1c1c;
-            border: 1px solid #3a3a3a;
+            background-color: #181a19;
+            border: 1px solid #2a2c2b;
             border-radius: 4px;
-            color: #ededed;
+            color: #edefee;
             cursor: pointer;
             font-size: 12px;
             font-weight: 500;
@@ -130,7 +130,7 @@
         }
 
         .dropdown-btn:hover {
-            background-color: #1c1c1c;
+            background-color: #181a19;
             border-color: #4a9eff;
         }
 
@@ -140,8 +140,8 @@
             right: 0;
             top: 100%;
             margin-top: 4px;
-            background-color: #1c1c1c;
-            border: 1px solid #3a3a3a;
+            background-color: #181a19;
+            border: 1px solid #2a2c2b;
             border-radius: 6px;
             min-width: 350px;
             max-width: 450px;
@@ -157,7 +157,7 @@
 
         .dropdown-header {
             padding: 12px;
-            border-bottom: 1px solid #3a3a3a;
+            border-bottom: 1px solid #2a2c2b;
             font-weight: 600;
             color: #fff;
             font-size: 14px;
@@ -166,7 +166,7 @@
         .dropdown-item {
             padding: 10px 12px;
             cursor: pointer;
-            border-bottom: 1px solid #3a3a3a;
+            border-bottom: 1px solid #2a2c2b;
             transition: background-color 0.2s;
             display: flex;
             justify-content: space-between;
@@ -174,7 +174,7 @@
         }
 
         .dropdown-item:hover {
-            background-color: #1c1c1c;
+            background-color: #181a19;
         }
 
         .dropdown-item:last-child {
@@ -193,7 +193,7 @@
         }
 
         .dropdown-item-meta {
-            color: #c2c6cd;
+            color: #bcbebc;
             font-size: 12px;
         }
 
@@ -236,16 +236,16 @@
         .dropdown-empty {
             padding: 20px;
             text-align: center;
-            color: #aab0b8;
+            color: #989a99;
             font-size: 12px;
         }
 
         .spot-display-box {
-            background-color: #1c1c1c;
-            border: 1px solid #3a3a3a;
+            background-color: #181a19;
+            border: 1px solid #2a2c2b;
             border-radius: 4px;
             padding: 8px 12px;
-            color: #ededed;
+            color: #edefee;
             font-size: 16px;
             height: 34px;
             min-width: 170px;
@@ -263,8 +263,8 @@
          
         .sidebar {
             width: 180px;
-            background-color: #1c1c1c;
-            border-right: 1px solid #3a3a3a;
+            background-color: #181a19;
+            border-right: 1px solid #2a2c2b;
             overflow-y: auto;
             padding: 12px;
             display: flex;
@@ -284,7 +284,7 @@
             position: fixed;
             top: 12px;
             left: 12px;
-            background-color: #1c1c1c;
+            background-color: #181a19;
             z-index: 100;
             padding: 0;
             margin: 0;
@@ -331,7 +331,7 @@
         .filter-section {
             margin-bottom: 12px;
             padding-bottom: 12px;
-            border-bottom: 1px solid #3a3a3a;
+            border-bottom: 1px solid #2a2c2b;
             display: flex;
             flex-direction: column;
         }
@@ -384,7 +384,7 @@
             gap: 4px;
             margin-bottom: 6px;
             font-size: 12px;
-            color: #c2c6cd;
+            color: #bcbebc;
             text-transform: uppercase;
             letter-spacing: 0.5px;
             padding-left: 12px;
@@ -405,7 +405,7 @@
         }
 
         .card-label {
-            color: #c2c6cd;
+            color: #bcbebc;
             font-size: 12px;
             font-weight: 500;
         }
@@ -414,7 +414,7 @@
         .circle-selector {
             width: 18px;
             height: 18px;
-            border: 2px solid #3a3a3a;
+            border: 2px solid #2a2c2b;
             border-radius: 50%;
             cursor: pointer;
             transition: all 0.15s ease;
@@ -470,7 +470,7 @@
         .clear-filters-btn {
             margin-top: auto;
             padding: 8px 12px;
-            background-color: #1c1c1c;
+            background-color: #181a19;
             color: #fff;
             border: none;
             border-radius: 4px;
@@ -481,14 +481,14 @@
         }
 
         .clear-filters-btn:hover {
-            background-color: #1c1c1c;
+            background-color: #181a19;
         }
 
        /* BREADCRUMB + AGGREGATE SECTION */
             .breadcrumb-aggregate-section {
-                background-color: #1c1c1c;
+                background-color: #181a19;
                 padding: 8px 12px;
-                border-bottom: 1px solid #3a3a3a;
+                border-bottom: 1px solid #2a2c2b;
             }
 
             .breadcrumb-path {
@@ -496,17 +496,17 @@
                 align-items: center;
                 gap: 8px;
                 font-size: 14px;
-                color: #c2c6cd;
+                color: #bcbebc;
                 margin-bottom: 6px;
             }
 
             .breadcrumb-item {
-                color: #ededed;
+                color: #edefee;
                 font-weight: 500;
             }
 
             .breadcrumb-separator {
-                color: #aab0b8;
+                color: #989a99;
             }
 
             .breadcrumb-current {
@@ -520,8 +520,8 @@
             }
 
         .aggregate-section {
-            background-color: #1c1c1c;
-            border: 1px solid #3a3a3a;
+            background-color: #181a19;
+            border: 1px solid #2a2c2b;
             border-radius: 6px;
             overflow: hidden;
             margin-bottom: 12px;
@@ -533,12 +533,12 @@
             align-items: center;
             padding: 10px 14px;
             cursor: pointer;
-            background-color: #1c1c1c;
-            border-bottom: 1px solid #3a3a3a;
+            background-color: #181a19;
+            border-bottom: 1px solid #2a2c2b;
         }
 
         .aggregate-header:hover {
-            background-color: #1c1c1c;
+            background-color: #181a19;
         }
 
         .aggregate-title {
@@ -551,7 +551,7 @@
 
         .aggregate-toggle {
             font-size: 12px;
-            color: #c2c6cd;
+            color: #bcbebc;
             transition: transform 0.2s;
         }
 
@@ -594,7 +594,7 @@
         }
 
         .action-separator {
-            color: #aab0b8;
+            color: #989a99;
             margin: 0 4px;
         }
 
@@ -617,7 +617,7 @@
             color: white;
         }
 
-        .action-btn.fold { background-color: #3a3a3a; }
+        .action-btn.fold { background-color: #2a2c2b; }
         .action-btn.check { background-color: #9aa0ab; }
         .action-btn.call { background-color: #10b981; }
         .action-btn.bet { background-color: #f59e0b; }
@@ -636,7 +636,7 @@
 
         .back-btn {
             padding: 10px 18px;
-            background-color: #1c1c1c;
+            background-color: #181a19;
             border: none;
             border-radius: 6px;
             color: #fff;
@@ -647,7 +647,7 @@
         }
 
         .back-btn:hover {
-            background-color: #1c1c1c;
+            background-color: #181a19;
         }
     
         .edit-report-btn {
@@ -655,7 +655,7 @@
             color: #fff;
             font-weight: 600;
             min-width: 45px;
-            background-color: #121212;
+            background-color: #131413;
             padding: 7px 14px;
             border-radius: 6px;
             font-size: 12px;
@@ -667,7 +667,7 @@
         }
 
         .edit-report-btn:hover {
-            background-color: #1c1c1c;
+            background-color: #181a19;
         }
 
         /* ============================================================
@@ -689,44 +689,44 @@
         /* the header bar uses the SAME visual language as the "Import data" bar (.rc-import) */
         .street-bar {
             display: flex; align-items: center; justify-content: center;
-            background: #1c1c1c; border: 1px solid #3a3a3a; color: #ededed;
+            background: #181a19; border: 1px solid #2a2c2b; color: #edefee;
             border-radius: 6px; padding: 8px 12px;
             font-size: 14px; font-weight: 700; letter-spacing: .6px;
             width: 100%; box-sizing: border-box;
         }
         /* ACTIVE street bar: exact green-outline token of the active action card (.gtow-card.active) */
         .street-bar.active { border: 1.5px solid #5db85c; color: #74c96a; }
-        .street-bar.empty { color: #aab0b8; }
+        .street-bar.empty { color: #989a99; }
         .street-cards { display: flex; align-items: stretch; gap: 4px; }
         .gtow-card {
             flex: 0 0 auto; min-width: 84px; min-height: 108px;
-            background: #1c1c1c; border: 1px solid #3a3a3a; border-radius: 7px;
+            background: #181a19; border: 1px solid #2a2c2b; border-radius: 7px;
             padding: 8px 9px; display: flex; flex-direction: column;
         }
         .gtow-card-head {
             display: flex; justify-content: center; align-items: baseline;
             font-size: 14px; margin-bottom: 6px; white-space: nowrap;
         }
-        .gtow-card-head .pos { font-weight: 700; color: #ededed; letter-spacing: .3px; }
-        .gtow-card-head .street { font-weight: 700; color: #c2c6cd; letter-spacing: .4px; }
+        .gtow-card-head .pos { font-weight: 700; color: #edefee; letter-spacing: .3px; }
+        .gtow-card-head .street { font-weight: 700; color: #bcbebc; letter-spacing: .4px; }
         .gtow-actions { display: flex; flex-direction: column; gap: 3px; }
         .gtow-act {
             font-size: 14px; line-height: 1.15; padding: 3px 7px; border-radius: 5px;
             white-space: nowrap; text-align: center;
         }
-        .gtow-act.dim { color: #aab0b8; background: transparent; }
+        .gtow-act.dim { color: #989a99; background: transparent; }
         .gtow-act.taken {
-            color: #ededed; font-weight: 700;
-            background: #1c1c1c; border: 1px solid #3a3a3a;
+            color: #edefee; font-weight: 700;
+            background: #181a19; border: 1px solid #2a2c2b;
         }
         /* clickable to-act options rendered into the active card by updateActionButtons */
         .gtow-act-btn {
             display: block; width: 100%; text-align: center; background: transparent;
-            color: #c2c6cd; border: 1px solid transparent; border-radius: 5px;
+            color: #bcbebc; border: 1px solid transparent; border-radius: 5px;
             padding: 4px 8px; margin: 0; font-size: 14px; font-weight: 600;
             line-height: 1.15; white-space: nowrap; cursor: pointer;
         }
-        .gtow-act-btn:hover { background: #1c1c1c; color: #fff; border-color: #3a3a3a; }
+        .gtow-act-btn:hover { background: #181a19; color: #fff; border-color: #2a2c2b; }
         .gtow-card.board .gtow-tiles { display: flex; gap: 4px; align-items: center; justify-content: center; }
         .gtow-tile {
             width: 30px; height: 42px; border-radius: 5px;
@@ -739,60 +739,60 @@
         .gtow-tile.d { background: #3b82f6; }
         .gtow-tile.c { background: #22c55e; }
         .gtow-tile.s { background: #888888; }
-        .gtow-board-hint { text-align: center; font-size: 12px; color: #c2c6cd; font-weight: 700; letter-spacing: 1px; margin-top: auto; }
+        .gtow-board-hint { text-align: center; font-size: 12px; color: #bcbebc; font-weight: 700; letter-spacing: 1px; margin-top: auto; }
         .gtow-card.active { border: 1.5px solid #5db85c; }
         .gtow-card.active .pos { color: #74c96a; }
         .gtow-pos-card { cursor: pointer; }
-        .gtow-pos-card:hover { border-color: #3a3a3a; }
+        .gtow-pos-card:hover { border-color: #2a2c2b; }
         /* ---------- REPORT CARD (first card: picker + Clear + fields + Edit) ---------- */
         .gtow-report-card {
             flex: 0 0 auto; min-width: 184px; min-height: 108px;
-            background: #1c1c1c; border: 1px solid #3a3a3a; border-radius: 7px;
+            background: #181a19; border: 1px solid #2a2c2b; border-radius: 7px;
             padding: 9px 10px; display: flex; flex-direction: column; gap: 8px;
             margin-right: 6px;
         }
         .gtow-report-card .rc-top { display: flex; align-items: center; gap: 6px; }
         .gtow-report-card .rc-picker {
             flex: 1 1 auto; position: relative;
-            background: #1c1c1c; border: 1px solid #3a3a3a; color: #ededed;
+            background: #181a19; border: 1px solid #2a2c2b; color: #edefee;
             border-radius: 6px; padding: 6px 24px 6px 9px;
             font-size: 12px; font-weight: 600; white-space: nowrap; overflow: visible;
             text-overflow: ellipsis; cursor: pointer; min-width: 0;
         }
         .gtow-report-card .rc-picker::after {
             content: "\25BE"; position: absolute; right: 8px; top: 50%;
-            transform: translateY(-50%); color: #c2c6cd; font-size: 12px;
+            transform: translateY(-50%); color: #bcbebc; font-size: 12px;
         }
         .gtow-report-card .rc-clear {
-            flex: 0 0 auto; background: #1c1c1c; border: 1px solid #3a3a3a;
-            color: #c2c6cd; border-radius: 6px; padding: 6px 11px;
+            flex: 0 0 auto; background: #181a19; border: 1px solid #2a2c2b;
+            color: #bcbebc; border-radius: 6px; padding: 6px 11px;
             font-size: 12px; font-weight: 600; cursor: pointer;
         }
         .gtow-report-card .rc-clear:hover { box-shadow: inset 0 0 0 999px rgba(255,255,255,.08); }
         .rc-pick-menu {
             display: none; position: absolute; top: calc(100% + 4px); left: 0;
             min-width: 300px; max-width: 360px; max-height: 260px; overflow-y: auto;
-            background: #1c1c1c; border: 1px solid #3a3a3a; border-radius: 6px;
+            background: #181a19; border: 1px solid #2a2c2b; border-radius: 6px;
             z-index: 200; box-shadow: 0 8px 24px rgba(0,0,0,.6);
         }
         .rc-pick-menu.open { display: block; }
         .rc-pick-item {
-            padding: 8px 10px; font-size: 12px; font-weight: 600; color: #ededed;
-            white-space: nowrap; cursor: pointer; border-bottom: 1px solid #3a3a3a;
+            padding: 8px 10px; font-size: 12px; font-weight: 600; color: #edefee;
+            white-space: nowrap; cursor: pointer; border-bottom: 1px solid #2a2c2b;
         }
         .rc-pick-item:last-child { border-bottom: none; }
-        .rc-pick-item:hover { background: #1c1c1c; color: #fff; }
+        .rc-pick-item:hover { background: #181a19; color: #fff; }
         /* currently-loaded report row: blue highlight + leading checkmark */
         .rc-pick-item.is-current { background: rgba(74,158,255,.12); box-shadow: inset 2px 0 0 #4a9eff; }
         .rc-pick-item.is-current:hover { background: rgba(74,158,255,.18); }
-        .rc-pick-item.is-current .rc-pick-title { color: #ededed; }
+        .rc-pick-item.is-current .rc-pick-title { color: #edefee; }
         .rc-pick-check {
             flex: 0 0 auto; width: 14px; margin-left: 8px;
             text-align: center; font-size: 12px; font-weight: 700; line-height: 1;
             color: transparent; user-select: none;
         }
         .rc-pick-item.is-current .rc-pick-check { color: #4a9eff; }
-        .rc-pick-empty { padding: 8px 10px; font-size: 12px; color: #aab0b8; }
+        .rc-pick-empty { padding: 8px 10px; font-size: 12px; color: #989a99; }
         /* FIELD LIST as an aligned 2-column description list: labels col | values col.
            Values share one left edge to scan down. Type tokens kept from the old .rc-row. */
         .gtow-report-card .rc-fields {
@@ -800,11 +800,11 @@
             column-gap: 10px; row-gap: 4px; margin: 1px 0 0; padding: 0;
         }
         .gtow-report-card .rc-fields dt {
-            color: #c2c6cd; font-weight: 600; font-size: 14px; line-height: 1.2; white-space: nowrap;
+            color: #bcbebc; font-weight: 600; font-size: 14px; line-height: 1.2; white-space: nowrap;
         }
         .gtow-report-card .rc-fields dt::after { content: ":"; }
         .gtow-report-card .rc-fields dd {
-            color: #ededed; font-weight: 700; font-size: 14px; line-height: 1.2;
+            color: #edefee; font-weight: 700; font-size: 14px; line-height: 1.2;
             white-space: nowrap; margin: 0;
         }
         .gtow-report-card .rc-actions {
@@ -812,10 +812,10 @@
         }
         .gtow-report-card .rc-edit {
             align-self: flex-start;
-            background: #1c1c1c; border: 1px solid #3a3a3a; color: #c2c6cd;
+            background: #181a19; border: 1px solid #2a2c2b; color: #bcbebc;
             border-radius: 6px; padding: 7px 16px; font-size: 14px; font-weight: 600; cursor: pointer;
         }
-        .gtow-report-card .rc-edit:hover { background: #1c1c1c; color: #fff; }
+        .gtow-report-card .rc-edit:hover { background: #181a19; color: #fff; }
         .gtow-report-card .rc-edit:focus-visible { outline: 2px solid #4a9eff; outline-offset: 2px; }
         .gtow-report-card .rc-notes {
             display: inline-flex; align-items: center; gap: 6px;
@@ -824,11 +824,11 @@
         /* ---- Import data button (top of report card) ---- */
         .gtow-report-card .rc-import {
             display: flex; align-items: center; justify-content: center; gap: 7px;
-            width: 100%; background: #1c1c1c; border: 1px solid #3a3a3a; color: #ededed;
+            width: 100%; background: #181a19; border: 1px solid #2a2c2b; color: #edefee;
             border-radius: 6px; padding: 8px 12px; font-size: 14px; font-weight: 600;
             cursor: pointer;
         }
-        .gtow-report-card .rc-import:hover { background: #1c1c1c; color: #fff; }
+        .gtow-report-card .rc-import:hover { background: #181a19; color: #fff; }
         /* ---- picker rows: name + per-report Export ---- */
         .rc-pick-item {
             display: flex; align-items: center; justify-content: space-between; gap: 8px;
@@ -838,57 +838,57 @@
             display: flex; flex-direction: column; gap: 1px; overflow: hidden;
         }
         .rc-pick-title {
-            font-size: 12px; font-weight: 600; color: #ededed;
+            font-size: 12px; font-weight: 600; color: #edefee;
             white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
         }
         .rc-pick-sub {
-            font-size: 12px; font-weight: 500; color: #c2c6cd;
+            font-size: 12px; font-weight: 500; color: #bcbebc;
             white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
         }
         /* separator between the size-line segments — lighter muted grey (AA-verified on
-           menu bg #242424, hover #1c1c1c, and the composited selected-fill). NOT #6f6f6f. */
-        .rc-pick-sub .rc-pick-sep { color: #aab0b8; padding: 0 2px; }
+           menu bg #1e201f, hover #181a19, and the composited selected-fill). NOT #6f6f6f. */
+        .rc-pick-sub .rc-pick-sep { color: #989a99; padding: 0 2px; }
         /* comment on its own line, verbatim (user's own parentheses) */
         .rc-pick-cmt {
-            font-size: 12px; font-weight: 500; color: #aab0b8;
+            font-size: 12px; font-weight: 500; color: #989a99;
             white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
         }
         /* flop-count chip: right-aligned number on the row (Option C) */
         .rc-pick-count {
-            flex: 0 0 auto; font-size: 11px; font-weight: 700; color: #aab0b8;
+            flex: 0 0 auto; font-size: 11px; font-weight: 700; color: #989a99;
             font-variant-numeric: tabular-nums; padding: 0 2px; user-select: none;
         }
         /* ---- picker search box (top of menu) ---- */
         .rc-pick-search {
             position: sticky; top: 0; z-index: 1;
             display: flex; align-items: center; gap: 7px;
-            padding: 8px 10px; background: #1c1c1c;
-            border-bottom: 1px solid #3a3a3a;
+            padding: 8px 10px; background: #181a19;
+            border-bottom: 1px solid #2a2c2b;
         }
-        .rc-pick-search svg { flex: 0 0 auto; color: #c2c6cd; }
+        .rc-pick-search svg { flex: 0 0 auto; color: #bcbebc; }
         .rc-pick-search input {
             flex: 1 1 auto; min-width: 0;
             background: transparent; border: none; outline: none;
-            color: #ededed; font-size: 12px; font-weight: 600;
+            color: #edefee; font-size: 12px; font-weight: 600;
         }
-        .rc-pick-search input::placeholder { color: #aab0b8; font-weight: 500; }
+        .rc-pick-search input::placeholder { color: #989a99; font-weight: 500; }
         /* per-row actions: icon-only Export (arrow UP) + icon-only RED Delete */
         .rc-pick-actions { flex: 0 0 auto; display: flex; align-items: center; gap: 4px; margin: 3px 8px 3px 0; }
         .rc-pick-export, .rc-pick-delete {
             flex: 0 0 auto; display: flex; align-items: center; justify-content: center;
             padding: 5px; font-size: 12px; font-weight: 600;
-            background: #1c1c1c; border: 1px solid #3a3a3a; border-radius: 6px; cursor: pointer;
+            background: #181a19; border: 1px solid #2a2c2b; border-radius: 6px; cursor: pointer;
         }
-        .rc-pick-export { color: #c2c6cd; }
-        .rc-pick-export:hover { background: #1c1c1c; color: #fff; }
+        .rc-pick-export { color: #bcbebc; }
+        .rc-pick-export:hover { background: #181a19; color: #fff; }
         /* RED delete (app danger token #ef4444 / hover #dc2626) */
         .rc-pick-delete { color: #ef4444; }
-        .rc-pick-delete:hover { background: #1c1c1c; color: #dc2626; }
+        .rc-pick-delete:hover { background: #181a19; color: #dc2626; }
         .rc-pick-export svg, .rc-pick-delete svg { display: block; }
         /* ---- thin far-left vertical strip: holds ONLY the avatar ---- */
         .left-strip {
-            flex: 0 0 auto; width: 52px; background-color: #1c1c1c;
-            border-right: 1px solid #3a3a3a; display: flex; flex-direction: column;
+            flex: 0 0 auto; width: 52px; background-color: #181a19;
+            border-right: 1px solid #2a2c2b; display: flex; flex-direction: column;
             align-items: center; padding-top: 14px;
         }
         /* ---- account control: avatar-only on the left strip ---- */
@@ -903,28 +903,28 @@
         .acct-menu {
             display: none; position: absolute; left: calc(100% + 8px); top: 0;
             min-width: 170px; padding: 6px 0; z-index: 1000;
-            background: #1c1c1c; border: 1px solid #3a3a3a; border-radius: 10px;
+            background: #181a19; border: 1px solid #2a2c2b; border-radius: 10px;
             box-shadow: 0 8px 24px rgba(0,0,0,.6);
         }
         .acct-menu-item {
-            padding: 9px 16px; font-size: 14px; font-weight: 600; color: #ededed; cursor: pointer;
+            padding: 9px 16px; font-size: 14px; font-weight: 600; color: #edefee; cursor: pointer;
         }
-        .acct-menu-item:hover { background: #1c1c1c; color: #fff; }
+        .acct-menu-item:hover { background: #181a19; color: #fff; }
         /* ---- LOAD A REPORT drop-zone (bottom of picker menu) ---- */
-        .rc-load { border-top: 1px solid #3a3a3a; padding: 10px; }
+        .rc-load { border-top: 1px solid #2a2c2b; padding: 10px; }
         .rc-load-label {
             font-size: 12px; font-weight: 700; letter-spacing: .8px;
-            color: #c2c6cd; text-transform: uppercase; margin-bottom: 8px;
+            color: #bcbebc; text-transform: uppercase; margin-bottom: 8px;
         }
         .rc-load-zone {
             display: flex; flex-direction: column; align-items: center; gap: 6px;
-            border: 1px dashed #3a3a3a; border-radius: 8px; padding: 14px 10px;
-            background: #1c1c1c; text-align: center;
+            border: 1px dashed #2a2c2b; border-radius: 8px; padding: 14px 10px;
+            background: #181a19; text-align: center;
         }
         .rc-load-zone.dragover { border-color: #4a9eff; background: #1d2533; }
-        .rc-load-icon { color: #c2c6cd; }
-        .rc-load-hint { font-size: 12px; color: #c2c6cd; }
-        .rc-load-or { font-size: 12px; color: #aab0b8; }
+        .rc-load-icon { color: #bcbebc; }
+        .rc-load-hint { font-size: 12px; color: #bcbebc; }
+        .rc-load-or { font-size: 12px; color: #989a99; }
         .rc-load-btn {
             background: #1d4ed8; border: none; color: #fff; border-radius: 6px;
             padding: 7px 16px; font-size: 12px; font-weight: 600; cursor: pointer;
@@ -932,9 +932,9 @@
         .rc-load-btn:hover { background: #4a9eff; }
 
         .header {
-            background-color: #1c1c1c;
+            background-color: #181a19;
             padding: 12px 20px;
-            border-bottom: 1px solid #3a3a3a;
+            border-bottom: 1px solid #2a2c2b;
         }
     
         .header-top {
@@ -951,7 +951,7 @@
     
         .header p {
             font-size: 12px;
-            color: #c2c6cd;
+            color: #bcbebc;
         }
     
         .chart-container {
@@ -961,7 +961,7 @@
         }
     
         .chart-wrapper {
-            background-color: #1c1c1c;
+            background-color: #181a19;
             border-radius: 6px;
             padding: 20px;
             width: fit-content;
@@ -970,7 +970,7 @@
         }
     
         .chart-wrapper-main {
-            background-color: #1c1c1c;
+            background-color: #181a19;
             border-radius: 6px;
             padding: 20px;
             width: fit-content;
@@ -978,7 +978,7 @@
         }
 
         .chart-wrapper-detail {
-            background-color: #1c1c1c;
+            background-color: #181a19;
             border-radius: 6px;
             padding: 20px;
             width: fit-content;
@@ -1010,16 +1010,16 @@
         }
 
         /* >< / <> collapse-expand control at the right end of the stat-cards row.
-           Matches the app's card palette (#1c1c1c bg, #3a3a3a border) and adds the
-           hover/focus/active states the inline-styled cards lack. Glyph color #c2c6cd on
-           #1c1c1c = 9.9:1 (WCAG AAA); hover/focus glyph #fff on #1c1c1c = 16:1 (AAA).
+           Matches the app's card palette (#181a19 bg, #2a2c2b border) and adds the
+           hover/focus/active states the inline-styled cards lack. Glyph color #bcbebc on
+           #181a19 = 9.9:1 (WCAG AAA); hover/focus glyph #fff on #181a19 = 16:1 (AAA).
            The focus ring itself is the app-wide blue (#4a9eff via --focus-ring), painted by
            the shared `button:focus-visible` rule's !important outline below — measured 6.19:1
-           on #1c1c1c (passes WCAG 1.4.11 non-text >=3:1). This control deliberately inherits
+           on #181a19 (passes WCAG 1.4.11 non-text >=3:1). This control deliberately inherits
            that ring for app consistency rather than defining its own. */
         .stat-collapse-btn {
-            background-color: #1c1c1c;
-            border: 1px solid #3a3a3a;
+            background-color: #181a19;
+            border: 1px solid #2a2c2b;
             border-radius: 4px;
             height: 70px;
             min-width: 36px;
@@ -1028,7 +1028,7 @@
                resolves to 0 (no free space); only when the card row wraps does it push the
                control to the right edge of its line instead of leaving it left-packed. */
             margin-left: auto;
-            color: #c2c6cd;
+            color: #bcbebc;
             font-size: 16px;
             font-weight: 700;
             letter-spacing: 1px;
@@ -1106,12 +1106,12 @@
         }
     
         .btn-secondary {
-            background-color: #1c1c1c;
+            background-color: #181a19;
             color: #fff;
         }
     
         .btn-secondary:hover {
-            background-color: #1c1c1c;
+            background-color: #181a19;
         }
     
         .btn-danger {
@@ -1150,14 +1150,14 @@
         }
     
         .modal-content {
-            background-color: #1c1c1c;
+            background-color: #181a19;
             border-radius: 12px;
             padding: 25px;
             max-width: 900px;
             width: 90%;
             max-height: 80vh;
             overflow-y: auto;
-            border: 1px solid #3a3a3a;
+            border: 1px solid #2a2c2b;
         }
     
         .modal-header {
@@ -1176,7 +1176,7 @@
         .close-btn {
             background: none;
             border: none;
-            color: #c2c6cd;
+            color: #bcbebc;
             font-size: 28px;
             cursor: pointer;
         }
@@ -1196,7 +1196,7 @@
         }
     
         .import-section p {
-            color: #c2c6cd;
+            color: #bcbebc;
             font-size: 12px;
             margin-bottom: 12px;
         }
@@ -1204,11 +1204,11 @@
         textarea {
             width: 100%;
             min-height: 180px;
-            background-color: #1c1c1c;
-            border: 1px solid #3a3a3a;
+            background-color: #181a19;
+            border: 1px solid #2a2c2b;
             border-radius: 6px;
             padding: 10px;
-            color: #ededed;
+            color: #edefee;
             font-family: 'Courier New', monospace;
             font-size: 12px;
             resize: vertical;
@@ -1248,15 +1248,15 @@
         }
     
         .stat-card {
-            background-color: #1c1c1c;
+            background-color: #181a19;
             padding: 15px;
             border-radius: 6px;
-            border: 1px solid #3a3a3a;
+            border: 1px solid #2a2c2b;
         }
     
         .stat-label {
             font-size: 12px;
-            color: #c2c6cd;
+            color: #bcbebc;
             margin-bottom: 3px;
         }
     
@@ -1272,18 +1272,18 @@
     
         .input-group label {
             display: block;
-            color: #c2c6cd;
+            color: #bcbebc;
             font-size: 12px;
             margin-bottom: 4px;
         }
     
         .input-group input, .input-group select {
             width: 100%;
-            background-color: #1c1c1c;
-            border: 1px solid #3a3a3a;
+            background-color: #181a19;
+            border: 1px solid #2a2c2b;
             border-radius: 6px;
             padding: 8px;
-            color: #ededed;
+            color: #edefee;
             font-size: 12px;
         }
     
@@ -1293,8 +1293,8 @@
         }
     
         .filter-tags-section {
-            background-color: #1c1c1c;
-            border: 1px solid #3a3a3a;
+            background-color: #181a19;
+            border: 1px solid #2a2c2b;
             border-radius: 6px;
             padding: 12px;
             margin-bottom: 15px;
@@ -1317,7 +1317,7 @@
         }
     
         .tag-group-title {
-            color: #c2c6cd;
+            color: #bcbebc;
             font-size: 12px;
             text-transform: uppercase;
             margin-bottom: 6px;
@@ -1327,14 +1327,14 @@
         .tag-group select,
         .tag-group input {
             width: 100%;
-            background-color: #1c1c1c;
-            border: 1px solid #3a3a3a;
+            background-color: #181a19;
+            border: 1px solid #2a2c2b;
             border-radius: 4px;
             padding: 6px;
-            color: #ededed;
+            color: #edefee;
             font-size: 12px;
         }
-        .tag-group input::placeholder { color: #aab0b8; }
+        .tag-group input::placeholder { color: #989a99; }
     
         #strengthChart {
             min-height: 0;
@@ -1345,13 +1345,13 @@
         .no-data-message {
             text-align: center;
             padding: 50px 20px;
-            color: #c2c6cd;
+            color: #bcbebc;
         }
     
         .no-data-message h3 {
             font-size: 16px;
             margin-bottom: 8px;
-            color: #c2c6cd;
+            color: #bcbebc;
         }
     
         .no-data-message p {
@@ -1359,8 +1359,8 @@
         }
     
         .additional-filters {
-            background-color: #1c1c1c;
-            border: 1px solid #3a3a3a;
+            background-color: #181a19;
+            border: 1px solid #2a2c2b;
             border-radius: 6px;
             padding: 10px;
             margin-bottom: 10px;
@@ -1383,7 +1383,7 @@
             align-items: center;
             gap: 8px;
             padding: 6px;
-            background-color: #1c1c1c;
+            background-color: #181a19;
             border-radius: 4px;
         }
 
@@ -1394,7 +1394,7 @@
         }
 
         .additional-filter-item label {
-            color: #c2c6cd;
+            color: #bcbebc;
             font-size: 12px;
             cursor: pointer;
             margin: 0;
@@ -1404,7 +1404,7 @@
             padding: 6px 16px;
             margin: 0 5px;
             font-size: 14px;
-            background-color: #1c1c1c;
+            background-color: #181a19;
             color: #ffffff;
             border: none;
             border-radius: 4px;
@@ -1413,7 +1413,7 @@
         }
 
         .view-toggle-btn:hover {
-            background-color: #1c1c1c;
+            background-color: #181a19;
         }
 
         .view-toggle-btn.active {
@@ -1430,8 +1430,8 @@
 
         .bet-input {
             width: 45px;
-            background: #1c1c1c;
-            border: 1px solid #3a3a3a;
+            background: #181a19;
+            border: 1px solid #2a2c2b;
             color: #fff;
             padding: 2px 4px;
             border-radius: 4px;
@@ -1463,7 +1463,7 @@
 
         .gto-tooltip {
             position: absolute;
-            background: #121212;
+            background: #131413;
             color: #fff;
             padding: 4px 8px;
             border-radius: 4px;
@@ -1488,8 +1488,8 @@
         }
 
         .import-modal {
-            background: #1c1c1c;
-            border: 1px solid #3a3a3a;
+            background: #181a19;
+            border: 1px solid #2a2c2b;
             border-radius: 8px;
             padding: 24px;
             max-width: 400px;
@@ -1504,7 +1504,7 @@
 
         .import-modal p {
             margin: 0 0 20px 0;
-            color: #c2c6cd;
+            color: #bcbebc;
             font-size: 14px;
         }
 
@@ -1528,7 +1528,7 @@
         }
 
         .import-modal-btn.cancel {
-            background: #1c1c1c;
+            background: #181a19;
             color: #fff;
         }
 
@@ -1538,16 +1538,16 @@
 
         /* Link Report Modal - Make dropdowns visible */
         #linkReportModal select {
-            background-color: #1c1c1c;
-            color: #ededed;
-            border: 1px solid #3a3a3a;
+            background-color: #181a19;
+            color: #edefee;
+            border: 1px solid #2a2c2b;
             padding: 8px;
             border-radius: 4px;
             font-size: 14px;
         }
 
         #linkReportModal label {
-            color: #ededed;
+            color: #edefee;
             display: block;
             margin-top: 10px;
             margin-bottom: 5px;
@@ -1555,9 +1555,9 @@
         }
 
         #linkReportModal textarea {
-            background-color: #1c1c1c;
-            color: #ededed;
-            border: 1px solid #3a3a3a;
+            background-color: #181a19;
+            color: #edefee;
+            border: 1px solid #2a2c2b;
         }
 
         /* Link Report Modal Styling */
@@ -1567,25 +1567,25 @@
         }
 
         #linkReportModal .filter-group label {
-            color: #ededed;
+            color: #edefee;
             font-size: 14px;
             font-weight: bold;
             margin-bottom: 5px;
         }
 
         #linkReportModal select {
-            background-color: #1c1c1c;
-            color: #ededed;
-            border: 1px solid #3a3a3a;
+            background-color: #181a19;
+            color: #edefee;
+            border: 1px solid #2a2c2b;
             padding: 8px;
             border-radius: 4px;
             font-size: 14px;
         }
 
         #linkReportModal textarea {
-            background-color: #1c1c1c;
-            color: #ededed;
-            border: 1px solid #3a3a3a;
+            background-color: #181a19;
+            color: #edefee;
+            border: 1px solid #2a2c2b;
             padding: 10px;
             border-radius: 4px;
             font-family: monospace;
@@ -1632,14 +1632,14 @@
         }
 
         #linkReportModal .btn-secondary:hover {
-            background-color: #1c1c1c;
+            background-color: #181a19;
         }
 
         /* Board Import Modal Styling */
         #dataInput {
-            background-color: #1c1c1c;
-            color: #ededed;
-            border: 1px solid #3a3a3a;
+            background-color: #181a19;
+            color: #edefee;
+            border: 1px solid #2a2c2b;
             padding: 10px;
             border-radius: 4px;
             font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
@@ -1677,7 +1677,7 @@
             --imd-line-soft:  #21242a;
             --imd-txt:        #f3f5f8;          /* primary text       ~16:1 */
             --imd-txt-2:      #aeb4bf;          /* secondary text     ~8.5:1 */
-            --imd-txt-3:      #aab0b8;          /* labels / muted     ~7:1  (was #aab0b8 = 3.68:1 FAIL) */
+            --imd-txt-3:      #989a99;          /* labels / muted     ~7:1  (was #989a99 = 3.68:1 FAIL) */
             --imd-txt-ph:     #969ba5;          /* placeholder        ~6.7:1 (in scope, must pass 4.5:1) */
             --imd-accent:     #4a9eff;          /* accent TEXT/BORDER/ICON on dark ~6.45:1 */
             --imd-accent-strong:#3a8eef;        /* (legacy accent hover — retained) */
@@ -1717,7 +1717,7 @@
         #linkReportModal .modal-content::-webkit-scrollbar { width: 10px; }
         #importModal .modal-content::-webkit-scrollbar-thumb,
         #linkReportModal .modal-content::-webkit-scrollbar-thumb {
-            background:#3a3a3a; border-radius:8px; border:3px solid var(--imd-surface);
+            background:#2a2c2b; border-radius:8px; border:3px solid var(--imd-surface);
         }
 
         /* head */
@@ -1739,7 +1739,7 @@
             transition:.15s; font-size:0; line-height:0; padding:0;
         }
         #importModal .imd-x:hover,
-        #linkReportModal .imd-x:hover { background:#2a2a2a; color:var(--imd-txt); }
+        #linkReportModal .imd-x:hover { background:#242625; color:var(--imd-txt); }
 
         #importModal .imd-body,
         #linkReportModal .imd-body { padding:8px 24px 0; }
@@ -1964,10 +1964,10 @@
         }
         #importModal .imd-btn-secondary,
         #linkReportModal .imd-btn-secondary {
-            background:#2a2a2a; color:var(--imd-txt); border-color:#3a3a3a;
+            background:#242625; color:var(--imd-txt); border-color:#2a2c2b;
         }
         #importModal .imd-btn-secondary:hover,
-        #linkReportModal .imd-btn-secondary:hover { background:#3a3a3a; }
+        #linkReportModal .imd-btn-secondary:hover { background:#2a2c2b; }
         #importModal .imd-btn-ghost,
         #linkReportModal .imd-btn-ghost {
             background:transparent; color:var(--imd-txt-2); border-color:var(--imd-line);
@@ -1998,24 +1998,24 @@
            REPORT NOTES DRAWER (notes-*) — ADDITIVE, look held to the
            research-backed-UI hard gate. Right-side standard (non-modal)
            drawer ~400px (GitLab Pajamas / Material standard side-sheet),
-           keeps the report visible. Flat-black #1c1c1c surface + #3a3a3a
+           keeps the report visible. Flat-black #181a19 surface + #2a2c2b
            hairline borders to match the app; contrast tokens reuse the
            imd modal's WCAG-vetted palette. Every text color is measured
            against its ACTUAL rendered background:
-             editor body  #f3f5f8 on #1c1c1c = 16.87:1  (AAA)
-             title        #f3f5f8 on #1c1c1c = 17.79:1  (AAA)
-             help/sub     #aeb4bf on #1c1c1c =  9.33:1  (AAA)
-             label        #aab0b8 on #1c1c1c =  7.70:1  (AAA)
-             placeholder  #969ba5 on #1c1c1c =  6.60:1  (passes AA 4.5:1; NOT the failing #9ca3af gray)
-             "Saved" txt  #4ade80 on #1c1c1c = 11.15:1  (AAA)
-             presence dot #4a9eff on #1c1c1c =  7.06:1  (non-text, ≥3:1)
+             editor body  #f3f5f8 on #181a19 = 16.87:1  (AAA)
+             title        #f3f5f8 on #181a19 = 17.79:1  (AAA)
+             help/sub     #aeb4bf on #181a19 =  9.33:1  (AAA)
+             label        #989a99 on #181a19 =  7.70:1  (AAA)
+             placeholder  #969ba5 on #181a19 =  6.60:1  (passes AA 4.5:1; NOT the failing #9ca3af gray)
+             "Saved" txt  #4ade80 on #181a19 = 11.15:1  (AAA)
+             presence dot #4a9eff on #181a19 =  7.06:1  (non-text, ≥3:1)
            Body text ≥16px, line-height ≥1.5 per WCAG 1.4.12 + 1.4.3.
            ============================================================ */
         .notes-drawer {
             position: fixed; top: 0; right: 0; bottom: 0;
             width: 400px; max-width: 92vw;
-            background: #1c1c1c;
-            border-left: 1px solid #3a3a3a;
+            background: #181a19;
+            border-left: 1px solid #2a2c2b;
             box-shadow: -16px 0 48px -16px rgba(0,0,0,.7);
             display: flex; flex-direction: column;
             transform: translateX(100%);
@@ -2030,7 +2030,7 @@
         .notes-drawer-head {
             display: flex; align-items: flex-start; justify-content: space-between;
             gap: 12px; padding: 20px 20px 14px;
-            border-bottom: 1px solid #3a3a3a;
+            border-bottom: 1px solid #2a2c2b;
         }
         .notes-drawer-titlewrap { min-width: 0; }
         .notes-drawer-title {
@@ -2053,7 +2053,7 @@
         }
         .notes-drawer-editor {
             flex: 1 1 auto; width: 100%; box-sizing: border-box; resize: none;
-            background: #1c1c1c; border: 1px solid #3a3a3a; border-radius: 8px;
+            background: #181a19; border: 1px solid #2a2c2b; border-radius: 8px;
             color: #f3f5f8;
             font-family: inherit;
             font-size: 16px; line-height: 1.5;
@@ -2080,7 +2080,7 @@
         .rc-notes-dot {
             position: absolute; top: -3px; right: -3px;
             width: 8px; height: 8px; border-radius: 50%;
-            background: #4a9eff; border: 1px solid #1c1c1c;
+            background: #4a9eff; border: 1px solid #181a19;
             display: none;
         }
         .rc-notes.has-notes .rc-notes-dot { display: block; }
@@ -2088,9 +2088,9 @@
     </style>
 <style id="proposal-overrides">
 :root{
-  --surface-sunken:#0d0d0d; --surface-base:#121212; --surface-raised:#1c1c1c; --surface-overlay:#242424;
-  --text-primary:#ededed; --text-secondary:#c2c6cd; --text-muted:#aab0b8; --text-danger:#f94e4e; --text-disabled:#6f6f6f;
-  --border-subtle:#3a3a3a; --border-strong:#6e6e6e; --focus-ring:#4a9eff; --accent:#4a9eff;
+  --surface-sunken:#101110; --surface-base:#131413; --surface-raised:#181a19; --surface-overlay:#1e201f;
+  --text-primary:#edefee; --text-secondary:#bcbebc; --text-muted:#989a99; --text-danger:#f94e4e; --text-disabled:#6f6f6f;
+  --border-subtle:#2a2c2b; --border-strong:#3a3c3b; --focus-ring:#4a9eff; --accent:#4a9eff;
   --btn-primary:#1d4ed8; --btn-primary-hover:#2563eb; --btn-primary-active:#163fae;
   --btn-success:#0c6342; --btn-success-hover:#0f7a52; --btn-success-active:#094e34;
   --btn-danger:#c01c1c; --btn-danger-hover:#dc2626; --btn-danger-active:#991b1b;
@@ -2125,7 +2125,7 @@ textarea,.search-input-inline,.bet-input,.input-group input,.input-group select,
 .acct-avatar{ background:var(--avatar)!important; color:#fff!important; }
 /* disabled (contrast-exempt 1.4.3, kept perceivable) */
 button:disabled,.btn:disabled,.btn-primary:disabled,.btn-success:disabled,.btn-danger:disabled,.imd-btn-primary:disabled{
-  background:#2a2a2a!important; color:var(--text-disabled)!important; border-color:#2a2a2a!important; cursor:not-allowed!important; opacity:1!important; }
+  background:#242625!important; color:var(--text-disabled)!important; border-color:#242625!important; cursor:not-allowed!important; opacity:1!important; }
 /* red delete icons stay graphic >=3 */
 .rc-pick-delete,.dropdown-delete-btn{ color:var(--danger-icon)!important; background:transparent!important; }
 .rc-pick-delete:hover,.dropdown-delete-btn:hover{ color:#dc2626!important; }
@@ -2154,9 +2154,9 @@ a:focus-visible,button:focus-visible,input:focus-visible,textarea:focus-visible,
 .acct-menu,.rc-pick-menu,.dropdown-content,#handlinePickerMenu{ border-radius:12px!important; }
 /* ---- import/link modal token unify ---- */
 #importModal,#linkReportModal{
-  --imd-surface:#242424; --imd-surface-2:#2a2a2a; --imd-surface-3:#0d0d0d;
-  --imd-line:#3a3a3a; --imd-line-soft:#3a3a3a;
-  --imd-txt:#ededed; --imd-txt-2:#c2c6cd; --imd-txt-3:#aab0b8; --imd-txt-ph:#aab0b8;
+  --imd-surface:#1e201f; --imd-surface-2:#242625; --imd-surface-3:#101110;
+  --imd-line:#2a2c2b; --imd-line-soft:#2a2c2b;
+  --imd-txt:#edefee; --imd-txt-2:#bcbebc; --imd-txt-3:#989a99; --imd-txt-ph:#989a99;
   --imd-accent:#4a9eff; --imd-accent-strong:#2563eb; --imd-accent-fill:#1d4ed8; --imd-accent-fill-strong:#2563eb;
 }
 /* ---- MOTION: respect reduce-motion globally ---- */
@@ -2210,7 +2210,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,textarea:focus-visible,
 .m-dlg-row{ display:flex; gap:10px; justify-content:flex-end; }
 .m-dlg-btn{ padding:9px 16px; border-radius:8px; font-size:14px; font-weight:600; cursor:pointer; border:1px solid transparent; }
 .m-dlg-cancel{ background:transparent; color:var(--text-secondary); border-color:var(--border-subtle); }
-.m-dlg-cancel:hover{ color:var(--text-primary); background:#2e2e2e; }
+.m-dlg-cancel:hover{ color:var(--text-primary); background:#2a2c2b; }
 .m-dlg-danger{ background:var(--btn-danger); color:#fff; } .m-dlg-danger:hover{ background:var(--btn-danger-hover); }
 .m-dlg-primary{ background:var(--btn-primary); color:#fff; } .m-dlg-primary:hover{ background:var(--btn-primary-hover); }
 .m-dlg-btn:focus-visible{ outline:2px solid var(--focus-ring); outline-offset:2px; }
@@ -2221,10 +2221,143 @@ a:focus-visible,button:focus-visible,input:focus-visible,textarea:focus-visible,
 .m-toast.err{ border-left-color:var(--danger-icon); }
 .m-toast .m-toast-ico{ width:18px; height:18px; flex:0 0 auto; }
 </style>
+<style id="redesign3">
+/* ============================================================================
+   REDESIGN3 (live): narrow no-scroll strip + consolidated DeepSolver board table
+   + Supabase skin extras. Loads after proposal-overrides -> wins. Desktop-only.
+   ============================================================================ */
+
+/* ---------- Supabase skin extras (grey tokens already remapped above) ---------- */
+html, body, button, input, textarea, select, .btn, .rc-picker, .rc-pick-item {
+  font-family: Inter, system-ui, "Segoe UI", Roboto, sans-serif !important;
+}
+.gtow-card, .gtow-report-card, .street-bar, .rc-import, .rc-picker, .rc-clear, .rc-edit,
+.flop-cat-btn, .turn-cat-btn, #vsBtn, .btn, .btn-primary, .btn-success, .btn-danger,
+input, textarea, select, .ds-cell, .ds-table { border-radius: 6px !important; }
+.left-strip {
+  width: 48px !important; background: #131413 !important;
+  border-right: 1px solid rgba(255,255,255,.08) !important;
+}
+
+/* ---------- Narrow strip that NEVER scrolls ---------- */
+/* Cards GROW to fit all actions; strip height = tallest card. overflow:visible kills the base
+   overflow-x:auto (which forced a computed overflow-y:auto scrollbar / vertical clip). */
+.gtow-handline { align-items: flex-start !important; gap: 6px !important; padding-bottom: 2px !important; overflow: visible !important; }
+.street-group { gap: 0 !important; }
+.street-group.is-empty { min-width: 0 !important; }
+.street-cards { gap: 4px !important; align-items: flex-start !important; }
+
+.gtow-card {
+  width: 116px !important; min-width: 116px !important;
+  height: auto !important; min-height: 0 !important;
+  padding: 8px 9px !important; box-sizing: border-box !important;
+  display: flex !important; flex-direction: column !important; border-radius: 6px !important;
+  overflow: visible !important;
+}
+.gtow-card-head {
+  display: flex !important; justify-content: space-between !important; align-items: baseline !important;
+  gap: 8px !important; margin-bottom: 6px !important; padding-bottom: 6px !important;
+  border-bottom: 1px solid rgba(255,255,255,.07); white-space: nowrap !important;
+}
+.gtow-card-head .street-tag { font-size: 12px !important; font-weight: 700 !important; letter-spacing: .4px; color: var(--text-muted) !important; }
+.gtow-card-head .pos { font-size: 12px !important; font-weight: 700 !important; color: var(--text-primary) !important; }
+.gtow-actions { gap: 2px !important; overflow: visible !important; }
+.gtow-act, .gtow-act-btn {
+  font-size: 14px !important; line-height: 1.15 !important;
+  padding: 1px 6px !important; min-height: 0 !important; white-space: nowrap !important;
+}
+.gtow-card.empty-street { opacity: .55; justify-content: flex-start; }
+.gtow-empty-hint { color: var(--text-muted); font-size: 12px; text-align: center; margin-top: 8px; white-space: nowrap; }
+
+/* Report card: fixed by WIDTH (~460px), not vertical squeezing. All 5 fields visible at >=12px
+   in a clean 2-column grid; full-size Edit/Notes. Only a genuinely long Comment truncates
+   (with the full-field tooltip on the list). */
+.gtow-report-card {
+  width: 460px !important; min-width: 460px !important;
+  height: auto !important; min-height: 0 !important;
+  padding: 10px 12px !important; gap: 7px !important;
+  display: flex !important; flex-direction: column !important;
+  border-radius: 6px !important; margin-right: 8px !important; overflow: visible !important;
+}
+.gtow-report-card .rc-import {
+  width: auto !important; align-self: flex-start !important; order: 0 !important;
+  padding: 5px 11px !important; font-size: 12px !important; gap: 6px !important;
+}
+.gtow-report-card .rc-top { gap: 8px !important; }
+.gtow-report-card .rc-picker { padding: 5px 24px 5px 10px !important; font-size: 13px !important; }
+.gtow-report-card .rc-clear { padding: 5px 12px !important; font-size: 12px !important; }
+.gtow-report-card .rc-fields {
+  display: grid !important;
+  grid-template-columns: max-content minmax(0,1fr) max-content minmax(0,1fr) !important;
+  column-gap: 12px !important; row-gap: 5px !important; align-items: baseline !important;
+  margin: 2px 0 0 !important; max-height: none !important; overflow: visible !important;
+}
+.gtow-report-card .rc-fields dt { font-size: 12px !important; color: var(--text-muted) !important; line-height: 1.35 !important; white-space: nowrap !important; }
+.gtow-report-card .rc-fields dd {
+  font-size: 12px !important; color: var(--text-secondary) !important; font-weight: 600 !important;
+  line-height: 1.35 !important; margin: 0 !important;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.gtow-report-card .rc-fields dt:nth-of-type(4),
+.gtow-report-card .rc-fields dt:nth-of-type(5) { grid-column: 1 !important; }
+.gtow-report-card .rc-fields dd:nth-of-type(4),
+.gtow-report-card .rc-fields dd:nth-of-type(5) { grid-column: 2 / -1 !important; }
+.gtow-report-card .rc-actions { margin-top: 3px !important; gap: 8px !important; }
+.gtow-report-card .rc-edit { padding: 5px 16px !important; font-size: 12px !important; }
+
+/* ---------- ONE consolidated DeepSolver-style board table ---------- */
+/* the base app caps .chart-wrapper-main at 600px; the consolidated table is wider and the page
+   is desktop-only. Lift the cap. */
+.chart-wrapper-main { max-width: none !important; }
+.chart-plus-freq { width: 100%; }
+/* the Chart.js canvas is kept alive but visually removed (machinery still runs, no errors). */
+#strengthChartArea.m-chart-hidden {
+  position: absolute !important; width: 1px !important; height: 1px !important;
+  overflow: hidden !important; opacity: 0 !important; pointer-events: none !important;
+  clip-path: inset(50%); left: -9999px !important;
+}
+.ds-wrap { width: max-content; max-width: 100%; }
+.ds-title { font-size: 12px; font-weight: 600; color: var(--text-secondary); margin: 4px 0 10px 2px; }
+.ds-table { display: flex; flex-direction: column; }
+.ds-row {
+  display: flex; align-items: center; gap: 10px; height: 28px;
+  border-bottom: 1px solid rgba(255,255,255,.08); padding: 0 2px;
+}
+.ds-row:last-child { border-bottom: none; }
+.ds-head { height: 24px; border-bottom: 1px solid rgba(255,255,255,.12); margin-bottom: 2px; }
+.ds-head .ds-board, .ds-hcell { font-size: 12px; font-weight: 700; color: var(--text-muted); }
+.ds-board { flex: 0 0 118px; width: 118px; display: flex; align-items: center; gap: 3px; }
+.ds-chip {
+  display: inline-flex; align-items: center; justify-content: center; gap: 1px;
+  width: 28px; height: 20px; border-radius: 4px; flex: 0 0 auto;
+}
+.ds-chip .ds-rank { font-size: 12px; font-weight: 700; color: #fafafa; line-height: 1; }
+.ds-chip .ds-suit { font-size: 11px; line-height: 1; }
+.ds-stratcell { flex: 0 0 240px; width: 240px; position: relative; height: 100%; display: flex; align-items: center; }
+.ds-head .ds-stratcell { font-size: 12px; font-weight: 700; color: var(--text-muted); }
+.ds-strat { position: relative; width: 240px; height: 18px; border-radius: 4px; overflow: hidden; display: flex; background: rgba(255,255,255,.05); }
+.ds-strat > span { height: 100%; display: block; }
+.ds-strat .ds-avg { position: absolute; top: -1px; bottom: -1px; width: 2px; background: #fbbf24; transform: translateX(-1px); }
+.ds-avgtag { position: absolute; top: 0; transform: translateX(-50%); font-size: 11px; font-weight: 700; color: #fbbf24; }
+.ds-cell {
+  position: relative; flex: 0 0 52px; width: 52px; height: 22px;
+  display: flex; align-items: center; justify-content: center; border-radius: 5px;
+}
+.ds-hcell.ds-cell { background: transparent !important; }
+.ds-num {
+  position: relative; z-index: 1; font-size: 14px; font-weight: 700;
+  color: #edefee; padding: 0 5px; border-radius: 4px;
+  background: rgba(0,0,0,.55); font-variant-numeric: tabular-nums; line-height: 1.35;
+}
+.ds-eq { flex: 0 0 56px; width: 56px; text-align: right; font-size: 13px; font-weight: 600;
+  color: var(--text-secondary); font-variant-numeric: tabular-nums; padding-right: 4px; }
+.ds-head .ds-eq { color: var(--text-muted); }
+</style>
+
 </head>
 <body>
-    <div class="auth-required-overlay" style="display:flex; position:fixed; top:0; left:0; width:100%; height:100%; background:#1c1c1c; justify-content:center; align-items:center; z-index:9999;">
-        <h2 style="color:#ededed;">Please log in to use this app</h2>
+    <div class="auth-required-overlay" style="display:flex; position:fixed; top:0; left:0; width:100%; height:100%; background:#181a19; justify-content:center; align-items:center; z-index:9999;">
+        <h2 style="color:#edefee;">Please log in to use this app</h2>
     </div>
     <!-- ACCOUNT lives on a thin far-left vertical strip holding ONLY the avatar.
          The old top pill is gone; #authStatus is rendered into this strip by updateAuthUI().
@@ -2254,29 +2387,29 @@ a:focus-visible,button:focus-visible,input:focus-visible,textarea:focus-visible,
 
         <!-- BREADCRUMB + AGGREGATE SECTION (Hidden by default) -->
         <div class="breadcrumb-aggregate-section" id="breadcrumbAggregateSection" style="display: none;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; padding: 12px 20px; background-color: #1c1c1c; border-bottom: 1px solid #3a3a3a;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; padding: 12px 20px; background-color: #181a19; border-bottom: 1px solid #2a2c2b;">
                 <div>
                     <div style="font-size: 20px; font-weight: 600; color: #fff; margin-bottom: 4px;">
                         <span id="breadcrumbSituation">3BP IP PFR</span>
-                        <span style="color: #aab0b8; margin: 0 8px;">•</span>
+                        <span style="color: #989a99; margin: 0 8px;">•</span>
                         <span id="breadcrumbPosition">BB vs SB</span>
                     </div>
-                    <div style="font-size: 12px; color: #c2c6cd;">
+                    <div style="font-size: 12px; color: #bcbebc;">
                         <span id="breadcrumbCurrent">FLOP: SB ?</span>
                     </div>
                 </div>
                 
                 <div style="display: flex; gap: 12px;">
-                    <div style="background-color: #1c1c1c; border: 1px solid #3a3a3a; border-radius: 6px; padding: 10px 16px; min-width: 100px;">
-                        <div style="font-size: 12px; color: #c2c6cd; margin-bottom: 3px;">Total Flops</div>
+                    <div style="background-color: #181a19; border: 1px solid #2a2c2b; border-radius: 6px; padding: 10px 16px; min-width: 100px;">
+                        <div style="font-size: 12px; color: #bcbebc; margin-bottom: 3px;">Total Flops</div>
                         <div style="font-size: 16px; color: #fff; font-weight: 600;" id="headerFlopCount">0</div>
                     </div>
-                    <div style="background-color: #1c1c1c; border: 1px solid #3a3a3a; border-radius: 6px; padding: 10px 16px; min-width: 100px;">
-                        <div style="font-size: 12px; color: #c2c6cd; margin-bottom: 3px;">Avg Bet Freq</div>
+                    <div style="background-color: #181a19; border: 1px solid #2a2c2b; border-radius: 6px; padding: 10px 16px; min-width: 100px;">
+                        <div style="font-size: 12px; color: #bcbebc; margin-bottom: 3px;">Avg Bet Freq</div>
                         <div style="font-size: 16px; color: #ef4444; font-weight: 600;" id="headerAvgBet">0%</div>
                     </div>
-                    <div style="background-color: #1c1c1c; border: 1px solid #3a3a3a; border-radius: 6px; padding: 10px 16px; min-width: 100px;">
-                        <div style="font-size: 12px; color: #c2c6cd; margin-bottom: 3px;">Avg Check Freq</div>
+                    <div style="background-color: #181a19; border: 1px solid #2a2c2b; border-radius: 6px; padding: 10px 16px; min-width: 100px;">
+                        <div style="font-size: 12px; color: #bcbebc; margin-bottom: 3px;">Avg Check Freq</div>
                         <div style="font-size: 16px; color: #10b981; font-weight: 600;" id="headerAvgCheck">0%</div>
                     </div>
                 </div>
@@ -2299,7 +2432,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,textarea:focus-visible,
         
        <!-- MAIN DATA DISPLAY -->
         <div class="chart-container">
-            <div id="breadcrumbSection" style="display: none; margin-bottom: 20px; padding: 15px; background-color: #1c1c1c; border-radius: 8px; position: relative; z-index: 101;"></div>
+            <div id="breadcrumbSection" style="display: none; margin-bottom: 20px; padding: 15px; background-color: #181a19; border-radius: 8px; position: relative; z-index: 101;"></div>
             
             <div id="dataDisplay"></div>
         </div>
@@ -2619,22 +2752,22 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
     </div>
 
     <div id="trainerModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000; justify-content: center; align-items: center;">
-        <div style="background: #1c1c1c; border: 1px solid #3a3a3a; border-radius: 8px; padding: 30px; min-width: 450px; text-align: center;">
+        <div style="background: #181a19; border: 1px solid #2a2c2b; border-radius: 8px; padding: 30px; min-width: 450px; text-align: center;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-                <span id="trainerProgress" style="color: #c2c6cd;">1 / 1024</span>
-                <button onclick="closeTrainer()" style="background: none; border: none; color: #c2c6cd; font-size: 28px; cursor: pointer;">&times;</button>
+                <span id="trainerProgress" style="color: #bcbebc;">1 / 1024</span>
+                <button onclick="closeTrainer()" style="background: none; border: none; color: #bcbebc; font-size: 28px; cursor: pointer;">&times;</button>
             </div>
             
             <div id="trainerBoardName" style="font-size: 36px; margin: 20px 0;">K♠J♥9♦</div>
-            <div id="trainerCombo" style="font-size: 28px; color: #c2c6cd; margin: 15px 0;">Q♠8♠</div>
-            <div id="trainerCategory" style="color: #aab0b8; margin-bottom: 25px; font-size: 14px;">gutshot</div>
+            <div id="trainerCombo" style="font-size: 28px; color: #bcbebc; margin: 15px 0;">Q♠8♠</div>
+            <div id="trainerCategory" style="color: #989a99; margin-bottom: 25px; font-size: 14px;">gutshot</div>
             
             <div style="display: flex; gap: 10px; justify-content: center; margin-bottom: 20px;">
-                <button onclick="submitBet(0)" style="background: #1c1c1c; color: #fff; border: none; padding: 12px 20px; border-radius: 6px; font-size: 16px; cursor: pointer; min-width: 70px;">Check</button>
-                <button onclick="submitBet(25)" style="background: #1c1c1c; color: #fff; border: none; padding: 12px 20px; border-radius: 6px; font-size: 16px; cursor: pointer; min-width: 70px;">25%</button>
-                <button onclick="submitBet(50)" style="background: #1c1c1c; color: #fff; border: none; padding: 12px 20px; border-radius: 6px; font-size: 16px; cursor: pointer; min-width: 70px;">50%</button>
-                <button onclick="submitBet(75)" style="background: #1c1c1c; color: #fff; border: none; padding: 12px 20px; border-radius: 6px; font-size: 16px; cursor: pointer; min-width: 70px;">75%</button>
-                <button onclick="submitBet(100)" style="background: #1c1c1c; color: #fff; border: none; padding: 12px 20px; border-radius: 6px; font-size: 16px; cursor: pointer; min-width: 70px;">100%</button>
+                <button onclick="submitBet(0)" style="background: #181a19; color: #fff; border: none; padding: 12px 20px; border-radius: 6px; font-size: 16px; cursor: pointer; min-width: 70px;">Check</button>
+                <button onclick="submitBet(25)" style="background: #181a19; color: #fff; border: none; padding: 12px 20px; border-radius: 6px; font-size: 16px; cursor: pointer; min-width: 70px;">25%</button>
+                <button onclick="submitBet(50)" style="background: #181a19; color: #fff; border: none; padding: 12px 20px; border-radius: 6px; font-size: 16px; cursor: pointer; min-width: 70px;">50%</button>
+                <button onclick="submitBet(75)" style="background: #181a19; color: #fff; border: none; padding: 12px 20px; border-radius: 6px; font-size: 16px; cursor: pointer; min-width: 70px;">75%</button>
+                <button onclick="submitBet(100)" style="background: #181a19; color: #fff; border: none; padding: 12px 20px; border-radius: 6px; font-size: 16px; cursor: pointer; min-width: 70px;">100%</button>
             </div>
             
             <div id="trainerResults" style="display: none; margin-top: 20px; text-align: left; max-height: 300px; overflow-y: auto;"></div>
@@ -3122,10 +3255,10 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
             const btn = document.getElementById('vsBtn');
             if (vsMode) {
                 btn.style.background = 'rgba(74,158,255,0.16)'; btn.style.borderColor = '#4a9eff';
-                btn.style.color = '#ededed'; btn.style.background = 'rgba(74,158,255,0.16)'; btn.style.borderColor = '#4a9eff';
+                btn.style.color = '#edefee'; btn.style.background = 'rgba(74,158,255,0.16)'; btn.style.borderColor = '#4a9eff';
             } else {
-                btn.style.background = '#1c1c1c'; btn.style.borderColor = 'transparent';
-                btn.style.color = '#c2c6cd'; btn.style.borderColor = '#3a3a3a';
+                btn.style.background = '#181a19'; btn.style.borderColor = 'transparent';
+                btn.style.color = '#bcbebc'; btn.style.borderColor = '#2a2c2b';
                 // Reset to normal view
                 filterFlopBoard(currentFlopFilter || 'all');
             }
@@ -3230,6 +3363,9 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
 
             document.getElementById('strengthChart').style.display = 'none';
             document.getElementById('avgLabel').style.display = 'none';
+            // VS keeps its own two mini-charts; hide the consolidated board table while comparing
+            // (exitVsMode -> filterFlopBoard -> displayReport rebuilds it with vsMode=false).
+            document.querySelectorAll('.ds-wrap').forEach(function(e){ e.style.display = 'none'; });
 
             function calcStats(boards) {
                 if (!boards.length) return { total: 0, actions: {} };
@@ -3260,7 +3396,7 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
 
             const generateStatBoxes = (stats) => {
                 let html = `
-                    <div style="background-color: #1c1c1c; border: 1px solid #3a3a3a; border-radius: 4px; padding: 10px 12px; min-width: 70px; height: 70px; display: flex; flex-direction: column; justify-content: center; align-items: center;">
+                    <div style="background-color: #181a19; border: 1px solid #2a2c2b; border-radius: 4px; padding: 10px 12px; min-width: 70px; height: 70px; display: flex; flex-direction: column; justify-content: center; align-items: center;">
                         <div style="font-size: 12px; color: #fff; margin-bottom: 3px; white-space: nowrap;">Total Flops</div>
                         <div style="font-size: 16px; color: #fff; font-weight: 600;">${stats.total}</div>
                     </div>
@@ -3269,7 +3405,7 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                 for (const [action, value] of Object.entries(stats.actions)) {
                     const color = getActionStatTextColor(action);
                     html += `
-                        <div style="background-color: #1c1c1c; border: 1px solid #3a3a3a; border-radius: 4px; padding: 10px 12px; min-width: 70px; height: 70px; display: flex; flex-direction: column; justify-content: center; align-items: center;">
+                        <div style="background-color: #181a19; border: 1px solid #2a2c2b; border-radius: 4px; padding: 10px 12px; min-width: 70px; height: 70px; display: flex; flex-direction: column; justify-content: center; align-items: center;">
                             <div style="font-size: 12px; color: #fff; margin-bottom: 3px; white-space: nowrap;">Avg. ${displayActionLabel(action)}</div>
                             <div style="font-size: 16px; color: ${color}; font-weight: 600;">${value}%</div>
                         </div>
@@ -3285,7 +3421,7 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
             container.innerHTML = `
                 <div style="display: flex; gap: 16px; justify-content: center; width: max-content; margin: 0 auto;">
                     <div style="overflow: visible;">
-                        <div style="text-align: center; margin-bottom: 10px; color: #ededed; font-size: 16px; font-weight: 600;">${filter1}</div>
+                        <div style="text-align: center; margin-bottom: 10px; color: #edefee; font-size: 16px; font-weight: 600;">${filter1}</div>
                         <div style="display: flex; gap: 8px; margin-bottom: 12px; justify-content: center; flex-wrap: nowrap;">
                             ${generateStatBoxes(stats1)}
                         </div>
@@ -3294,7 +3430,7 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                         </div>
                     </div>
                     <div style="overflow: visible;">
-                        <div style="text-align: center; margin-bottom: 10px; color: #ededed; font-size: 16px; font-weight: 600;">${filter2}</div>
+                        <div style="text-align: center; margin-bottom: 10px; color: #edefee; font-size: 16px; font-weight: 600;">${filter2}</div>
                         <div style="display: flex; gap: 8px; margin-bottom: 12px; justify-content: center; flex-wrap: nowrap;">
                             ${generateStatBoxes(stats2)}
                         </div>
@@ -3381,7 +3517,7 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                             
                             if (char === '-') {
                                 ctx.font = `500 ${fontSize}px sans-serif`;
-                                ctx.fillStyle = '#c2c6cd';
+                                ctx.fillStyle = '#bcbebc';
                                 ctx.textAlign = 'left';
                                 ctx.fillText('-', currentX, y);
                                 currentX += ctx.measureText('-').width;
@@ -3393,7 +3529,7 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                                 currentX += ctx.measureText(suitSymbols[lowerChar]).width + 1;
                             } else {
                                 ctx.font = `500 ${fontSize}px sans-serif`;
-                                ctx.fillStyle = '#ededed';
+                                ctx.fillStyle = '#edefee';
                                 ctx.textAlign = 'left';
                                 ctx.fillText(char, currentX, y);
                                 currentX += ctx.measureText(char).width;
@@ -3420,8 +3556,8 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                         x: {
                             stacked: true,
                             max: 100,
-                            ticks: { color: '#c2c6cd', callback: v => v + '%' },
-                            grid: { color: '#3a3a3a' }
+                            ticks: { color: '#bcbebc', callback: v => v + '%' },
+                            grid: { color: '#2a2c2b' }
                         },
                         y: {
                             stacked: true,
@@ -3455,8 +3591,8 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
             vsFirstFilter = null;
             const btn = document.getElementById('vsBtn');
             if (btn) {
-                btn.style.background = '#1c1c1c'; btn.style.borderColor = 'transparent';
-                btn.style.color = '#c2c6cd'; btn.style.borderColor = '#3a3a3a';
+                btn.style.background = '#181a19'; btn.style.borderColor = 'transparent';
+                btn.style.color = '#bcbebc'; btn.style.borderColor = '#2a2c2b';
             }
             
             // Hide VS charts
@@ -3472,7 +3608,7 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
             
             // Reset button highlights
             document.querySelectorAll('.flop-cat-btn').forEach(btn => {
-                btn.style.background = btn.dataset.category === (currentFlopFilter || 'all') ? '#1d4ed8' : '#1c1c1c';
+                btn.style.background = btn.dataset.category === (currentFlopFilter || 'all') ? '#1d4ed8' : '#181a19';
             });
             filterFlopBoard(currentFlopFilter || 'all');
         }
@@ -3503,7 +3639,7 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                     
                     if (char === '-') {
                         ctx.font = `${fontWeight} ${fontSize}px sans-serif`;
-                        ctx.fillStyle = '#c2c6cd';
+                        ctx.fillStyle = '#bcbebc';
                         ctx.fillText('-', currentX, y);
                         currentX += ctx.measureText('-').width;
                     } else if (suitSymbols[lowerChar]) {
@@ -3513,7 +3649,7 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                         currentX += ctx.measureText(suitSymbols[lowerChar]).width + 1;
                     } else {
                         ctx.font = `${fontWeight} ${fontSize}px sans-serif`;
-                        ctx.fillStyle = '#ededed';
+                        ctx.fillStyle = '#edefee';
                         ctx.fillText(char, currentX, y);
                         currentX += ctx.measureText(char).width;
                     }
@@ -3557,7 +3693,7 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
             [input1, input2].forEach(input => {
                 if (input) {
                     input.value = '';
-                    input.style.border = '1px solid #3a3a3a';
+                    input.style.border = '1px solid #2a2c2b';
                 }
             });
             
@@ -3797,7 +3933,7 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
             let totalError = 0;
             let resultsHtml = '<h3 style="color: #fff; margin-bottom: 10px;">Results</h3>';
             resultsHtml += '<table style="width: 100%; color: #fff; font-size: 12px;">';
-            resultsHtml += '<tr style="color: #c2c6cd;"><th>Combo</th><th>Category</th><th>You</th><th>GTO</th><th>Diff</th></tr>';
+            resultsHtml += '<tr style="color: #bcbebc;"><th>Combo</th><th>Category</th><th>You</th><th>GTO</th><th>Diff</th></tr>';
             
             trainerAnswers.forEach(ans => {
                 const diff = Math.abs(ans.userBet - ans.gtoBet);
@@ -3814,7 +3950,7 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
             
             resultsHtml += '</table>';
             const avgError = (totalError / trainerAnswers.length).toFixed(1);
-            resultsHtml += `<div style="margin-top: 15px; padding: 10px; background: #1c1c1c; border-radius: 4px; color: #fff;">Average Error: <strong>${avgError}%</strong></div>`;
+            resultsHtml += `<div style="margin-top: 15px; padding: 10px; background: #181a19; border-radius: 4px; color: #fff;">Average Error: <strong>${avgError}%</strong></div>`;
             
             document.getElementById('trainerResults').innerHTML = resultsHtml;
             document.getElementById('trainerResults').style.display = 'block';
@@ -4187,7 +4323,8 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                     `<dt>Boards Category</dt><dd>${boardCat ? escapeHtml(boardCat) : '—'}</dd>`,
                     `<dt>Comment</dt><dd>${cmt ? escapeHtml(cmt) : '—'}</dd>`
                 ];
-                fields = `<dl class="rc-fields">${rows.join('')}</dl>`;
+                const _fieldTip = ['Spot: ' + (currentReport.potType || '—'), 'Positions: ' + (currentReport.position || '—'), 'Table Size: ' + (tableSz || '—'), 'Boards Category: ' + (boardCat || '—'), 'Comment: ' + (cmt || '—')].join('\n');
+                fields = `<dl class="rc-fields" title="${escapeHtml(_fieldTip)}">${rows.join('')}</dl>`;
             }
 
             // Edit + Notes share a bottom action row. The Notes trigger carries a presence dot
@@ -4440,8 +4577,7 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                 const groupCls = hasCards ? 'street-group' : 'street-group is-empty';
 
                 out += `<div class="${groupCls}">
-                    <div class="${barCls}">${street}</div>
-                    ${hasCards ? `<div class="street-cards">${cards}</div>` : ''}
+                    ${hasCards ? `<div class="street-cards">${cards}</div>` : `<div class="street-cards"><div class="gtow-card empty-street"><div class="gtow-card-head"><span class="street-tag">${street}</span></div><div class="gtow-empty-hint">not reached</div></div></div>`}
                 </div>`;
             });
             return out;
@@ -4470,7 +4606,7 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                 return `<div class="gtow-act ${isTaken ? 'taken' : 'dim'}">${escapeHtml(formatActionText(act))}</div>`;
             }).join('');
             return `<div class="gtow-card gtow-pos-card" title="Go back to this decision" onclick="goToAction(${globalIndex})">
-                <div class="gtow-card-head"><span class="pos">${escapeHtml(a.player)}</span></div>
+                <div class="gtow-card-head"><span class="street-tag">${escapeHtml(a.street)}</span><span class="pos">${escapeHtml(a.player)}</span></div>
                 <div class="gtow-actions">${body}</div>
             </div>`;
         }
@@ -4479,7 +4615,7 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
         // into #<street>Buttons (unchanged generator), so the to-act options stay clickable.
         function activeCardHTML(street) {
             return `<div class="gtow-card active">
-                <div class="gtow-card-head"><span class="pos">${escapeHtml(currentPerspective)}</span></div>
+                <div class="gtow-card-head"><span class="street-tag">${street}</span><span class="pos">${escapeHtml(currentPerspective)}</span></div>
                 <div id="${street.toLowerCase()}Buttons" class="gtow-actions"></div>
             </div>`;
         }
@@ -4573,7 +4709,7 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
 
             // Reset filter button styles
             document.querySelectorAll('.flop-cat-btn').forEach(btn => {
-                btn.style.background = btn.dataset.category === 'all' ? '#1d4ed8' : '#1c1c1c';
+                btn.style.background = btn.dataset.category === 'all' ? '#1d4ed8' : '#181a19';
             });
             
             // Clear text filter input
@@ -5034,6 +5170,13 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                 // because we only replace its innerHTML, so the control stays usable indefinitely.
                 const chartArea = document.getElementById('strengthChartArea');
                 if (chartArea) {
+                    // The chart area is normally 1px-clipped (m-chart-hidden) because the consolidated
+                    // table is the visible graphic. On a zero-match we show the message HERE, so lift
+                    // the clip and hide the (now stale) consolidated table; the next displayReport
+                    // re-render restores both. The persistent wrapper is never destroyed (KI contract).
+                    chartArea.classList.remove('m-chart-hidden');
+                    var _dsw = chartArea.parentElement ? chartArea.parentElement.querySelector('.ds-wrap') : null;
+                    if (_dsw) _dsw.style.display = 'none';
                     chartArea.innerHTML = noMatchMsg;
                     updateFlopTextureButtonStyles();
                     clearBoardStatsHeader();
@@ -5216,7 +5359,7 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
             const boardInput = document.getElementById('boardFilterInput');
             if (boardInput) {
                 boardInput.value = '';
-                boardInput.style.border = '1px solid #3a3a3a';
+                boardInput.style.border = '1px solid #2a2c2b';
             }
             
             // If in VS mode, keep VS mode active but refresh with cleared filters
@@ -5227,7 +5370,7 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                     if (btn.dataset.category === vsFirstFilter || btn.dataset.category === vsSecondFilter) {
                         btn.style.background = 'rgba(74,158,255,0.16)'; btn.style.borderColor = '#4a9eff';
                     } else {
-                        btn.style.background = '#1c1c1c'; btn.style.borderColor = 'transparent';
+                        btn.style.background = '#181a19'; btn.style.borderColor = 'transparent';
                     }
                 });
             } else if (!vsMode) {
@@ -5288,7 +5431,7 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                         if (btn.dataset.category === vsFirstFilter || btn.dataset.category === vsSecondFilter) {
                             btn.style.background = 'rgba(74,158,255,0.16)'; btn.style.borderColor = '#4a9eff';
                         } else {
-                            btn.style.background = '#1c1c1c'; btn.style.borderColor = 'transparent';
+                            btn.style.background = '#181a19'; btn.style.borderColor = 'transparent';
                         }
                     });
                 } else if (vsMode) {
@@ -5297,7 +5440,7 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                 } else {
                     // Clear main category button highlights when using sidebar filters
                     document.querySelectorAll('.flop-cat-btn').forEach(btn => {
-                        btn.style.background = '#1c1c1c'; btn.style.borderColor = 'transparent';
+                        btn.style.background = '#181a19'; btn.style.borderColor = 'transparent';
                     });
                     
                     filterFlopBoard(categoryFilter, true);
@@ -5305,7 +5448,7 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                     // FORCE clear main buttons after everything completes (only when NOT in VS mode)
                     setTimeout(() => {
                         document.querySelectorAll('.flop-cat-btn').forEach(btn => {
-                            btn.style.background = '#1c1c1c'; btn.style.borderColor = 'transparent';
+                            btn.style.background = '#181a19'; btn.style.borderColor = 'transparent';
                         });
                     }, 100);
                 }
@@ -5478,7 +5621,7 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                         if (btn.dataset.category === filter) {
                             btn.style.background = 'rgba(74,158,255,0.16)'; btn.style.borderColor = '#4a9eff';
                         } else {
-                            btn.style.background = '#1c1c1c'; btn.style.borderColor = 'transparent';
+                            btn.style.background = '#181a19'; btn.style.borderColor = 'transparent';
                         }
                     });
                 } else {
@@ -5489,7 +5632,7 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                         if (btn.dataset.category === vsFirstFilter || btn.dataset.category === vsSecondFilter) {
                             btn.style.background = 'rgba(74,158,255,0.16)'; btn.style.borderColor = '#4a9eff';
                         } else {
-                            btn.style.background = '#1c1c1c'; btn.style.borderColor = 'transparent';
+                            btn.style.background = '#181a19'; btn.style.borderColor = 'transparent';
                         }
                     });
                 }
@@ -5505,7 +5648,7 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
         function flopToggleBtnStyle(state) {
             if (state === 'include') return 'background: #157D3C; color: #fff; border: 1px solid #1f9d4d;';
             if (state === 'exclude') return 'background: #b91c1c; color: #fff; border: 1px solid #ef4444;';
-            return 'background: #1c1c1c; color: #fff; border: 1px solid transparent;';
+            return 'background: #181a19; color: #fff; border: 1px solid transparent;';
         }
 
         // Button label with state icon (✓ include, ✗ exclude)
@@ -5520,12 +5663,12 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
         function updateFlopTextureButtonStyles() {
             document.querySelectorAll('.flop-cat-btn').forEach(btn => {
                 const cat = btn.dataset.category;
-                if (cat === 'all') { var _an=Object.keys(flopTextureToggles).some(function(k){return flopTextureToggles[k]&&flopTextureToggles[k]!=='off';}); btn.style.background=_an?'#1c1c1c':'rgba(74,158,255,0.16)'; btn.style.border='1px solid '+(_an?'transparent':'#4a9eff'); btn.style.color='#ededed'; return; }
+                if (cat === 'all') { var _an=Object.keys(flopTextureToggles).some(function(k){return flopTextureToggles[k]&&flopTextureToggles[k]!=='off';}); btn.style.background=_an?'#181a19':'rgba(74,158,255,0.16)'; btn.style.border='1px solid '+(_an?'transparent':'#4a9eff'); btn.style.color='#edefee'; return; }
                 if (!(cat in flopTextureToggles)) return;
                 const state = flopTextureToggles[cat];
                 if (state === 'include') { btn.style.background = '#157D3C'; btn.style.border = '1px solid #1f9d4d'; }
                 else if (state === 'exclude') { btn.style.background = '#b91c1c'; btn.style.border = '1px solid #ef4444'; }
-                else { btn.style.background = '#1c1c1c'; btn.style.borderColor = 'transparent'; btn.style.border = '1px solid transparent'; }
+                else { btn.style.background = '#181a19'; btn.style.borderColor = 'transparent'; btn.style.border = '1px solid transparent'; }
                 btn.textContent = flopToggleLabel(cat, state);
             });
         }
@@ -5653,7 +5796,7 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
         function turnToggleBtnStyle(state) {
             if (state === 'include') return 'background: #157D3C; color: #fff; border: 1px solid #1f9d4d;';
             if (state === 'exclude') return 'background: #b91c1c; color: #fff; border: 1px solid #ef4444;';
-            return 'background: #1c1c1c; color: #fff; border: 1px solid transparent;';
+            return 'background: #181a19; color: #fff; border: 1px solid transparent;';
         }
 
         // Button label with state icon (✓ include, ✗ exclude).
@@ -5669,12 +5812,12 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
         function updateTurnTextureButtonStyles() {
             document.querySelectorAll('.turn-cat-btn').forEach(btn => {
                 const cat = btn.dataset.category;
-                if (cat === 'all') { var _an=Object.keys(turnTextureToggles).some(function(k){return turnTextureToggles[k]&&turnTextureToggles[k]!=='off';}); btn.style.background=_an?'#1c1c1c':'rgba(74,158,255,0.16)'; btn.style.border='1px solid '+(_an?'transparent':'#4a9eff'); btn.style.color='#ededed'; return; }
+                if (cat === 'all') { var _an=Object.keys(turnTextureToggles).some(function(k){return turnTextureToggles[k]&&turnTextureToggles[k]!=='off';}); btn.style.background=_an?'#181a19':'rgba(74,158,255,0.16)'; btn.style.border='1px solid '+(_an?'transparent':'#4a9eff'); btn.style.color='#edefee'; return; }
                 if (!(cat in turnTextureToggles)) return;
                 const state = turnTextureToggles[cat];
                 if (state === 'include') { btn.style.background = '#157D3C'; btn.style.border = '1px solid #1f9d4d'; }
                 else if (state === 'exclude') { btn.style.background = '#b91c1c'; btn.style.border = '1px solid #ef4444'; }
-                else { btn.style.background = '#1c1c1c'; btn.style.borderColor = 'transparent'; btn.style.border = '1px solid transparent'; }
+                else { btn.style.background = '#181a19'; btn.style.borderColor = 'transparent'; btn.style.border = '1px solid transparent'; }
                 btn.textContent = turnToggleLabel(cat, state);
             });
         }
@@ -5778,6 +5921,13 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                 // every keystroke because we only replace its innerHTML.
                 const chartArea = document.getElementById('strengthChartArea');
                 if (chartArea) {
+                    // The chart area is normally 1px-clipped (m-chart-hidden) because the consolidated
+                    // table is the visible graphic. On a zero-match we show the message HERE, so lift
+                    // the clip and hide the (now stale) consolidated table; the next displayReport
+                    // re-render restores both. The persistent wrapper is never destroyed (KI contract).
+                    chartArea.classList.remove('m-chart-hidden');
+                    var _dsw = chartArea.parentElement ? chartArea.parentElement.querySelector('.ds-wrap') : null;
+                    if (_dsw) _dsw.style.display = 'none';
                     chartArea.innerHTML = noMatchMsg;
                     updateTurnTextureButtonStyles();
                     clearBoardStatsHeader();
@@ -6930,7 +7080,7 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
         function interpolateColor(value, maxValue) {
             const position = Math.min(value / maxValue, 1);
             const startColor = { r: 251, g: 191, b: 36 };  // Light orange
-            const endColor = { r: 168, g: 84, b: 22 };      // deep-orange big-bet end #a85416 (>=3:1 vs #1c1c1c)
+            const endColor = { r: 168, g: 84, b: 22 };      // deep-orange big-bet end #a85416 (>=3:1 vs #181a19)
             const r = Math.round(startColor.r + (endColor.r - startColor.r) * position);
             const g = Math.round(startColor.g + (endColor.g - startColor.g) * position);
             const b = Math.round(startColor.b + (endColor.b - startColor.b) * position);
@@ -7011,8 +7161,8 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
         // Subtle locked "pill" for an action already TAKEN in a street's line (GTOw language:
         // taken = muted grey pill, not the bright semantic color of the live to-act buttons).
         function takenActionPillStyle() {
-            return `background-color: #1c1c1c; color: #c2c6cd; padding: 6px 12px; ` +
-                `min-height: 30px; border: 1px solid #3a3a3a; border-radius: 6px; ` +
+            return `background-color: #181a19; color: #bcbebc; padding: 6px 12px; ` +
+                `min-height: 30px; border: 1px solid #2a2c2b; border-radius: 6px; ` +
                 `cursor: pointer; font-size: 12px; font-weight: 600; white-space: nowrap; ` +
                 `flex-shrink: 0; line-height: 1.1;`;
         }
@@ -7317,10 +7467,10 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
             if (sequence && sequence.needsOpponentData) {
                 // Show waiting message instead of chart
                 document.getElementById('dataDisplay').innerHTML = `
-                    <div style="text-align: center; padding: 60px 20px; color: #c2c6cd;">
+                    <div style="text-align: center; padding: 60px 20px; color: #bcbebc;">
                         <div style="font-size: 20px; margin-bottom: 12px;">⏳ Waiting for ${sequence.opponent} to act</div>
-                        <div style="font-size: 14px; color: #aab0b8;">No strategy data available until ${sequence.opponent} makes a decision</div>
-                        <div style="margin-top: 24px; font-size: 14px; color: #aab0b8;">Use the action buttons above to simulate ${sequence.opponent}'s action</div>
+                        <div style="font-size: 14px; color: #989a99;">No strategy data available until ${sequence.opponent} makes a decision</div>
+                        <div style="margin-top: 24px; font-size: 14px; color: #989a99;">Use the action buttons above to simulate ${sequence.opponent}'s action</div>
                     </div>
                 `;
                 showBreadcrumbSection();
@@ -7357,7 +7507,7 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
             const limited = sorted.slice(0, 100);
                 if (limited.length === 0) {
                 document.getElementById('dataDisplay').innerHTML = `
-                    <div style="text-align: center; padding: 60px 20px; color: #c2c6cd;">
+                    <div style="text-align: center; padding: 60px 20px; color: #bcbebc;">
                         <div style="font-size: 20px; margin-bottom: 12px;">No boards match this filter</div>
                     </div>
                 `;
@@ -7405,7 +7555,7 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                 return /x/i.test(s) ? m[1] + 'x' : m[1] + '%';
             };
             const _statCard = (titleHtml, valueHtml, valueColor) => `
-                            <div style="background-color: #1c1c1c; border: 1px solid #3a3a3a; border-radius: 4px; padding: 10px 12px; min-width: 70px; height: 70px; display: flex; flex-direction: column; justify-content: center; align-items: center;">
+                            <div style="background-color: #181a19; border: 1px solid #2a2c2b; border-radius: 4px; padding: 10px 12px; min-width: 70px; height: 70px; display: flex; flex-direction: column; justify-content: center; align-items: center;">
                                 <div style="font-size: 12px; color: #fff; margin-bottom: 3px; white-space: nowrap;">${titleHtml}</div>
                                 <div class="avgStatValue" style="font-size: 16px; color: ${valueColor}; font-weight: 600;">${valueHtml}</div>
                             </div>`;
@@ -7413,7 +7563,7 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
             const _raiseSizes = _statActions.filter(_isRaiseSize);
             // Total Flops always leads the row.
             let _statCardsHtml = `
-                            <div style="background-color: #1c1c1c; border: 1px solid #3a3a3a; border-radius: 4px; padding: 10px 12px; min-width: 70px; height: 70px; display: flex; flex-direction: column; justify-content: center; align-items: center;">
+                            <div style="background-color: #181a19; border: 1px solid #2a2c2b; border-radius: 4px; padding: 10px 12px; min-width: 70px; height: 70px; display: flex; flex-direction: column; justify-content: center; align-items: center;">
                                 <div style="font-size: 12px; color: #fff; margin-bottom: 3px; white-space: nowrap;">Total Flops</div>
                                 <div id="totalFlopsCount" style="font-size: 16px; color: #fff; font-weight: 600;">${data.length}</div>
                             </div>`;
@@ -7445,6 +7595,52 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                             <button type="button" class="stat-collapse-btn" onclick="toggleStatCardsCollapse()" aria-pressed="${statCardsCollapsed}" aria-label="${statCardsCollapsed ? 'Expand bet and raise size cards back to individual sizes' : 'Collapse bet sizes into one Bet card and raise sizes into one Raise card'}" title="${statCardsCollapsed ? 'Expand size cards' : 'Collapse size cards'}">${statCardsCollapsed ? '&lt;&gt;' : '&gt;&lt;'}</button>`;
             }
 
+            // ---- Consolidated DeepSolver-style board table (replaces the flop/turn strength chart) ----
+            //   Board (suit chips) | Strategy (stacked bar + Avg) | per-action numeric cells | Equity.
+            //   Built from `limited` (already sort+filter aware) so it live-updates through this same
+            //   displayReport render path that flopFilteredData/turnFilteredData feed. Returns '' in
+            //   VS-compare mode (VS keeps its own two mini-charts, rendered into #flopChartContainer).
+            const _consolTableHtml = (function(){
+              try {
+                if (typeof vsMode !== 'undefined' && vsMode) return '';
+                var acts = Array.isArray(perspectiveData.availableActions) ? perspectiveData.availableActions : [];
+                if (!acts.length || !Array.isArray(limited) || !limited.length) return '';
+                var esc = function(s){ return String(s == null ? '' : s).replace(/[&<>"]/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); };
+                var freqOf = function(h, a){ var k = String(a).toLowerCase(); var v = (h.actions && h.actions[k] != null) ? h.actions[k] : (h[k] != null ? h[k] : 0); v = Number(v); return isFinite(v) ? v : 0; };
+                // DeepSolver-style suit chips (contrast-corrected: rank #fafafa >=4.6:1 on every suit bg).
+                var SUIT = { h:{bg:'#ce3948',glyph:'♥',tint:'#f9dcdf'}, d:{bg:'#3b5fc4',glyph:'♦',tint:'#e1e6f4'}, c:{bg:'#2d812d',glyph:'♣',tint:'#e1f5e6'}, s:{bg:'#71717a',glyph:'♠',tint:'#ebebeb'} };
+                var chip = function(card){ if(!card||card.length<2) return ''; var rk=card[0].toUpperCase(); var m=SUIT[card[1].toLowerCase()]||SUIT.s; return '<span class="ds-chip" style="background:'+m.bg+';"><span class="ds-rank">'+esc(rk)+'</span><span class="ds-suit" style="color:'+m.tint+';">'+m.glyph+'</span></span>'; };
+                var boardChips = function(t){ t=String(t||''); var out=''; if(t.length>=6){ out+=chip(t.substr(0,2))+chip(t.substr(2,2))+chip(t.substr(4,2)); } if(t.length>=8) out+=chip(t.substr(6,2)); if(t.length>=10) out+=chip(t.substr(8,2)); return out || esc(t); };
+                var avgPct = Math.max(0, Math.min(100, (typeof avgBet==='number' && isFinite(avgBet)) ? avgBet : 0));
+                // Header label colour = the action colour, floored for WCAG legibility: the darkest
+                // big-bet orange (#a85416) is only 3.29:1 as text on the dark card, so lighten it
+                // toward white (hue kept) until >=4.6:1. Cells + strategy bars keep the TRUE colour.
+                var _lum = function(r,g,b){ var f=function(v){v/=255;return v<=0.03928?v/12.92:Math.pow((v+0.055)/1.055,2.4);}; return 0.2126*f(r)+0.7152*f(g)+0.0722*f(b); };
+                var _CARD_L = _lum(24,26,25); // #181a19 (post-skin card surface)
+                var _cardRatio = function(r,g,b){ var L=_lum(r,g,b); var hi=Math.max(L,_CARD_L), lo=Math.min(L,_CARD_L); return (hi+0.05)/(lo+0.05); };
+                var headerColor = function(a){
+                  var c=getActionColor(a), r,g,b, m=/rgb\((\d+),\s*(\d+),\s*(\d+)\)/.exec(c);
+                  if(m){ r=+m[1]; g=+m[2]; b=+m[3]; } else { var h=String(c).replace('#',''); r=parseInt(h.substr(0,2),16); g=parseInt(h.substr(2,2),16); b=parseInt(h.substr(4,2),16); }
+                  var k=0; while(k<1 && _cardRatio(r+(255-r)*k, g+(255-g)*k, b+(255-b)*k)<4.6){ k+=0.02; }
+                  return 'rgb('+Math.round(r+(255-r)*k)+','+Math.round(g+(255-g)*k)+','+Math.round(b+(255-b)*k)+')';
+                };
+                var head = '<div class="ds-row ds-head"><div class="ds-board">Board</div><div class="ds-stratcell"><span>Strategy</span><span class="ds-avgtag" style="left:'+avgPct+'%;">Avg</span></div>';
+                acts.forEach(function(a){ head += '<div class="ds-cell ds-hcell" style="color:'+headerColor(a)+';">'+esc(displayActionLabel(a))+'</div>'; });
+                head += '<div class="ds-eq ds-hcell">Equity</div></div>';
+                var rows = '';
+                limited.forEach(function(h){
+                  var strat = '<div class="ds-strat">';
+                  acts.forEach(function(a){ var p=Math.max(0,Math.min(100,freqOf(h,a))); if(p>0) strat += '<span style="width:'+p+'%;background:'+getActionColor(a)+';"></span>'; });
+                  strat += '<span class="ds-avg" style="left:'+avgPct+'%;"></span></div>';
+                  var cells = '';
+                  acts.forEach(function(a){ var col=getActionColor(a); var n=freqOf(h,a); var pct=Math.max(0,Math.min(100,n)); cells += '<div class="ds-cell" style="background:linear-gradient(to right,'+col+' '+pct+'%, transparent '+pct+'%);"><span class="ds-num">'+Math.round(n)+'</span></div>'; });
+                  var eq = (h.equity!=null && isFinite(Number(h.equity))) ? Number(h.equity).toFixed(1) : '—';
+                  rows += '<div class="ds-row"><div class="ds-board" title="'+esc(h.tree)+'">'+boardChips(h.tree)+'</div><div class="ds-stratcell">'+strat+'</div>'+cells+'<div class="ds-eq">'+eq+'</div></div>';
+                });
+                return '<div class="ds-wrap"><div class="ds-title">Board strategy</div><div class="ds-table" role="table" aria-label="Board strategy by action">'+head+rows+'</div></div>';
+              } catch (e) { return ''; }
+            })();
+
             document.getElementById('dataDisplay').innerHTML = `
             <div class="charts-container">
             <div class="chart-wrapper-main">
@@ -7455,7 +7651,7 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                     </div>
 
                    <!-- Flop Filter Box -->
-                    <div id="flopFilterBox" style="display: none; background: #1c1c1c; border: 1px solid #3a3a3a; border-radius: 6px; padding: 12px; margin-bottom: 10px; width: fit-content;">
+                    <div id="flopFilterBox" style="display: none; background: #181a19; border: 1px solid #2a2c2b; border-radius: 6px; padding: 12px; margin-bottom: 10px; width: fit-content;">
                         <div style="display: flex; gap: 6px; flex-wrap: nowrap; align-items: center;">
                             <button class="flop-cat-btn" data-category="all" onclick="resetFlopTextures()" style="${mAllBtnStyle(flopTextureToggles)} border-radius: 4px; padding: 4px 10px; font-size: 12px; cursor: pointer; white-space: nowrap; flex-shrink: 0;">All</button>
                             <button class="flop-cat-btn" data-category="rainbow" onclick="cycleFlopTexture('rainbow')" style="${flopToggleBtnStyle(flopTextureToggles.rainbow)} border-radius: 4px; padding: 4px 10px; font-size: 12px; cursor: pointer; white-space: nowrap; flex-shrink: 0;">${flopToggleLabel('rainbow', flopTextureToggles.rainbow)}</button>
@@ -7464,8 +7660,8 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                             <button class="flop-cat-btn" data-category="straight" onclick="cycleFlopTexture('straight')" style="${flopToggleBtnStyle(flopTextureToggles.straight)} border-radius: 4px; padding: 4px 10px; font-size: 12px; cursor: pointer; white-space: nowrap; flex-shrink: 0;">${flopToggleLabel('straight', flopTextureToggles.straight)}</button>
                             <button class="flop-cat-btn" data-category="paired" onclick="cycleFlopTexture('paired')" style="${flopToggleBtnStyle(flopTextureToggles.paired)} border-radius: 4px; padding: 4px 10px; font-size: 12px; cursor: pointer; white-space: nowrap; flex-shrink: 0;">${flopToggleLabel('paired', flopTextureToggles.paired)}</button>
                             <button class="flop-cat-btn" data-category="trips" title="Three-of-a-kind flop" onclick="cycleFlopTexture('trips')" style="${flopToggleBtnStyle(flopTextureToggles.trips)} border-radius: 4px; padding: 4px 10px; font-size: 12px; cursor: pointer; white-space: nowrap; flex-shrink: 0;">${flopToggleLabel('trips', flopTextureToggles.trips)}</button>
-                            <button id="vsBtn" onclick="toggleVsMode()" style="background: #1c1c1c; color: #c2c6cd; border: 1px solid #3a3a3a; border-radius: 4px; padding: 4px 10px; font-size: 12px; cursor: pointer; margin-left: 10px;">VS</button>
-                            <input type="text" id="boardFilterInput" class="${savedFlopFilterInput ? 'm-filter-active' : ''}" value="${savedFlopFilterInput}" placeholder="A, K · BBL · AcKs · no A" title="Flop card filter. Ranks A K Q J T 9-2 (T=ten), suits c d h s (e.g. Ac), groups B=broadway L=low. Comma = OR, no comma = AND on distinct cards. Prefix 'no' to exclude." oninput="liveBoardFilter()" style="background: #1c1c1c; color: #fff; border: ${savedFlopFilterInput ? '2px solid #f97316' : '1px solid #3a3a3a'}; border-radius: 4px; padding: 4px 8px; font-size: 12px; width: 220px; margin-left: 10px;"><div class="m-help-wrap"><button type="button" class="m-help-btn" aria-label="Filter syntax help" aria-expanded="false" onclick="toggleFilterHelp(this)">?</button><div class="m-help-pop" role="tooltip">Ranks <b>A K Q J T 9-2</b> &middot; suits <b>c d h s</b> (e.g. <b>Ac</b>) &middot; groups <b>B</b>=broadway <b>L</b>=low. Comma = OR, no comma = AND (distinct cards), prefix <b>no</b> = exclude. e.g. <b>BBL</b>, <b>AK</b>, <b>A, K</b>, <b>no A</b>.</div></div>
+                            <button id="vsBtn" onclick="toggleVsMode()" style="background: #181a19; color: #bcbebc; border: 1px solid #2a2c2b; border-radius: 4px; padding: 4px 10px; font-size: 12px; cursor: pointer; margin-left: 10px;">VS</button>
+                            <input type="text" id="boardFilterInput" class="${savedFlopFilterInput ? 'm-filter-active' : ''}" value="${savedFlopFilterInput}" placeholder="A, K · BBL · AcKs · no A" title="Flop card filter. Ranks A K Q J T 9-2 (T=ten), suits c d h s (e.g. Ac), groups B=broadway L=low. Comma = OR, no comma = AND on distinct cards. Prefix 'no' to exclude." oninput="liveBoardFilter()" style="background: #181a19; color: #fff; border: ${savedFlopFilterInput ? '2px solid #f97316' : '1px solid #2a2c2b'}; border-radius: 4px; padding: 4px 8px; font-size: 12px; width: 220px; margin-left: 10px;"><div class="m-help-wrap"><button type="button" class="m-help-btn" aria-label="Filter syntax help" aria-expanded="false" onclick="toggleFilterHelp(this)">?</button><div class="m-help-pop" role="tooltip">Ranks <b>A K Q J T 9-2</b> &middot; suits <b>c d h s</b> (e.g. <b>Ac</b>) &middot; groups <b>B</b>=broadway <b>L</b>=low. Comma = OR, no comma = AND (distinct cards), prefix <b>no</b> = exclude. e.g. <b>BBL</b>, <b>AK</b>, <b>A, K</b>, <b>no A</b>.</div></div>
                         </div>
                         
                     </div>
@@ -7473,7 +7669,7 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                     <div id="flopChartContainer" style="margin-top: 15px;"></div>
                     
                    <!-- Turn Filter Box -->
-                            <div id="turnFilterBox" style="display: none; background: #1c1c1c; border: 1px solid #3a3a3a; border-radius: 6px; padding: 12px; margin-bottom: 10px; width: fit-content;">
+                            <div id="turnFilterBox" style="display: none; background: #181a19; border: 1px solid #2a2c2b; border-radius: 6px; padding: 12px; margin-bottom: 10px; width: fit-content;">
                                 <div style="display: flex; gap: 6px; flex-wrap: nowrap; align-items: center;">
                                     <button class="turn-cat-btn" data-category="all" onclick="resetTurnTextures()" style="${mAllBtnStyle(turnTextureToggles)} border-radius: 4px; padding: 4px 10px; font-size: 12px; cursor: pointer; white-space: nowrap; flex-shrink: 0;">All</button>
                                     <button class="turn-cat-btn" data-category="flush" onclick="cycleTurnTexture('flush')" style="${turnToggleBtnStyle(turnTextureToggles.flush)} border-radius: 4px; padding: 4px 10px; font-size: 12px; cursor: pointer; white-space: nowrap; flex-shrink: 0;">${turnToggleLabel('flush', turnTextureToggles.flush)}</button>
@@ -7481,20 +7677,23 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                                     <button class="turn-cat-btn" data-category="straight" onclick="cycleTurnTexture('straight')" style="${turnToggleBtnStyle(turnTextureToggles.straight)} border-radius: 4px; padding: 4px 10px; font-size: 12px; cursor: pointer; white-space: nowrap; flex-shrink: 0;">${turnToggleLabel('straight', turnTextureToggles.straight)}</button>
                                     <button class="turn-cat-btn" data-category="broadway" onclick="cycleTurnTexture('broadway')" style="${turnToggleBtnStyle(turnTextureToggles.broadway)} border-radius: 4px; padding: 4px 10px; font-size: 12px; cursor: pointer; white-space: nowrap; flex-shrink: 0;">${turnToggleLabel('broadway', turnTextureToggles.broadway)}</button>
                                     <button class="turn-cat-btn" data-category="blank" onclick="cycleTurnTexture('blank')" style="${turnToggleBtnStyle(turnTextureToggles.blank)} border-radius: 4px; padding: 4px 10px; font-size: 12px; cursor: pointer; white-space: nowrap; flex-shrink: 0;">${turnToggleLabel('blank', turnTextureToggles.blank)}</button>
-                                    <input type="text" id="turnCardSearchInput" class="${savedSearchInput ? 'm-filter-active' : ''}" value="${savedSearchInput}" placeholder="BBL-L · noA-B · K43-A" title="Turn filter, split by '-' : [flop rules] - [turn rules]. Same syntax as the flop box on each side; either side blank = any. e.g. BBL-L, noA-B, K43-A." oninput="searchTurnCards()" style="background: ${savedSearchInput ? '#1d4ed8' : '#1c1c1c'}; color: #fff; border: 1px solid #3a3a3a; border-radius: 4px; padding: 4px 8px; font-size: 12px; width: 200px; margin-left: 10px;"><div class="m-help-wrap"><button type="button" class="m-help-btn" aria-label="Filter syntax help" aria-expanded="false" onclick="toggleFilterHelp(this)">?</button><div class="m-help-pop" role="tooltip">Same syntax split by <b>-</b> : <b>[flop] - [turn]</b>. Either side blank = any. e.g. <b>BBL-L</b> (2 broadway + 1 low flop, low turn), <b>noA-B</b> (no ace on flop, broadway turn), <b>K43-A</b>.</div></div>
+                                    <input type="text" id="turnCardSearchInput" class="${savedSearchInput ? 'm-filter-active' : ''}" value="${savedSearchInput}" placeholder="BBL-L · noA-B · K43-A" title="Turn filter, split by '-' : [flop rules] - [turn rules]. Same syntax as the flop box on each side; either side blank = any. e.g. BBL-L, noA-B, K43-A." oninput="searchTurnCards()" style="background: ${savedSearchInput ? '#1d4ed8' : '#181a19'}; color: #fff; border: 1px solid #2a2c2b; border-radius: 4px; padding: 4px 8px; font-size: 12px; width: 200px; margin-left: 10px;"><div class="m-help-wrap"><button type="button" class="m-help-btn" aria-label="Filter syntax help" aria-expanded="false" onclick="toggleFilterHelp(this)">?</button><div class="m-help-pop" role="tooltip">Same syntax split by <b>-</b> : <b>[flop] - [turn]</b>. Either side blank = any. e.g. <b>BBL-L</b> (2 broadway + 1 low flop, low turn), <b>noA-B</b> (no ace on flop, broadway turn), <b>K43-A</b>.</div></div>
                                 </div>
                                 
                             </div>
 
-                        <div id="strengthChartArea" style="position: relative;">
-                            <div id="avgLabel" style="position: absolute; left: 0; top: 15px; background-color: #fbbf24; color: #121212; font-size: 12px; font-weight: bold; padding: 3px 6px; border-radius: 3px; transform: translateX(-50%); z-index: 100;">Avg</div>
+                        <div class="chart-plus-freq">
+                        <div id="strengthChartArea" class="m-chart-hidden" style="position: relative;">
+                            <div id="avgLabel" style="position: absolute; left: 0; top: 15px; background-color: #fbbf24; color: #131413; font-size: 12px; font-weight: bold; padding: 3px 6px; border-radius: 3px; transform: translateX(-50%); z-index: 100;">Avg</div>
                             <canvas id="strengthChart"></canvas>
+                        </div>
+                        ${_consolTableHtml}
                         </div>
                 </div>
                 
                 <div id="boardDetailContainer" style="display: none; margin-top: 20px; position: relative;">
                     <!-- Aggregate Button (top-left corner) -->
-                    <button onclick="showAggregateDetails()" style="position: absolute; top: 0; left: 0; width: 40px; height: 40px; background-color: #1c1c1c; border: none; border-radius: 6px; cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 0; z-index: 10;">
+                    <button onclick="showAggregateDetails()" style="position: absolute; top: 0; left: 0; width: 40px; height: 40px; background-color: #181a19; border: none; border-radius: 6px; cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 0; z-index: 10;">
                         <svg width="24" height="24" viewBox="0 0 100 100" fill="none" stroke="white" stroke-width="3">
                             <circle cx="50" cy="30" r="25"/>
                             <circle cx="30" cy="65" r="25"/>
@@ -7515,13 +7714,13 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                                 <h3 id="boardDetailTitle" style="color: #fff; font-size: 20px; margin: 0;"></h3>
                                 <div style="display: flex; gap: 10px;">
                                     <button id="resetAdjustmentsBtn" onclick="resetBoardDetailAdjustments()" style="background-color: #1d4ed8; color: white; padding: 8px 16px; border-radius: 6px; font-size: 14px; font-weight: 600; border: none; cursor: pointer;">Unlock</button>                                    
-                                    <button id="resetBoardBtn" onclick="resetBoardDetail()" style="background-color: #1c1c1c; color: white; padding: 8px 16px; border-radius: 6px; font-size: 14px; font-weight: 600; border: none; cursor: pointer;">Close</button>
+                                    <button id="resetBoardBtn" onclick="resetBoardDetail()" style="background-color: #181a19; color: white; padding: 8px 16px; border-radius: 6px; font-size: 14px; font-weight: 600; border: none; cursor: pointer;">Close</button>
                                     <button id="deleteBoardBtn" onclick="deleteBoardDetail()" style="background-color: #dc2626; color: white; padding: 8px 16px; border-radius: 6px; font-size: 14px; font-weight: 600; border: none; cursor: pointer;">Delete Data</button>
                                 </div>
                             </div>
                             <div style="display: flex; gap: 10px; margin-bottom: 15px;">
-                                <div style="background-color: #1c1c1c; border: 1px solid #3a3a3a; border-radius: 4px; padding: 10px; flex: 1; text-align: center;">
-                                    <div style="font-size: 12px; color: #c2c6cd; margin-bottom: 5px;">Avg Bet</div>
+                                <div style="background-color: #181a19; border: 1px solid #2a2c2b; border-radius: 4px; padding: 10px; flex: 1; text-align: center;">
+                                    <div style="font-size: 12px; color: #bcbebc; margin-bottom: 5px;">Avg Bet</div>
                                     <div style="display: flex; align-items: center; justify-content: center; gap: 5px;">
                                         <div style="display: flex; align-items: center; justify-content: center; gap: 5px;">
                                             <span id="boardBetFreq" style="font-size: 20px; font-weight: 600;"></span>
@@ -7529,16 +7728,16 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                                         </div>
                                         <span id="boardBetParens" style="font-size: 20px; font-weight: 600;"></span>
                                     </div>
-                                    <div id="boardOriginalBetFreq" style="font-size: 12px; color: #c2c6cd;"></div>
+                                    <div id="boardOriginalBetFreq" style="font-size: 12px; color: #bcbebc;"></div>
                                 </div>
-                                <div style="background-color: #1c1c1c; border: 1px solid #3a3a3a; border-radius: 4px; padding: 10px; flex: 1; text-align: center;">
-                                    <div style="font-size: 12px; color: #c2c6cd; margin-bottom: 5px;">Avg Check</div>
+                                <div style="background-color: #181a19; border: 1px solid #2a2c2b; border-radius: 4px; padding: 10px; flex: 1; text-align: center;">
+                                    <div style="font-size: 12px; color: #bcbebc; margin-bottom: 5px;">Avg Check</div>
                                     <div id="boardCheckFreq" style="font-size: 20px; font-weight: 600;"></div>
                                 </div>
                             </div>
                             <div style="position: relative;">
                                 <canvas id="boardDetailChart"></canvas>
-                                <div id="boardAvgLabel" style="position: absolute; top: -25px; background-color: #fbbf24; color: #121212; padding: 2px 6px; border-radius: 3px; font-size: 12px; font-weight: 600; transform: translateX(-50%);">Avg</div>
+                                <div id="boardAvgLabel" style="position: absolute; top: -25px; background-color: #fbbf24; color: #131413; padding: 2px 6px; border-radius: 3px; font-size: 12px; font-weight: 600; transform: translateX(-50%);">Avg</div>
                             </div>
                         </div>
                         
@@ -7546,22 +7745,22 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                         <div id="aggregateDetail" style="flex: 1; display: none;">
                             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
                                 <h3 id="aggregateTitle" style="color: #fff; font-size: 20px; margin: 0;"></h3>
-                                <button onclick="hideAggregateDetails()" style="background-color: #1c1c1c; color: white; padding: 8px 16px; border-radius: 6px; font-size: 14px; font-weight: 600; border: none; cursor: pointer;">Close</button>
+                                <button onclick="hideAggregateDetails()" style="background-color: #181a19; color: white; padding: 8px 16px; border-radius: 6px; font-size: 14px; font-weight: 600; border: none; cursor: pointer;">Close</button>
                             </div>
                             <div style="display: flex; gap: 10px; margin-bottom: 15px;">
-                                <div style="background-color: #1c1c1c; border: 1px solid #3a3a3a; border-radius: 4px; padding: 10px; flex: 1; text-align: center;">
-                                    <div style="font-size: 12px; color: #c2c6cd; margin-bottom: 5px;">Avg Bet</div>
+                                <div style="background-color: #181a19; border: 1px solid #2a2c2b; border-radius: 4px; padding: 10px; flex: 1; text-align: center;">
+                                    <div style="font-size: 12px; color: #bcbebc; margin-bottom: 5px;">Avg Bet</div>
                                     <div id="aggregateBetFreq" style="font-size: 20px; font-weight: 600;"></div>
-                                    <div id="aggregateOriginalBetFreq" style="font-size: 12px; color: #c2c6cd;"></div>
+                                    <div id="aggregateOriginalBetFreq" style="font-size: 12px; color: #bcbebc;"></div>
                                 </div>
-                                <div style="background-color: #1c1c1c; border: 1px solid #3a3a3a; border-radius: 4px; padding: 10px; flex: 1; text-align: center;">
-                                    <div style="font-size: 12px; color: #c2c6cd; margin-bottom: 5px;">Avg Check</div>
+                                <div style="background-color: #181a19; border: 1px solid #2a2c2b; border-radius: 4px; padding: 10px; flex: 1; text-align: center;">
+                                    <div style="font-size: 12px; color: #bcbebc; margin-bottom: 5px;">Avg Check</div>
                                     <div id="aggregateCheckFreq" style="font-size: 20px; font-weight: 600;"></div>
                                 </div>
                             </div>
                             <div style="position: relative;">
                                 <canvas id="aggregateChart"></canvas>
-                                <div id="aggregateAvgLabel" style="position: absolute; top: -25px; background-color: #fbbf24; color: #121212; padding: 2px 6px; border-radius: 3px; font-size: 12px; font-weight: 600; transform: translateX(-50%);">Avg</div>
+                                <div id="aggregateAvgLabel" style="position: absolute; top: -25px; background-color: #fbbf24; color: #131413; padding: 2px 6px; border-radius: 3px; font-size: 12px; font-weight: 600; transform: translateX(-50%);">Avg</div>
                             </div>
                         </div>
                     </div>
@@ -7673,7 +7872,7 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                         const y = tickY - 5;
                         
                         ctx.save();
-                        ctx.strokeStyle = '#ededed';
+                        ctx.strokeStyle = '#edefee';
                         ctx.lineWidth = 1;
                         
                         // Draw file outline with folded corner
@@ -7730,10 +7929,10 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                         plugins: {
                             legend: { display: false },
                             tooltip: {
-                                backgroundColor: '#1c1c1c',
+                                backgroundColor: '#181a19',
                                 titleColor: '#fff',
-                                bodyColor: '#ededed',
-                                borderColor: '#3a3a3a',
+                                bodyColor: '#edefee',
+                                borderColor: '#2a2c2b',
                                 borderWidth: 1,
                                 titleFont: { size: 14 },
                                 bodyFont: { size: 13 }
@@ -7765,11 +7964,11 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                                 stacked: true,
                                 max: 100,
                                 grid: { 
-                                    color: '#3a3a3a',
+                                    color: '#2a2c2b',
                                     offset: false
                                 },
                                 ticks: {
-                                    color: '#c2c6cd',
+                                    color: '#bcbebc',
                                     font: { size: 12 },
                                     callback: value => value + '%'
                                 }
@@ -7994,7 +8193,7 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
             const labels = validCategories.map(c => c.name);
             
             const betColor = window.strengthChartInstance?.data?.datasets?.[0]?.backgroundColor || '#f97316';
-            const checkColor = window.strengthChartInstance?.data?.datasets?.[1]?.backgroundColor || '#aab0b8';
+            const checkColor = window.strengthChartInstance?.data?.datasets?.[1]?.backgroundColor || '#989a99';
             debugLog('Adopted colors:', betColor, checkColor);
 
             // Use adjusted values if available
@@ -8117,13 +8316,13 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                             stacked: true,
                             max: 100,
                             ticks: { 
-                                color: '#c2c6cd', 
+                                color: '#bcbebc', 
                                 font: { size: 12, weight: '500' },
                                 callback: function(value) {
                                     return value + '%';
                                 }
                             },
-                            grid: { color: '#3a3a3a' }
+                            grid: { color: '#2a2c2b' }
                         },
                         y: {
                             stacked: true,
@@ -8493,7 +8692,7 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
             const aggregateCheckFreq = document.getElementById('aggregateCheckFreq');
 
             const betColor = window.strengthChartInstance?.data?.datasets?.[0]?.backgroundColor || '#f97316';
-            const checkColor = window.strengthChartInstance?.data?.datasets?.[1]?.backgroundColor || '#aab0b8';
+            const checkColor = window.strengthChartInstance?.data?.datasets?.[1]?.backgroundColor || '#989a99';
 
             if (aggregateBetFreq && aggregateCheckFreq) {
                 aggregateBetFreq.textContent = avgBoardBet.toFixed(1) + '%';
@@ -8630,13 +8829,13 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                             stacked: true,
                             max: 100,
                             ticks: { 
-                                color: '#c2c6cd', 
+                                color: '#bcbebc', 
                                 font: { size: 12, weight: '500' },
                                 callback: function(value) {
                                     return value + '%';
                                 }
                             },
-                            grid: { color: '#3a3a3a' }
+                            grid: { color: '#2a2c2b' }
                         },
                         y: {
                             stacked: true,
@@ -9389,8 +9588,8 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
   // "All" selected-by-default style helper (used by the filter templates)
   window.mAllBtnStyle = function(toggles){
     var any = toggles && Object.keys(toggles).some(function(k){ return toggles[k] && toggles[k] !== 'off'; });
-    return any ? 'background: #1c1c1c; color: #ededed; border: 1px solid transparent;'
-               : 'background: rgba(74,158,255,0.16); color: #ededed; border: 1px solid #4a9eff;';
+    return any ? 'background: #181a19; color: #edefee; border: 1px solid transparent;'
+               : 'background: rgba(74,158,255,0.16); color: #edefee; border: 1px solid #4a9eff;';
   };
   // filter "?" popover (Dismissible / Hoverable / Persistent — WCAG 1.4.13)
   window.toggleFilterHelp = function(btn){
