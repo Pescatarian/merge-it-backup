@@ -8121,8 +8121,11 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                 head += '<div class="ds-eq ds-hcell">Equity</div><div class="cv-count">Boards</div><div class="cv-x"></div></div>';
                 var rows = '';
                 cats.forEach(function (cat, idx) {
+                    // Classify by the FLOP part only (first 3 cards) — turn nodes carry
+                    // 8-char trees, and drill-down filters by flop, so aggregation must
+                    // match or turn-view counts would diverge (reviewer-flagged).
                     var subset = cat.pattern
-                        ? data.filter(function (h) { try { return boardMatchesTextFilter(h.tree, cat.pattern); } catch (e) { return false; } })
+                        ? data.filter(function (h) { try { return boardMatchesTextFilter(String(h.tree || '').substring(0, 6), cat.pattern); } catch (e) { return false; } })
                         : data.slice();
                     var del = idx > 0 ? '<button type="button" class="cv-del" onclick="event.stopPropagation();deleteBoardCategory(' + idx + ')" title="Remove this category" aria-label="Remove ' + esc(cat.label) + '">&times;</button>' : '';
                     if (!subset.length) {
