@@ -2336,8 +2336,6 @@ input, textarea, select, .ds-cell, .ds-table { border-radius: 6px !important; }
 .ds-head .ds-stratcell { font-size: 12px; font-weight: 700; color: var(--text-muted); }
 .ds-strat { position: relative; width: 240px; height: 18px; border-radius: 4px; overflow: hidden; display: flex; background: rgba(255,255,255,.05); }
 .ds-strat > span { height: 100%; display: block; }
-.ds-strat .ds-avg { position: absolute; top: -1px; bottom: -1px; width: 2px; background: #fbbf24; transform: translateX(-1px); }
-.ds-avgtag { position: absolute; top: 0; transform: translateX(-50%); font-size: 11px; font-weight: 700; color: #fbbf24; }
 .ds-cell {
   position: relative; flex: 0 0 52px; width: 52px; height: 22px;
   display: flex; align-items: center; justify-content: center; border-radius: 5px;
@@ -7607,7 +7605,9 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                 var esc = function(s){ return String(s == null ? '' : s).replace(/[&<>"]/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); };
                 var freqOf = function(h, a){ var k = String(a).toLowerCase(); var v = (h.actions && h.actions[k] != null) ? h.actions[k] : (h[k] != null ? h[k] : 0); v = Number(v); return isFinite(v) ? v : 0; };
                 // DeepSolver-style suit chips (contrast-corrected: rank #fafafa >=4.6:1 on every suit bg).
-                var SUIT = { h:{bg:'#ce3948',glyph:'♥',tint:'#f9dcdf'}, d:{bg:'#3b5fc4',glyph:'♦',tint:'#e1e6f4'}, c:{bg:'#2d812d',glyph:'♣',tint:'#e1f5e6'}, s:{bg:'#71717a',glyph:'♠',tint:'#ebebeb'} };
+                // Suit-glyph tints brightened to meet WCAG 2.1 AA (>=4.5:1) on their chip bg —
+                // measured old tints failed (♥3.80 ♣4.29 ♠4.05); new tints ♥4.60 ♦4.65 ♣4.61 ♠4.61.
+                var SUIT = { h:{bg:'#ce3948',glyph:'♥',tint:'#fef7f7'}, d:{bg:'#3b5fc4',glyph:'♦',tint:'#e1e6f4'}, c:{bg:'#2d812d',glyph:'♣',tint:'#f1faf4'}, s:{bg:'#71717a',glyph:'♠',tint:'#f9f9f9'} };
                 var chip = function(card){ if(!card||card.length<2) return ''; var rk=card[0].toUpperCase(); var m=SUIT[card[1].toLowerCase()]||SUIT.s; return '<span class="ds-chip" style="background:'+m.bg+';"><span class="ds-rank">'+esc(rk)+'</span><span class="ds-suit" style="color:'+m.tint+';">'+m.glyph+'</span></span>'; };
                 var boardChips = function(t){ t=String(t||''); var out=''; if(t.length>=6){ out+=chip(t.substr(0,2))+chip(t.substr(2,2))+chip(t.substr(4,2)); } if(t.length>=8) out+=chip(t.substr(6,2)); if(t.length>=10) out+=chip(t.substr(8,2)); return out || esc(t); };
                 var avgPct = Math.max(0, Math.min(100, (typeof avgBet==='number' && isFinite(avgBet)) ? avgBet : 0));
@@ -7623,14 +7623,14 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                   var k=0; while(k<1 && _cardRatio(r+(255-r)*k, g+(255-g)*k, b+(255-b)*k)<4.6){ k+=0.02; }
                   return 'rgb('+Math.round(r+(255-r)*k)+','+Math.round(g+(255-g)*k)+','+Math.round(b+(255-b)*k)+')';
                 };
-                var head = '<div class="ds-row ds-head"><div class="ds-board">Board</div><div class="ds-stratcell"><span>Strategy</span><span class="ds-avgtag" style="left:'+avgPct+'%;">Avg</span></div>';
+                var head = '<div class="ds-row ds-head"><div class="ds-board">Board</div><div class="ds-stratcell"><span>Strategy</span></div>';
                 acts.forEach(function(a){ head += '<div class="ds-cell ds-hcell" style="color:'+headerColor(a)+';">'+esc(displayActionLabel(a))+'</div>'; });
                 head += '<div class="ds-eq ds-hcell">Equity</div></div>';
                 var rows = '';
                 limited.forEach(function(h){
                   var strat = '<div class="ds-strat">';
                   acts.forEach(function(a){ var p=Math.max(0,Math.min(100,freqOf(h,a))); if(p>0) strat += '<span style="width:'+p+'%;background:'+getActionColor(a)+';"></span>'; });
-                  strat += '<span class="ds-avg" style="left:'+avgPct+'%;"></span></div>';
+                  strat += '</div>';
                   var cells = '';
                   acts.forEach(function(a){ var col=getActionColor(a); var n=freqOf(h,a); var pct=Math.max(0,Math.min(100,n)); cells += '<div class="ds-cell" style="background:linear-gradient(to right,'+col+' '+pct+'%, transparent '+pct+'%);"><span class="ds-num">'+Math.round(n)+'</span></div>'; });
                   var eq = (h.equity!=null && isFinite(Number(h.equity))) ? Number(h.equity).toFixed(1) : '—';
