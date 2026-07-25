@@ -1721,24 +1721,34 @@
 
         /* head */
         #importModal .imd-head,
-        #linkReportModal .imd-head {
+        #linkReportModal .imd-head,
+        #backupsModal .imd-head,
+        #rangesModal .imd-head {
             display:flex; align-items:flex-start; justify-content:space-between;
             padding:24px 24px 16px;
         }
         #importModal .imd-title,
-        #linkReportModal .imd-title {
+        #linkReportModal .imd-title,
+        #backupsModal .imd-title,
+        #rangesModal .imd-title {
             font-size: 20px; font-weight:700; letter-spacing:-.2px; margin:0; color:var(--imd-txt);
         }
         #importModal .imd-sub,
-        #linkReportModal .imd-sub { margin:4px 0 0; font-size: 14px; line-height:1.5; color:var(--imd-txt-3); }
+        #linkReportModal .imd-sub,
+        #backupsModal .imd-sub,
+        #rangesModal .imd-sub { margin:4px 0 0; font-size: 14px; line-height:1.5; color:var(--imd-txt-3); }
         #importModal .imd-x,
-        #linkReportModal .imd-x {
+        #linkReportModal .imd-x,
+        #backupsModal .imd-x,
+        #rangesModal .imd-x {
             flex:0 0 auto; width:36px; height:36px; border-radius:8px; border:0; cursor:pointer;
             background:transparent; color:var(--imd-txt-3); display:grid; place-items:center;
             transition:.15s; font-size:0; line-height:0; padding:0;
         }
         #importModal .imd-x:hover,
-        #linkReportModal .imd-x:hover { background:#242625; color:var(--imd-txt); }
+        #linkReportModal .imd-x:hover,
+        #backupsModal .imd-x:hover,
+        #rangesModal .imd-x:hover { background:#242625; color:var(--imd-txt); }
 
         #importModal .imd-body,
         #linkReportModal .imd-body { padding:8px 24px 0; }
