@@ -2406,6 +2406,9 @@ input, textarea, select, .ds-cell, .ds-table { border-radius: 6px !important; }
         <!-- Storage meter: hidden while comfortably empty; amber >=75%, red >=90%
              (updateStorageMeter; colors measured AA on this theme). -->
         <div id="storageMeter" style="display: none; font-size: 11px; font-weight: 600; margin-top: 10px; text-align: center;"></div>
+        <!-- Backups: automatic snapshots taken before every overwrite/edit/delete -->
+        <button id="backupsBtn" onclick="openBackupsModal()" title="Backups — restore an earlier state of your data"
+                style="background: #181a19; color: #bcbebc; border: 1px solid #2a2c2b; border-radius: 4px; padding: 4px 9px; font-size: 13px; cursor: pointer; margin-top: 10px;">⟲</button>
     </div>
     <div class="main-content app-hidden" id="appContent">
         <!-- TOP BAR REMOVED: the account control moved to the far-left .left-strip, so the
@@ -2742,6 +2745,22 @@ input, textarea, select, .ds-cell, .ds-table { border-radius: 6px !important; }
     </div>
 
     <!-- Board Import Modal -->
+    <!-- Backups modal: rolling automatic snapshots with one-click restore -->
+    <div id="backupsModal" class="modal">
+        <div class="modal-content" role="dialog" aria-modal="true" aria-labelledby="backupsModalTitle" tabindex="-1" style="max-width: 520px;">
+            <div class="imd-head">
+                <div>
+                    <h2 class="imd-title" id="backupsModalTitle">Backups</h2>
+                    <p class="imd-sub">Taken automatically before every overwrite, edit or delete. Restore returns your data to that moment — reversibly.</p>
+                </div>
+                <button class="imd-x" onclick="closeBackupsModal()" aria-label="Close">
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+                </button>
+            </div>
+            <div id="backupsModalBody"></div>
+        </div>
+    </div>
+
     <!-- Ranges import modal: one paste box per player with live grid preview -->
     <div id="rangesModal" class="modal">
         <div class="modal-content" role="dialog" aria-modal="true" aria-labelledby="rangesModalTitle" tabindex="-1" style="max-width: 860px;">
@@ -3130,12 +3149,22 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                 let existingReport = allReports.find(r => r.name === reportName);
                 
                 if (existingReport) {
-                    if (existingReport.perspectives[filters.player]) {
-                        const overwrite = await mConfirm({title:'Overwrite data?', body:`${filters.player} data already exists. Overwrite?`, ok:'Overwrite'});
+                    // MERGE, don't replace (same guarantee as the paste path in saveReport):
+                    // spreading the previous perspective first keeps every linked response
+                    // node (action2_Check, action2_B30, ...). The old wholesale replacement
+                    // in THIS file-import path silently destroyed all imported responses for
+                    // the player — the second of two save routes with the same trap; fixing
+                    // only the paste route left the user's file-import route deleting data.
+                    const _prevPersp2 = existingReport.perspectives[filters.player];
+                    if (_prevPersp2) {
+                        const _respCount2 = Object.keys(_prevPersp2).filter(k => /^action[2-9]/.test(k)).length;
+                        snapshotNow('before file-import overwrite of ' + filters.player);
+                        const overwrite = await mConfirm({title:'Overwrite data?', body:`${filters.player}'s base data already exists. Overwrite it?${_respCount2 ? ` Your ${_respCount2} imported response${_respCount2 > 1 ? 's' : ''} for ${filters.player} will be kept.` : ''}`, ok:'Overwrite'});
                         if (!overwrite) return;
                     }
-                    
+
                     existingReport.perspectives[filters.player] = {
+                        ...(_prevPersp2 || {}),
                         postflopPosition: posInfo.postflopPosition,
                         initiative: filters.initiative,
                         action1: {
@@ -4241,7 +4270,8 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
             
             // Store reference BEFORE deleting
             const reportToDelete = allReports[index];
-            
+
+            snapshotNow('before report delete');
             allReports.splice(index, 1);
             persistReports();
             loadReportsDropdown();
@@ -4263,6 +4293,7 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
             const wasCurrent = currentReport && (report === currentReport ||
                 (report.id != null && currentReport.id === report.id));
 
+            snapshotNow('before report delete');
             allReports.splice(index, 1);
             persistReports();
             loadReportsDropdown(); // keep the hidden legacy list in sync
@@ -4919,9 +4950,12 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
             // Get current node data for subsequent actions
             const currentNode = actionHistory[actionHistory.length - 1];
 
-            // Get rawData from the report
+            // Get rawData from the report. The node key includes the PREVIOUS action's
+            // suffix (action2_Check, action2_B30, ...) — the old suffixless key read a slot
+            // that never exists for responses, so the Edit modal always opened EMPTY.
             const actionNumber = actionHistory.length + 1;
-            const actionKey = 'action' + actionNumber;
+            const _prevAct = actionHistory.length > 0 ? actionHistory[actionHistory.length - 1].action : '';
+            const actionKey = 'action' + actionNumber + (_prevAct ? '_' + _prevAct : '');
             const rawData = currentReport.perspectives[currentPerspective]?.[actionKey]?.rawData || '';
 
             debugLog('🔍 Editing action:', actionNumber, 'perspective:', currentPerspective);
@@ -6295,6 +6329,7 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
 
             debugLog('📝 Saving data with actionKey:', actionKey);
 
+            if (pendingLinkReport.perspectives[player][actionKey]) snapshotNow('before response overwrite ' + player + ' ' + actionKey);
             pendingLinkReport.perspectives[player][actionKey] = {
                 data: hands,
                 availableActions: actionColumns,
@@ -6749,17 +6784,22 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                 if (existingReport) {
                     // Check if we're in edit mode
                     if (window.editMode && window.editMode.active) {
-                        // EDIT MODE: Update specific action node
+                        // EDIT MODE: Update specific action node. The key must carry the
+                        // previous action's suffix (action2_Check, action2_B30, ...) — the old
+                        // suffixless key wrote to a dead slot nothing reads, so "updates"
+                        // silently never applied.
                         const actionNumber = actionHistory.length + 1;
-                        const actionKey = 'action' + actionNumber;
-                        
+                        const _prevActE = actionHistory.length > 0 ? actionHistory[actionHistory.length - 1].action : '';
+                        const actionKey = 'action' + actionNumber + (_prevActE ? '_' + _prevActE : '');
+
                         if (!existingReport.perspectives[player]) {
                             alert('Error: Player perspective not found');
                             return;
                         }
-                        
+
                         debugLog('🔴 Columns extracted:', availableActions);
 
+                        snapshotNow('before edit of ' + player + ' ' + actionKey);
                         existingReport.perspectives[player][actionKey] = {
                             data: data,
                             availableActions: availableActions,
@@ -6806,6 +6846,7 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                         const _prevPersp = existingReport.perspectives[player];
                         if (_prevPersp) {
                             const _respCount = Object.keys(_prevPersp).filter(k => /^action[2-9]/.test(k)).length;
+                            snapshotNow('before paste-import overwrite of ' + player);
                             const overwrite = await mConfirm({title:'Overwrite data?', body:`${player}'s base data already exists for this report. Overwrite it?${_respCount ? ` Your ${_respCount} imported response${_respCount > 1 ? 's' : ''} for ${player} will be kept.` : ''}`, ok:'Overwrite'});
                             if (!overwrite) return;
                         }
@@ -8713,8 +8754,12 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
         // that reload the page right after saving can wait for it.
         function persistReports() {
             if (idbAvailable) {
-                return idbSet('gtoReports', allReports).then(updateStorageMeter)
-                    .catch(e => { persistFailAlert('reports', e); throw e; });
+                return idbSet('gtoReports', allReports).then(() => {
+                    updateStorageMeter();
+                    // Rolling safety net: at most one periodic snapshot per 10 minutes
+                    // (destructive operations snapshot explicitly regardless).
+                    if (Date.now() - _lastSnapshotTs > 10 * 60 * 1000) snapshotNow('periodic');
+                }).catch(e => { persistFailAlert('reports', e); throw e; });
             }
             try {
                 localStorage.setItem('gtoReports', JSON.stringify(allReports));
@@ -8745,6 +8790,64 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                     else el.style.display = 'none';
                 }).catch(() => {});
             } catch (e) { /* meter is best-effort only */ }
+        }
+
+        // ===== AUTOMATIC BACKUP SNAPSHOTS ===================================
+        // A rolling ring of the last MAX_BACKUPS states, stored in IndexedDB under
+        // 'gtoBackups'. snapshotNow() is called BEFORE every destructive operation
+        // (overwrite / edit / delete / restore) and periodically after saves, so any
+        // loss — including one caused by a bug we don't know about yet — is one
+        // click to undo via the Backups modal (left strip ⟲ button).
+        const MAX_BACKUPS = 10;
+        let _lastSnapshotTs = 0;
+        function snapshotNow(reason) {
+            try {
+                if (!idbAvailable) return; // backups live in IndexedDB only
+                const snap = {
+                    ts: new Date().toISOString(),
+                    reason: String(reason || ''),
+                    gtoReports: JSON.parse(JSON.stringify(allReports)),
+                    boardDetailData: JSON.parse(JSON.stringify(boardDetailData))
+                };
+                _lastSnapshotTs = Date.now();
+                idbGet('gtoBackups').then(list => {
+                    const arr = Array.isArray(list) ? list : [];
+                    arr.unshift(snap);
+                    return idbSet('gtoBackups', arr.slice(0, MAX_BACKUPS));
+                }).catch(e => console.error('snapshot failed:', e));
+            } catch (e) { console.error('snapshot failed:', e); }
+        }
+        function openBackupsModal() {
+            const body = document.getElementById('backupsModalBody');
+            body.innerHTML = '<p style="color:#bcbebc;font-size:13px;">Loading…</p>';
+            document.getElementById('backupsModal').classList.add('active');
+            idbGet('gtoBackups').then(list => {
+                const arr = Array.isArray(list) ? list : [];
+                if (!arr.length) { body.innerHTML = '<p style="color:#bcbebc;font-size:13px;">No backups yet. One is taken automatically before every overwrite, edit or delete.</p>'; return; }
+                const respCount = snap => snap.gtoReports.reduce((n, r) => n + Object.values(r.perspectives || {}).reduce((m, p) => m + Object.keys(p).filter(k => /^action[2-9]/.test(k)).length, 0), 0);
+                body.innerHTML = arr.map((s, i) => {
+                    const d = new Date(s.ts);
+                    const when = d.toLocaleDateString() + ' ' + d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                    return '<div style="display:flex;justify-content:space-between;align-items:center;gap:12px;padding:9px 2px;border-bottom:1px solid #2a2c2b;">' +
+                        '<div><div style="font-size:13px;color:#edefee;font-weight:600;">' + when + '</div>' +
+                        '<div style="font-size:12px;color:#bcbebc;">' + s.gtoReports.length + ' report' + (s.gtoReports.length !== 1 ? 's' : '') + ' · ' + respCount(s) + ' imported response' + (respCount(s) !== 1 ? 's' : '') + '</div></div>' +
+                        '<button type="button" class="rg-btn" style="color:#edefee;" onclick="restoreBackup(' + i + ')">Restore</button></div>';
+                }).join('');
+            }).catch(e => { body.innerHTML = '<p style="color:#f87171;font-size:13px;">Could not load backups (' + (e && e.name) + ').</p>'; });
+        }
+        function closeBackupsModal() { document.getElementById('backupsModal').classList.remove('active'); }
+        function restoreBackup(i) {
+            idbGet('gtoBackups').then(async list => {
+                const snap = Array.isArray(list) ? list[i] : null;
+                if (!snap) return;
+                const ok = await mConfirm({ title: 'Restore this backup?', body: 'Your data will go back to exactly how it was at that moment. (A backup of the current state is kept too, so this is reversible.)', ok: 'Restore' });
+                if (!ok) return;
+                snapshotNow('before restore');
+                allReports = snap.gtoReports;
+                boardDetailData = snap.boardDetailData || {};
+                await Promise.all([persistReports(), persistBoardDetail()]);
+                location.reload();
+            }).catch(e => persistFailAlert('backup restore', e));
         }
 
         // Fast path: legacy localStorage (also the pre-migration source of truth).
