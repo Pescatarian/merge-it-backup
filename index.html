@@ -6795,13 +6795,20 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                         displayReport(existingReport.id);
                         
                     } else {
-                        // NORMAL MODE: Adding new perspective or overwriting
-                        if (existingReport.perspectives[player]) {
-                            const overwrite = await mConfirm({title:'Overwrite data?', body:`${player} data already exists for this report. Overwrite?`, ok:'Overwrite'});
+                        // NORMAL MODE: Adding new perspective or overwriting.
+                        // MERGE, don't replace: spreading the previous perspective first keeps
+                        // every linked response node (action2_Check, action3_B30, responses, ...)
+                        // that lived alongside action1. The old wholesale replacement silently
+                        // destroyed all imported responses for the player (user-reported trap).
+                        const _prevPersp = existingReport.perspectives[player];
+                        if (_prevPersp) {
+                            const _respCount = Object.keys(_prevPersp).filter(k => /^action[2-9]/.test(k)).length;
+                            const overwrite = await mConfirm({title:'Overwrite data?', body:`${player}'s base data already exists for this report. Overwrite it?${_respCount ? ` Your ${_respCount} imported response${_respCount > 1 ? 's' : ''} for ${player} will be kept.` : ''}`, ok:'Overwrite'});
                             if (!overwrite) return;
                         }
-                        
+
                         existingReport.perspectives[player] = {
+                            ...(_prevPersp || {}),
                             postflopPosition: posInfo.postflopPosition,
                             initiative: initiative,
                             action1: {
