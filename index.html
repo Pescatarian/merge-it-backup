@@ -2811,11 +2811,14 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
             postflopPosition: null,
             initiative: null
         };
-        let additionalFilters = {
-            aboveAvgBet: false,
-            belowAvgBet: false,
-            aboveAvgEquity: false,
-            belowAvgEquity: false
+        // Board-table sort state (header-click). 'equity' | 'bet' | lowercase action token.
+        let boardSortKey = 'equity';
+        let boardSortDir = 'desc';
+        // Per-street frequency-threshold filter (inline controls at the end of each filter row).
+        // field: 'bet' (total) | lowercase action token; op: 'above' (>=) | 'below' (<=); val: raw input string.
+        let freqFilters = {
+            FLOP: { field: 'bet', op: 'above', val: '' },
+            TURN: { field: 'bet', op: 'above', val: '' }
         };
         let editingIndex = null;
         let currentReport = null;
@@ -7293,9 +7296,55 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
             `;
         }
 
-        function applyAdditionalFilters() {
-            if (!currentReport) return;
-            displayReport(currentReport);
+        // ONE shared numeric accessor for a board's value by key — used by the table cells,
+        // the header-click sort AND the frequency filter so all three always agree.
+        // Handles lowercase keys (flop exports: b30/check/bet), UPPERCASE keys (turn
+        // nodes: B267/CHECK) and nested h.actions storage. 'bet' = stored total when
+        // present, else the sum of all bet-size actions.
+        function actionFreqValue(h, key) {
+            if (!h) return 0;
+            if (key === 'equity') { const e = Number(h.equity); return isFinite(e) ? e : 0; }
+            if (key === 'bet') {
+                const t = Number(h.bet != null ? h.bet : (h.BET != null ? h.BET : NaN));
+                if (isFinite(t)) return t;
+                let sum = 0;
+                const src = (h.actions && typeof h.actions === 'object') ? h.actions : h;
+                Object.keys(src).forEach(k => {
+                    if (/^b\d/i.test(k)) { const v = Number(src[k]); if (isFinite(v)) sum += v; }
+                });
+                return sum;
+            }
+            const lk = String(key).toLowerCase(), uk = String(key).toUpperCase();
+            let v = null;
+            if (h.actions && h.actions[lk] != null) v = h.actions[lk];
+            else if (h.actions && h.actions[uk] != null) v = h.actions[uk];
+            else if (h[lk] != null) v = h[lk];
+            else if (h[uk] != null) v = h[uk];
+            v = Number(v);
+            return isFinite(v) ? v : 0;
+        }
+
+        // Header-click sort: same header again flips direction; new header starts descending.
+        function setBoardSort(key) {
+            if (boardSortKey === key) boardSortDir = (boardSortDir === 'desc') ? 'asc' : 'desc';
+            else { boardSortKey = key; boardSortDir = 'desc'; }
+            if (currentReport) displayReport(currentReport.id);
+        }
+
+        function setFreqFilterField(street, value) {
+            if (!freqFilters[street]) return;
+            freqFilters[street].field = value;
+            if (currentReport) displayReport(currentReport.id);
+        }
+        function toggleFreqFilterOp(street) {
+            const f = freqFilters[street]; if (!f) return;
+            f.op = (f.op === 'above') ? 'below' : 'above';
+            if (currentReport) displayReport(currentReport.id);
+        }
+        function liveFreqFilter(street, value) {
+            if (!freqFilters[street]) return;
+            freqFilters[street].val = value;
+            if (currentReport) displayReport(currentReport.id);
         }
 
         function updateSpotDisplay() {
@@ -7337,6 +7386,13 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
             const savedFlopFilterInput = _flopInputEl?.value || '';
             const flopInputWasFocused = !!_flopInputEl && document.activeElement === _flopInputEl;
             const flopInputCaret = _flopInputEl ? _flopInputEl.selectionStart : null;
+
+            // Preserve focus + caret of the frequency-filter number box across this re-render
+            // (same live-typing pattern as the flop rank box above)
+            const _freqInputEl = (document.activeElement && /^freqVal(FLOP|TURN)$/.test(document.activeElement.id || '')) ? document.activeElement : null;
+            const freqInputWasFocused = !!_freqInputEl;
+            const freqInputId = _freqInputEl ? _freqInputEl.id : null;
+            const freqInputCaret = _freqInputEl ? _freqInputEl.selectionStart : null;
 
             const report = allReports.find(r => r.id === reportId);
             if (!report) {
@@ -7478,29 +7534,28 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
             // Original display code continues here
             let data = [...displayData.data];
             
-            if (additionalFilters.aboveAvgBet || additionalFilters.belowAvgBet || 
-                additionalFilters.aboveAvgEquity || additionalFilters.belowAvgEquity) {
-                
-                // Get the first available action as the primary metric for filtering
-                const primaryAction = perspectiveData.availableActions[0]?.toLowerCase() || 'bet';
-                const avgBet = data.reduce((sum, h) => sum + (h[primaryAction] || 0), 0) / data.length;
-                const avgEquity = data.reduce((sum, h) => sum + h.equity, 0) / data.length;
-                
-                if (additionalFilters.aboveAvgBet) {
-                    data = data.filter(h => h.bet > avgBet);
-                }
-                if (additionalFilters.belowAvgBet) {
-                    data = data.filter(h => h.bet < avgBet);
-                }
-                if (additionalFilters.aboveAvgEquity) {
-                    data = data.filter(h => h.equity > avgEquity);
-                }
-                if (additionalFilters.belowAvgEquity) {
-                    data = data.filter(h => h.equity < avgEquity);
-                }
+            // Frequency-threshold filter (per-street, user-set): keep boards whose chosen
+            // frequency is Above (>=) / Below (<=) the typed percent. Replaces the old
+            // dead aboveAvgBet/belowAvgBet block (no UI ever set those flags).
+            const _ffState = freqFilters[currentStreet] || freqFilters.FLOP;
+            const _ffVal = parseFloat(_ffState.val);
+            if (isFinite(_ffVal)) {
+                data = data.filter(h => {
+                    const v = actionFreqValue(h, _ffState.field);
+                    return _ffState.op === 'above' ? v >= _ffVal : v <= _ffVal;
+                });
             }
 
-            const sorted = [...data].sort((a, b) => b.equity - a.equity);
+            // Header-click sort. If the picked action doesn't exist on this node
+            // (e.g. street changed), fall back to equity so the table is never unsorted.
+            const _sortActs = Array.isArray(perspectiveData.availableActions)
+                ? perspectiveData.availableActions.map(a => String(a).toLowerCase()) : [];
+            const effectiveSortKey = (boardSortKey === 'equity' || boardSortKey === 'bet' || _sortActs.indexOf(boardSortKey) !== -1)
+                ? boardSortKey : 'equity';
+            const sorted = [...data].sort((a, b) => {
+                const d = actionFreqValue(b, effectiveSortKey) - actionFreqValue(a, effectiveSortKey);
+                return boardSortDir === 'desc' ? d : -d;
+            });
             const limited = sorted.slice(0, 100);
                 if (limited.length === 0) {
                 document.getElementById('dataDisplay').innerHTML = `
@@ -7603,7 +7658,9 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                 var acts = Array.isArray(perspectiveData.availableActions) ? perspectiveData.availableActions : [];
                 if (!acts.length || !Array.isArray(limited) || !limited.length) return '';
                 var esc = function(s){ return String(s == null ? '' : s).replace(/[&<>"]/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); };
-                var freqOf = function(h, a){ var k = String(a).toLowerCase(); var v = (h.actions && h.actions[k] != null) ? h.actions[k] : (h[k] != null ? h[k] : 0); v = Number(v); return isFinite(v) ? v : 0; };
+                // Delegates to the shared accessor so cells, sort and filter always agree
+                // (also resolves UPPERCASE turn-node keys like B267/CHECK).
+                var freqOf = function(h, a){ return actionFreqValue(h, String(a).toLowerCase()); };
                 // DeepSolver-style suit chips (contrast-corrected: rank #fafafa >=4.6:1 on every suit bg).
                 // Suit-glyph tints brightened to meet WCAG 2.1 AA (>=4.5:1) on their chip bg —
                 // measured old tints failed (♥3.80 ♣4.29 ♠4.05); new tints ♥4.60 ♦4.65 ♣4.61 ♠4.61.
@@ -7623,9 +7680,13 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                   var k=0; while(k<1 && _cardRatio(r+(255-r)*k, g+(255-g)*k, b+(255-b)*k)<4.6){ k+=0.02; }
                   return 'rgb('+Math.round(r+(255-r)*k)+','+Math.round(g+(255-g)*k)+','+Math.round(b+(255-b)*k)+')';
                 };
+                // Sortable headers: click sorts by that column (desc), click again flips.
+                // ↓/↑ marks the active column; aria-sort + Enter key for accessibility.
+                var sortArrow = function(k){ return (effectiveSortKey === k) ? (boardSortDir === 'desc' ? ' ↓' : ' ↑') : ''; };
+                var ariaSort = function(k){ return (effectiveSortKey === k) ? (boardSortDir === 'desc' ? 'descending' : 'ascending') : 'none'; };
                 var head = '<div class="ds-row ds-head"><div class="ds-board">Board</div><div class="ds-stratcell"><span>Strategy</span></div>';
-                acts.forEach(function(a){ head += '<div class="ds-cell ds-hcell" style="color:'+headerColor(a)+';">'+esc(displayActionLabel(a))+'</div>'; });
-                head += '<div class="ds-eq ds-hcell">Equity</div></div>';
+                acts.forEach(function(a){ var k = String(a).toLowerCase(); head += '<div class="ds-cell ds-hcell" role="button" tabindex="0" aria-sort="'+ariaSort(k)+'" title="Sort by '+esc(displayActionLabel(a))+'" onclick="setBoardSort(\''+k+'\')" onkeydown="if(event.key===\'Enter\')setBoardSort(\''+k+'\')" style="color:'+headerColor(a)+'; cursor:pointer;">'+esc(displayActionLabel(a))+sortArrow(k)+'</div>'; });
+                head += '<div class="ds-eq ds-hcell" role="button" tabindex="0" aria-sort="'+ariaSort('equity')+'" title="Sort by Equity" onclick="setBoardSort(\'equity\')" onkeydown="if(event.key===\'Enter\')setBoardSort(\'equity\')" style="cursor:pointer;">Equity'+sortArrow('equity')+'</div></div>';
                 var rows = '';
                 limited.forEach(function(h){
                   var strat = '<div class="ds-strat">';
@@ -7639,6 +7700,21 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                 return '<div class="ds-wrap"><div class="ds-table" role="table" aria-label="Board strategy by action">'+head+rows+'</div></div>';
               } catch (e) { return ''; }
             })();
+
+            // Inline frequency-filter controls (Option A: appended to the END of the existing
+            // filter row — no extra line). [what to measure ▾][Above ≥ / Below ≤][number]% .
+            // Orange 2px border (the app's existing active-filter convention) while engaged.
+            const _freqControlsHtml = (street) => {
+                const f = freqFilters[street];
+                const on = isFinite(parseFloat(f.val));
+                const _acts = Array.isArray(perspectiveData.availableActions) ? perspectiveData.availableActions : [];
+                let opts = `<option value="bet" ${f.field === 'bet' ? 'selected' : ''}>Total Bet</option>`;
+                _acts.forEach(a => {
+                    const k = String(a).toLowerCase();
+                    opts += `<option value="${k}" ${f.field === k ? 'selected' : ''}>${displayActionLabel(a)}</option>`;
+                });
+                return `<select id="freqField${street}" onchange="setFreqFilterField('${street}', this.value)" title="Which frequency the filter applies to" style="background: #181a19; color: #fff; border: 1px solid #2a2c2b; border-radius: 4px; padding: 4px 6px; font-size: 12px; cursor: pointer; margin-left: 10px; flex-shrink: 0;">${opts}</select><button type="button" onclick="toggleFreqFilterOp('${street}')" title="Show boards above or below the value" style="background: #181a19; color: #fff; border: ${on ? '2px solid #f97316' : '1px solid #2a2c2b'}; border-radius: 4px; padding: ${on ? '3px 9px' : '4px 10px'}; font-size: 12px; cursor: pointer; white-space: nowrap; flex-shrink: 0;">${f.op === 'above' ? 'Above &ge;' : 'Below &le;'}</button><input id="freqVal${street}" type="text" inputmode="numeric" value="${f.val}" oninput="liveFreqFilter('${street}', this.value)" title="Frequency percent 0-100" style="background: #181a19; color: #fff; border: ${on ? '2px solid #f97316' : '1px solid #2a2c2b'}; border-radius: 4px; padding: ${on ? '3px 7px' : '4px 8px'}; font-size: 12px; width: 40px; text-align: center; flex-shrink: 0;"><span style="color: #bcbebc; font-size: 12px; flex-shrink: 0;">%</span>`;
+            };
 
             document.getElementById('dataDisplay').innerHTML = `
             <div class="charts-container">
@@ -7654,7 +7730,7 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                             <button class="flop-cat-btn" data-category="paired" onclick="cycleFlopTexture('paired')" style="${flopToggleBtnStyle(flopTextureToggles.paired)} border-radius: 4px; padding: 4px 10px; font-size: 12px; cursor: pointer; white-space: nowrap; flex-shrink: 0;">${flopToggleLabel('paired', flopTextureToggles.paired)}</button>
                             <button class="flop-cat-btn" data-category="trips" title="Three-of-a-kind flop" onclick="cycleFlopTexture('trips')" style="${flopToggleBtnStyle(flopTextureToggles.trips)} border-radius: 4px; padding: 4px 10px; font-size: 12px; cursor: pointer; white-space: nowrap; flex-shrink: 0;">${flopToggleLabel('trips', flopTextureToggles.trips)}</button>
                             <button id="vsBtn" onclick="toggleVsMode()" style="background: #181a19; color: #bcbebc; border: 1px solid #2a2c2b; border-radius: 4px; padding: 4px 10px; font-size: 12px; cursor: pointer; margin-left: 10px;">VS</button>
-                            <input type="text" id="boardFilterInput" class="${savedFlopFilterInput ? 'm-filter-active' : ''}" value="${savedFlopFilterInput}" placeholder="A, K · BBL · AcKs · no A" title="Flop card filter. Ranks A K Q J T 9-2 (T=ten), suits c d h s (e.g. Ac), groups B=broadway L=low. Comma = OR, no comma = AND on distinct cards. Prefix 'no' to exclude." oninput="liveBoardFilter()" style="background: #181a19; color: #fff; border: ${savedFlopFilterInput ? '2px solid #f97316' : '1px solid #2a2c2b'}; border-radius: 4px; padding: 4px 8px; font-size: 12px; width: 220px; margin-left: 10px;"><div class="m-help-wrap"><button type="button" class="m-help-btn" aria-label="Filter syntax help" aria-expanded="false" onclick="toggleFilterHelp(this)">?</button><div class="m-help-pop" role="tooltip">Ranks <b>A K Q J T 9-2</b> &middot; suits <b>c d h s</b> (e.g. <b>Ac</b>) &middot; groups <b>B</b>=broadway <b>L</b>=low. Comma = OR, no comma = AND (distinct cards), prefix <b>no</b> = exclude. e.g. <b>BBL</b>, <b>AK</b>, <b>A, K</b>, <b>no A</b>.</div></div>
+                            <input type="text" id="boardFilterInput" class="${savedFlopFilterInput ? 'm-filter-active' : ''}" value="${savedFlopFilterInput}" placeholder="A, K · BBL · AcKs · no A" title="Flop card filter. Ranks A K Q J T 9-2 (T=ten), suits c d h s (e.g. Ac), groups B=broadway L=low. Comma = OR, no comma = AND on distinct cards. Prefix 'no' to exclude." oninput="liveBoardFilter()" style="background: #181a19; color: #fff; border: ${savedFlopFilterInput ? '2px solid #f97316' : '1px solid #2a2c2b'}; border-radius: 4px; padding: 4px 8px; font-size: 12px; width: 220px; margin-left: 10px;"><div class="m-help-wrap"><button type="button" class="m-help-btn" aria-label="Filter syntax help" aria-expanded="false" onclick="toggleFilterHelp(this)">?</button><div class="m-help-pop" role="tooltip">Ranks <b>A K Q J T 9-2</b> &middot; suits <b>c d h s</b> (e.g. <b>Ac</b>) &middot; groups <b>B</b>=broadway <b>L</b>=low. Comma = OR, no comma = AND (distinct cards), prefix <b>no</b> = exclude. e.g. <b>BBL</b>, <b>AK</b>, <b>A, K</b>, <b>no A</b>.</div></div>${_freqControlsHtml('FLOP')}
                         </div>
                         
                     </div>
@@ -7670,7 +7746,7 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                                     <button class="turn-cat-btn" data-category="straight" onclick="cycleTurnTexture('straight')" style="${turnToggleBtnStyle(turnTextureToggles.straight)} border-radius: 4px; padding: 4px 10px; font-size: 12px; cursor: pointer; white-space: nowrap; flex-shrink: 0;">${turnToggleLabel('straight', turnTextureToggles.straight)}</button>
                                     <button class="turn-cat-btn" data-category="broadway" onclick="cycleTurnTexture('broadway')" style="${turnToggleBtnStyle(turnTextureToggles.broadway)} border-radius: 4px; padding: 4px 10px; font-size: 12px; cursor: pointer; white-space: nowrap; flex-shrink: 0;">${turnToggleLabel('broadway', turnTextureToggles.broadway)}</button>
                                     <button class="turn-cat-btn" data-category="blank" onclick="cycleTurnTexture('blank')" style="${turnToggleBtnStyle(turnTextureToggles.blank)} border-radius: 4px; padding: 4px 10px; font-size: 12px; cursor: pointer; white-space: nowrap; flex-shrink: 0;">${turnToggleLabel('blank', turnTextureToggles.blank)}</button>
-                                    <input type="text" id="turnCardSearchInput" class="${savedSearchInput ? 'm-filter-active' : ''}" value="${savedSearchInput}" placeholder="BBL-L · noA-B · K43-A" title="Turn filter, split by '-' : [flop rules] - [turn rules]. Same syntax as the flop box on each side; either side blank = any. e.g. BBL-L, noA-B, K43-A." oninput="searchTurnCards()" style="background: ${savedSearchInput ? '#1d4ed8' : '#181a19'}; color: #fff; border: 1px solid #2a2c2b; border-radius: 4px; padding: 4px 8px; font-size: 12px; width: 200px; margin-left: 10px;"><div class="m-help-wrap"><button type="button" class="m-help-btn" aria-label="Filter syntax help" aria-expanded="false" onclick="toggleFilterHelp(this)">?</button><div class="m-help-pop" role="tooltip">Same syntax split by <b>-</b> : <b>[flop] - [turn]</b>. Either side blank = any. e.g. <b>BBL-L</b> (2 broadway + 1 low flop, low turn), <b>noA-B</b> (no ace on flop, broadway turn), <b>K43-A</b>.</div></div>
+                                    <input type="text" id="turnCardSearchInput" class="${savedSearchInput ? 'm-filter-active' : ''}" value="${savedSearchInput}" placeholder="BBL-L · noA-B · K43-A" title="Turn filter, split by '-' : [flop rules] - [turn rules]. Same syntax as the flop box on each side; either side blank = any. e.g. BBL-L, noA-B, K43-A." oninput="searchTurnCards()" style="background: ${savedSearchInput ? '#1d4ed8' : '#181a19'}; color: #fff; border: 1px solid #2a2c2b; border-radius: 4px; padding: 4px 8px; font-size: 12px; width: 200px; margin-left: 10px;"><div class="m-help-wrap"><button type="button" class="m-help-btn" aria-label="Filter syntax help" aria-expanded="false" onclick="toggleFilterHelp(this)">?</button><div class="m-help-pop" role="tooltip">Same syntax split by <b>-</b> : <b>[flop] - [turn]</b>. Either side blank = any. e.g. <b>BBL-L</b> (2 broadway + 1 low flop, low turn), <b>noA-B</b> (no ace on flop, broadway turn), <b>K43-A</b>.</div></div>${_freqControlsHtml('TURN')}
                                 </div>
                                 
                             </div>
@@ -8078,13 +8154,20 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
             }, 10);
         }
 
-        }
-    
-        function toggleAdditionalFilter(filterName) {
-            additionalFilters[filterName] = !additionalFilters[filterName];
-            applyAdditionalFilters();
+        // Restore focus + caret to the frequency-filter number box (same 10ms pattern)
+        if (freqInputWasFocused && freqInputId) {
+            setTimeout(() => {
+                const input = document.getElementById(freqInputId);
+                if (input) {
+                    input.focus();
+                    const pos = (freqInputCaret == null) ? input.value.length : freqInputCaret;
+                    input.setSelectionRange(pos, pos);
+                }
+            }, 10);
         }
 
+        }
+    
         allReports = JSON.parse(localStorage.getItem('gtoReports') || '[]');
         let currentBoard = null;
         let boardDetailData = JSON.parse(localStorage.getItem('boardDetailData') || '{}');
