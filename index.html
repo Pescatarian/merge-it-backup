@@ -2350,6 +2350,17 @@ input, textarea, select, .ds-cell, .ds-table { border-radius: 6px !important; }
   color: var(--text-secondary); font-variant-numeric: tabular-nums; padding-right: 4px; }
 .ds-head .ds-eq { color: var(--text-muted); }
 
+/* ===== Category view (Boards|Categories toggle): one aggregated row per category ===== */
+.cv-label { flex: 0 0 100px; width: 100px; font-size: 12px; font-weight: 600; color: #edefee; }
+.ds-head .cv-label { color: var(--text-muted); font-weight: 700; }
+.cv-count { flex: 0 0 56px; width: 56px; text-align: right; font-size: 13px; color: #bcbebc; font-variant-numeric: tabular-nums; }
+.ds-head .cv-count { font-size: 12px; font-weight: 700; color: var(--text-muted); }
+.cv-x { flex: 0 0 22px; width: 22px; display: flex; justify-content: flex-end; }
+.cv-del { background: none; border: none; color: #989a99; font-size: 14px; cursor: pointer; padding: 0 2px; border-radius: 3px; line-height: 1; }
+.cv-del:hover { color: #f87171; }
+.cv-row { cursor: pointer; }
+.cv-row:hover { background: rgba(255,255,255,.03); }
+
 /* ===== Ranges panel: two 13x13 preflop grids beside the board table =====
    Colors per researched WCAG spec: labels #edefee on every cell state
    (empty #131413 ~15:1, fill rgba(249,115,22,.6) over #131413 => ~#A14D15 ~5:1);
@@ -7396,6 +7407,75 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
             if (currentReport) displayReport(currentReport.id);
         }
 
+        // ===== Board view mode: 'boards' (per-board table, default) | 'categories'
+        //       (one aggregated row per saved board category). ADDS a view on top of
+        //       the existing table — the user switches between them, nothing replaced.
+        let boardViewMode = localStorage.getItem('boardViewMode') === 'categories' ? 'categories' : 'boards';
+        let addingBoardCategory = false;
+        const DEFAULT_BOARD_CATEGORIES = [
+            { label: 'Everything', pattern: '' },
+            { label: 'BBB', pattern: 'BBB' },
+            { label: 'BBL', pattern: 'BBL' },
+            { label: 'BLL', pattern: 'BLL' },
+            { label: 'LLL', pattern: 'LLL' }
+        ];
+        function getBoardCategories() {
+            try {
+                const raw = localStorage.getItem('boardCategories');
+                if (raw) { const v = JSON.parse(raw); if (Array.isArray(v) && v.length) return v; }
+            } catch (e) {}
+            return DEFAULT_BOARD_CATEGORIES.slice();
+        }
+        function setBoardViewMode(mode) {
+            boardViewMode = (mode === 'categories') ? 'categories' : 'boards';
+            localStorage.setItem('boardViewMode', boardViewMode);
+            addingBoardCategory = false;
+            if (currentReport) displayReport(currentReport.id);
+        }
+        // Category row click: jump to the Boards view showing only that category's boards
+        // (pattern goes through the existing filter pipeline; '' = Everything = clear).
+        function drillBoardCategory(encPattern) {
+            const pattern = decodeURIComponent(encPattern || '');
+            boardViewMode = 'boards';
+            localStorage.setItem('boardViewMode', 'boards');
+            boardFilterText = pattern;
+            window.savedBoardFilterText = pattern;
+            const inp = document.getElementById('boardFilterInput');
+            if (inp) inp.value = pattern;
+            filterFlopBoard('all');
+        }
+        function toggleAddBoardCategory(show) {
+            addingBoardCategory = !!show;
+            if (currentReport) displayReport(currentReport.id);
+        }
+        function saveNewBoardCategory() {
+            const label = (document.getElementById('catAddName')?.value || '').trim();
+            const pattern = (document.getElementById('catAddPattern')?.value || '').trim();
+            const errEl = document.getElementById('catAddErr');
+            const fail = msg => { if (errEl) errEl.textContent = msg; };
+            if (!label) { fail('Give the category a name.'); return; }
+            if (!pattern) { fail('Type a pattern (e.g. KBL).'); return; }
+            // Valid pattern = parses to at least one include/exclude token (the grammar
+            // silently ignores unknown characters, so '$$$' parses to ZERO tokens and
+            // would otherwise match everything).
+            let _parsed = null;
+            try { _parsed = bfParseSide(pattern); } catch (e) { _parsed = null; }
+            const _tokens = _parsed ? ((_parsed.includes || []).length + (_parsed.excludes || []).length) : 0;
+            if (!_tokens) { fail('Could not read that pattern — use the filter-box language (e.g. KBL, BBL, no A).'); return; }
+            const cats = getBoardCategories();
+            cats.push({ label, pattern });
+            localStorage.setItem('boardCategories', JSON.stringify(cats));
+            addingBoardCategory = false;
+            if (currentReport) displayReport(currentReport.id);
+        }
+        function deleteBoardCategory(i) {
+            const cats = getBoardCategories();
+            if (i <= 0 || i >= cats.length) return; // 'Everything' (index 0) is not deletable
+            cats.splice(i, 1);
+            localStorage.setItem('boardCategories', JSON.stringify(cats));
+            if (currentReport) displayReport(currentReport.id);
+        }
+
         // ===== Preflop range parsing (PioSOLVER / GTO Wizard compatible) =====
         // Grammar per the Pio-compatible reference parser (b-inary/postflop-solver):
         //   groups separated by commas; each group = class (AA/AKs/AJo, bare AK = s+o),
@@ -7997,6 +8077,79 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                 } catch (e) { return ''; }
             })();
 
+            // ----- Boards | Categories view toggle (hidden in VS mode) -----
+            const _viewToggleHtml = (function () {
+                if (typeof vsMode !== 'undefined' && vsMode) return '';
+                const on = 'border: 2px solid #f97316; padding: 3px 9px; color: #edefee;';
+                const off = 'border: 1px solid #2a2c2b; padding: 4px 10px; color: #bcbebc;';
+                const btn = (label, mode, active) => '<button type="button" onclick="setBoardViewMode(\'' + mode + '\')" aria-pressed="' + active + '" style="background: #181a19; ' + (active ? on : off) + ' border-radius: 4px; font-size: 12px; cursor: pointer;">' + label + '</button>';
+                let h = '<div style="display: flex; gap: 6px; align-items: center; margin: 2px 0 10px;">' +
+                        btn('Boards', 'boards', boardViewMode === 'boards') +
+                        btn('Categories', 'categories', boardViewMode === 'categories');
+                if (boardViewMode === 'categories') h += '<button type="button" class="rg-btn" style="margin-left: 8px;" onclick="toggleAddBoardCategory(true)">+ Add category</button>';
+                h += '</div>';
+                return h;
+            })();
+
+            // ----- Category view: one aggregated row per saved category. Aggregates the
+            //       SAME filtered `data` the board table would show, with the SAME action
+            //       colors/cells. Row click drills into the Boards view for that category.
+            //       (On the Turn view, patterns classify by the FLOP part of each board.)
+            const _categoryTableHtml = (function () {
+              try {
+                if (typeof vsMode !== 'undefined' && vsMode) return '';
+                var acts = Array.isArray(perspectiveData.availableActions) ? perspectiveData.availableActions : [];
+                if (!acts.length || !Array.isArray(data) || !data.length) return '';
+                var esc = function (s) { return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); };
+                // header colour floor: same WCAG lift as the board table's headers
+                var _lum2 = function (r, g, b) { var f = function (v) { v /= 255; return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4); }; return 0.2126 * f(r) + 0.7152 * f(g) + 0.0722 * f(b); };
+                var _CARD_L2 = _lum2(24, 26, 25);
+                var _cardRatio2 = function (r, g, b) { var L = _lum2(r, g, b); var hi = Math.max(L, _CARD_L2), lo = Math.min(L, _CARD_L2); return (hi + 0.05) / (lo + 0.05); };
+                var headerColor2 = function (a) {
+                    var c = getActionColor(a), r, g, b, m = /rgb\((\d+),\s*(\d+),\s*(\d+)\)/.exec(c);
+                    if (m) { r = +m[1]; g = +m[2]; b = +m[3]; } else { var h = String(c).replace('#', ''); r = parseInt(h.substr(0, 2), 16); g = parseInt(h.substr(2, 2), 16); b = parseInt(h.substr(4, 2), 16); }
+                    var k = 0; while (k < 1 && _cardRatio2(r + (255 - r) * k, g + (255 - g) * k, b + (255 - b) * k) < 4.6) { k += 0.02; }
+                    return 'rgb(' + Math.round(r + (255 - r) * k) + ',' + Math.round(g + (255 - g) * k) + ',' + Math.round(b + (255 - b) * k) + ')';
+                };
+                var cats = getBoardCategories();
+                var head = '<div class="ds-row ds-head"><div class="cv-label">Category</div><div class="ds-stratcell"><span>Strategy</span></div>';
+                acts.forEach(function (a) { head += '<div class="ds-cell ds-hcell" style="color:' + headerColor2(a) + ';">' + esc(displayActionLabel(a)) + '</div>'; });
+                head += '<div class="ds-eq ds-hcell">Equity</div><div class="cv-count">Boards</div><div class="cv-x"></div></div>';
+                var rows = '';
+                cats.forEach(function (cat, idx) {
+                    var subset = cat.pattern
+                        ? data.filter(function (h) { try { return boardMatchesTextFilter(h.tree, cat.pattern); } catch (e) { return false; } })
+                        : data.slice();
+                    var del = idx > 0 ? '<button type="button" class="cv-del" onclick="event.stopPropagation();deleteBoardCategory(' + idx + ')" title="Remove this category" aria-label="Remove ' + esc(cat.label) + '">&times;</button>' : '';
+                    if (!subset.length) {
+                        rows += '<div class="ds-row"><div class="cv-label" style="color:#989a99;">' + esc(cat.label) + '</div><div class="ds-stratcell"><span style="font-size:12px;color:#989a99;">no boards</span></div>';
+                        acts.forEach(function () { rows += '<div class="ds-cell"><span class="ds-num" style="color:#989a99;">&mdash;</span></div>'; });
+                        rows += '<div class="ds-eq">&mdash;</div><div class="cv-count">0</div><div class="cv-x">' + del + '</div></div>';
+                        return;
+                    }
+                    var avg = function (a) { var k = String(a).toLowerCase(); return subset.reduce(function (s, h) { return s + actionFreqValue(h, k); }, 0) / subset.length; };
+                    var avgEq = subset.reduce(function (s, h) { return s + (Number(h.equity) || 0); }, 0) / subset.length;
+                    var strat = '<div class="ds-strat">';
+                    acts.forEach(function (a) { var p = Math.max(0, Math.min(100, avg(a))); if (p > 0) strat += '<span style="width:' + p + '%;background:' + getActionColor(a) + ';"></span>'; });
+                    strat += '</div>';
+                    var cells = '';
+                    acts.forEach(function (a) { var col = getActionColor(a); var n = avg(a); var pct = Math.max(0, Math.min(100, n)); cells += '<div class="ds-cell" style="background:linear-gradient(to right,' + col + ' ' + pct + '%, transparent ' + pct + '%);"><span class="ds-num">' + Math.round(n) + '</span></div>'; });
+                    var enc = encodeURIComponent(cat.pattern || '');
+                    rows += '<div class="ds-row cv-row" role="button" tabindex="0" title="Open these boards in the Boards view" onclick="drillBoardCategory(\'' + enc + '\')" onkeydown="if(event.key===\'Enter\')drillBoardCategory(\'' + enc + '\')"><div class="cv-label">' + esc(cat.label) + '</div><div class="ds-stratcell">' + strat + '</div>' + cells + '<div class="ds-eq">' + avgEq.toFixed(1) + '</div><div class="cv-count">' + subset.length + '</div><div class="cv-x">' + del + '</div></div>';
+                });
+                var addRow = '';
+                if (addingBoardCategory) {
+                    addRow = '<div style="display:flex;gap:6px;align-items:center;padding:8px 2px;border-top:1px solid rgba(255,255,255,.08);margin-top:2px;">' +
+                        '<input id="catAddName" placeholder="Name (e.g. KBL)" style="background:#131413;color:#edefee;border:1px solid #2a2c2b;border-radius:4px;padding:4px 8px;font-size:12px;width:110px;">' +
+                        '<input id="catAddPattern" placeholder="Pattern (e.g. KBL)" title="Same language as the filter box: ranks, B=broadway, L=low, no, commas" style="background:#131413;color:#edefee;border:1px solid #2a2c2b;border-radius:4px;padding:4px 8px;font-size:12px;width:150px;">' +
+                        '<button type="button" class="rg-btn" onclick="saveNewBoardCategory()" style="color:#edefee;">Save</button>' +
+                        '<button type="button" class="rg-btn" onclick="toggleAddBoardCategory(false)">Cancel</button>' +
+                        '<span id="catAddErr" style="font-size:12px;color:#f87171;"></span></div>';
+                }
+                return '<div class="ds-wrap"><div class="ds-table" role="table" aria-label="Strategy by board category">' + head + rows + '</div>' + addRow + '</div>';
+              } catch (e) { return ''; }
+            })();
+
             document.getElementById('dataDisplay').innerHTML = `
             <div class="charts-container">
             <div class="chart-wrapper-main">
@@ -8046,7 +8199,8 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                             <div id="avgLabel" style="position: absolute; left: 0; top: 15px; background-color: #fbbf24; color: #131413; font-size: 12px; font-weight: bold; padding: 3px 6px; border-radius: 3px; transform: translateX(-50%); z-index: 100;">Avg</div>
                             <canvas id="strengthChart"></canvas>
                         </div>
-                        <div class="rg-flex">${_consolTableHtml}${_rangesPanelHtml}</div>
+                        ${_viewToggleHtml}
+                        <div class="rg-flex">${boardViewMode === 'categories' ? _categoryTableHtml : _consolTableHtml}${_rangesPanelHtml}</div>
                         </div>
                 </div>
                 
