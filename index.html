@@ -3031,6 +3031,11 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                     let key = null;
                     if (up === 'CHECK' || up === 'CALL' || up === 'FOLD') {
                         key = up.toLowerCase();
+                    } else if (/^ALL[\s-]?IN$/.test(up) || up === 'AI' || up === 'JAM' || up === 'SHOVE') {
+                        // All-in column, any common spelling (ALL IN / ALL-IN / ALLIN / AI /
+                        // JAM / SHOVE) -> normalized 'allin'. Previously matched nothing and
+                        // the whole column was silently dropped (user-reported).
+                        key = 'allin';
                     } else {
                         let m = up.match(/^B(?:ET)?\s*([\d.]+)$/);
                         if (m) {
@@ -3204,10 +3209,13 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
 
         function normalizePioAction(action) {
             const upper = action.toUpperCase().trim();
-            
+
             if (upper === 'CHECK') return 'check';
             if (upper === 'CALL') return 'call';
             if (upper === 'FOLD') return 'fold';
+            // All-in in any common spelling -> normalized 'allin' (matches the bare-column
+            // scan; keys with spaces would break downstream whitespace-split parsing).
+            if (/^ALL[\s-]?IN$/.test(upper) || upper === 'AI' || upper === 'JAM' || upper === 'SHOVE') return 'allin';
             
             if (upper.startsWith('BET')) {
                 const match = action.match(/[\d.]+/);
@@ -4808,6 +4816,7 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
         // a lowercase b/r (check/call/fold and already-capitalized labels unchanged).
         function displayActionLabel(action) {
             if (typeof action !== 'string' || !action) return action;
+            if (/^(ai|allin|all[\s-]?in|jam|shove)$/i.test(action)) return 'AI';
             const first = action.charAt(0);
             if (first === 'b' || first === 'r') {
                 return first.toUpperCase() + action.slice(1);
@@ -4820,6 +4829,7 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
             if (actionLower === 'check') return 'Check';
             if (actionLower === 'call') return 'Call';
             if (actionLower === 'fold') return 'Fold';
+            if (/^(ai|allin|all[\s-]?in|jam|shove)$/.test(actionLower)) return 'AI';
             if (actionLower.startsWith('b') || actionLower.startsWith('r')) return displayActionLabel(action);
             return action;
         }
