@@ -2349,6 +2349,35 @@ input, textarea, select, .ds-cell, .ds-table { border-radius: 6px !important; }
 .ds-eq { flex: 0 0 56px; width: 56px; text-align: right; font-size: 13px; font-weight: 600;
   color: var(--text-secondary); font-variant-numeric: tabular-nums; padding-right: 4px; }
 .ds-head .ds-eq { color: var(--text-muted); }
+
+/* ===== Ranges panel: two 13x13 preflop grids beside the board table =====
+   Colors per researched WCAG spec: labels #edefee on every cell state
+   (empty #131413 ~15:1, fill rgba(249,115,22,.6) over #131413 => ~#A14D15 ~5:1);
+   fill vs empty cell ~3.2:1 satisfies non-text contrast (1.4.11). */
+.rg-flex { display: flex; gap: 24px; align-items: flex-start; }
+.rg-panel { flex: 0 0 auto; background: #181a19; border: 1px solid #2a2c2b; border-radius: 8px; padding: 14px 16px; }
+.rg-panelhead { display: flex; justify-content: space-between; align-items: center; gap: 14px; margin-bottom: 10px; }
+.rg-paneltitle { font-size: 14px; font-weight: 700; color: #edefee; }
+.rg-btn { background: #181a19; color: #bcbebc; border: 1px solid #2a2c2b; border-radius: 4px; padding: 3px 10px; font-size: 12px; cursor: pointer; white-space: nowrap; }
+.rg-btn:hover { color: #edefee; border-color: #3a3c3b; }
+.rg-grids { display: flex; gap: 16px; }
+.rg-gridtitle { font-size: 12px; font-weight: 700; color: #edefee; margin-bottom: 2px; }
+.rg-gridsub { font-size: 11px; color: #bcbebc; margin-bottom: 6px; font-variant-numeric: tabular-nums; }
+.rg-grid { display: grid; grid-template-columns: repeat(13, 26px); gap: 1px; background: #131413; padding: 4px; border: 1px solid #2a2c2b; border-radius: 6px; }
+.rg-cell { width: 26px; height: 26px; display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 600; color: #edefee; border-radius: 2px; background-color: #131413; }
+/* Ranges modal */
+#rangesModal .rgm-cols { display: flex; gap: 24px; align-items: flex-start; flex-wrap: wrap; }
+#rangesModal .rgm-col { flex: 1 1 360px; min-width: 360px; }
+#rangesModal .rgm-label { font-size: 13px; font-weight: 700; color: #edefee; margin: 0 0 6px; }
+#rangesModal textarea { width: 100%; height: 64px; background: #131413; color: #edefee; border: 1px solid #2a2c2b;
+  border-radius: 6px; font-size: 12px; font-family: 'Courier New', monospace; padding: 8px; box-sizing: border-box; resize: vertical; }
+#rangesModal textarea:focus { outline: none; border-color: #f97316; }
+#rangesModal .rgm-status { font-size: 12px; color: #bcbebc; margin: 6px 0 10px; min-height: 16px; font-variant-numeric: tabular-nums; }
+#rangesModal .rgm-status.err { color: #f87171; }
+#rangesModal .rgm-buttons { display: flex; justify-content: flex-end; gap: 8px; margin-top: 16px; }
+#rangesModal .rgm-save { background: #006239; color: #fff; border: none; border-radius: 4px; padding: 6px 16px; font-size: 12px; font-weight: 600; cursor: pointer; }
+#rangesModal .rgm-save:disabled { opacity: .45; cursor: not-allowed; }
 </style>
 
 </head>
@@ -2699,6 +2728,26 @@ input, textarea, select, .ds-cell, .ds-table { border-radius: 6px !important; }
     </div>
 
     <!-- Board Import Modal -->
+    <!-- Ranges import modal: one paste box per player with live grid preview -->
+    <div id="rangesModal" class="modal">
+        <div class="modal-content" role="dialog" aria-modal="true" aria-labelledby="rangesModalTitle" tabindex="-1" style="max-width: 860px;">
+            <div class="imd-head">
+                <div>
+                    <h2 class="imd-title" id="rangesModalTitle">Ranges</h2>
+                    <p class="imd-sub">Paste each player's range text (from PioSOLVER's or GTO Wizard's copy range). Weighted hands like AJo:0.5 are understood.</p>
+                </div>
+                <button class="imd-x" onclick="closeRangesModal()" aria-label="Close">
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+                </button>
+            </div>
+            <div class="rgm-cols" id="rangesModalBody"></div>
+            <div class="rgm-buttons">
+                <button type="button" class="rg-btn" onclick="closeRangesModal()">Cancel</button>
+                <button type="button" class="rgm-save" id="rgmSaveBtn" onclick="saveRangesFromModal()">Save</button>
+            </div>
+        </div>
+    </div>
+
     <div id="boardImportModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">`
@@ -7347,6 +7396,210 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
             if (currentReport) displayReport(currentReport.id);
         }
 
+        // ===== Preflop range parsing (PioSOLVER / GTO Wizard compatible) =====
+        // Grammar per the Pio-compatible reference parser (b-inary/postflop-solver):
+        //   groups separated by commas; each group = class (AA/AKs/AJo, bare AK = s+o),
+        //   specific combo (AhKh), plus range (TT+/T9s+ gap<=1 climbs both ranks;
+        //   ATs+ gap>1 climbs the kicker), or dash range (QQ-88 same-gap run,
+        //   A9s-A6s same-high-card run); optional :weight in 0..1, default 1;
+        //   whitespace tolerated; later tokens overwrite earlier ones (last wins).
+        const RG_RANKS = 'AKQJT98765432';           // index 0 = A (high) ... 12 = 2
+        const RG_SUITS = ['s', 'h', 'd', 'c'];
+        function _rgRankVal(ch) { return 12 - RG_RANKS.indexOf(ch.toUpperCase()); } // A=12 ... 2=0
+        function _rgRankChar(v) { return RG_RANKS[12 - v]; }
+        function _rgClassCombos(hi, lo, suitedness) {
+            // hi/lo are rank values (hi >= lo). suitedness: 's' | 'o' | null (null = pair or both)
+            const out = [];
+            if (hi === lo) {
+                for (let a = 0; a < 4; a++) for (let b = a + 1; b < 4; b++)
+                    out.push(_rgRankChar(hi) + RG_SUITS[a] + _rgRankChar(lo) + RG_SUITS[b]);
+                return out;
+            }
+            if (suitedness === 's' || suitedness == null)
+                for (let a = 0; a < 4; a++) out.push(_rgRankChar(hi) + RG_SUITS[a] + _rgRankChar(lo) + RG_SUITS[a]);
+            if (suitedness === 'o' || suitedness == null)
+                for (let a = 0; a < 4; a++) for (let b = 0; b < 4; b++)
+                    if (a !== b) out.push(_rgRankChar(hi) + RG_SUITS[a] + _rgRankChar(lo) + RG_SUITS[b]);
+            return out;
+        }
+        function parseRangeText(text) {
+            const combos = {};   // canonical combo key -> weight 0..1
+            const setCombos = (list, w) => list.forEach(c => { combos[c] = w; });
+            const src = String(text || '').trim();
+            if (!src) return { ok: true, empty: true, classWeights: {}, comboCount: 0, pctOfAll: 0 };
+            const tokens = src.split(',').map(t => t.trim()).filter(t => t.length);
+            const CLASS_RE = /^([2-9TJQKA])([2-9TJQKA])(S|O)?$/;
+            const COMBO_RE = /^([2-9TJQKA])([SHDC])([2-9TJQKA])([SHDC])$/;
+            for (const rawTok of tokens) {
+                const tok = rawTok.replace(/\s+/g, '');
+                // weight suffix
+                let body = tok, w = 1;
+                const ci = tok.lastIndexOf(':');
+                if (ci !== -1) {
+                    body = tok.slice(0, ci);
+                    const ws = tok.slice(ci + 1);
+                    // percent-prefix format (Equilab style "100: KK+") — number BEFORE the colon
+                    if (/^\d/.test(body) && !CLASS_RE.test(body.toUpperCase()) && !COMBO_RE.test(body.toUpperCase())) {
+                        return { ok: false, error: 'This looks like percent-first format ("' + rawTok + '"). Paste the range copied from PioSOLVER or GTO Wizard instead.' };
+                    }
+                    w = parseFloat(ws);
+                    if (!isFinite(w) || !/^\d*\.?\d+$/.test(ws)) return { ok: false, error: 'Bad weight in "' + rawTok + '" — expected a number like AKs:0.5' };
+                    if (w < 0 || w > 1) return { ok: false, error: 'Weight in "' + rawTok + '" must be between 0 and 1 (e.g. AJo:0.5 = half the time).' };
+                }
+                const B = body.toUpperCase();
+                const plus = B.endsWith('+');
+                const core = plus ? B.slice(0, -1) : B;
+                let m;
+                if ((m = COMBO_RE.exec(core)) && !plus) {
+                    let r1 = _rgRankVal(m[1]), s1 = m[2].toLowerCase(), r2 = _rgRankVal(m[3]), s2 = m[4].toLowerCase();
+                    if (r1 === r2 && s1 === s2) return { ok: false, error: 'Impossible combo "' + rawTok + '" (same card twice).' };
+                    if (r1 < r2 || (r1 === r2 && RG_SUITS.indexOf(s1) > RG_SUITS.indexOf(s2))) { const tr = r1; r1 = r2; r2 = tr; const ts = s1; s1 = s2; s2 = ts; }
+                    setCombos([_rgRankChar(r1) + s1 + _rgRankChar(r2) + s2], w);
+                    continue;
+                }
+                if ((m = CLASS_RE.exec(core))) {
+                    let hi = _rgRankVal(m[1]), lo = _rgRankVal(m[2]);
+                    const suff = m[3] ? m[3].toLowerCase() : null;
+                    if (hi < lo) { const t = hi; hi = lo; lo = t; }
+                    if (hi !== lo && suff == null && core.length === 2) {
+                        // bare "AK" = suited + offsuit (superset, common convention)
+                    } else if (hi === lo && suff != null) {
+                        return { ok: false, error: 'Pairs take no s/o suffix ("' + rawTok + '").' };
+                    }
+                    if (!plus) { setCombos(_rgClassCombos(hi, lo, suff), w); continue; }
+                    const gap = hi - lo;
+                    if (gap <= 1) {
+                        // pair or connector: climb both ranks, keep the gap (T9s+ -> T9s,JTs,QJs,KQs,AKs)
+                        for (let h2 = hi; h2 <= 12; h2++) setCombos(_rgClassCombos(h2, h2 - gap, suff), w);
+                    } else {
+                        // gapped: high card fixed, kicker climbs to one below (ATs+ -> ATs..AKs)
+                        for (let l2 = lo; l2 < hi; l2++) setCombos(_rgClassCombos(hi, l2, suff), w);
+                    }
+                    continue;
+                }
+                // dash range
+                const dm = core.split('-');
+                if (dm.length === 2) {
+                    const a = CLASS_RE.exec(dm[0]), b = CLASS_RE.exec(dm[1]);
+                    if (a && b) {
+                        let h1 = _rgRankVal(a[1]), l1 = _rgRankVal(a[2]); if (h1 < l1) { const t = h1; h1 = l1; l1 = t; }
+                        let h2 = _rgRankVal(b[1]), l2 = _rgRankVal(b[2]); if (h2 < l2) { const t = h2; h2 = l2; l2 = t; }
+                        const sf1 = a[3] ? a[3].toLowerCase() : null, sf2 = b[3] ? b[3].toLowerCase() : null;
+                        if (sf1 !== sf2) return { ok: false, error: 'Both ends of "' + rawTok + '" must match (both suited, both offsuit, or both pairs).' };
+                        if (h1 - l1 === h2 - l2 && h1 > h2) {
+                            const gap = h1 - l1;   // same-gap run: QQ-88, 98o-65o
+                            for (let h = h2; h <= h1; h++) setCombos(_rgClassCombos(h, h - gap, sf1), w);
+                            continue;
+                        }
+                        if (h1 === h2 && l1 > l2) {
+                            for (let l = l2; l <= l1; l++) setCombos(_rgClassCombos(h1, l, sf1), w); // A9s-A6s
+                            continue;
+                        }
+                        return { ok: false, error: 'Range "' + rawTok + '" is not a valid run (try like QQ-88 or A9s-A6s).' };
+                    }
+                }
+                return { ok: false, error: 'Could not read "' + rawTok + '" — expected forms like AA, AKs, AJo:0.5, TT+, A9s-A6s, AhKh.' };
+            }
+            // aggregate combos -> 169 class weights (class weight = mean of its combos)
+            const classWeights = {};
+            let comboCount = 0;
+            for (let i = 0; i < 13; i++) for (let j = 0; j < 13; j++) {
+                const hiV = 12 - Math.min(i, j), loV = 12 - Math.max(i, j);
+                let label, list;
+                if (i === j) { label = RG_RANKS[i] + RG_RANKS[j]; list = _rgClassCombos(hiV, loV, null); }
+                else if (j > i) { label = RG_RANKS[i] + RG_RANKS[j] + 's'; list = _rgClassCombos(hiV, loV, 's'); }
+                else { label = RG_RANKS[j] + RG_RANKS[i] + 'o'; list = _rgClassCombos(hiV, loV, 'o'); }
+                let sum = 0;
+                list.forEach(c => { sum += (combos[c] || 0); });
+                comboCount += sum;
+                if (sum > 0) classWeights[label] = sum / list.length;
+            }
+            return { ok: true, classWeights, comboCount: Math.round(comboCount * 100) / 100, pctOfAll: Math.round(comboCount / 1326 * 1000) / 10 };
+        }
+
+        // 13x13 grid HTML from a parse result. Pairs on the diagonal, suited upper-right,
+        // offsuit lower-left, A->2 top/left to bottom/right (universal convention).
+        // Weighted hands = bottom-anchored partial fill; exact % in the cell tooltip.
+        function rangeGridHtml(parsed, title) {
+            const cw = (parsed && parsed.classWeights) || {};
+            let cells = '';
+            for (let i = 0; i < 13; i++) for (let j = 0; j < 13; j++) {
+                let label;
+                if (i === j) label = RG_RANKS[i] + RG_RANKS[j];
+                else if (j > i) label = RG_RANKS[i] + RG_RANKS[j] + 's';
+                else label = RG_RANKS[j] + RG_RANKS[i] + 'o';
+                const w = cw[label] || 0;
+                const pct = Math.round(w * 100);
+                const style = w >= 1 ? 'background-color:rgba(249,115,22,.6);'
+                    : (w > 0 ? 'background-image:linear-gradient(to top, rgba(249,115,22,.6) ' + pct + '%, transparent ' + pct + '%);' : '');
+                cells += '<div class="rg-cell" style="' + style + '" title="' + label + ' — ' + pct + '%">' + label + '</div>';
+            }
+            const sub = parsed && parsed.comboCount
+                ? parsed.comboCount + ' combos · ' + parsed.pctOfAll + '% of hands' : 'no range';
+            return '<div><div class="rg-gridtitle">' + title + '</div><div class="rg-gridsub">' + sub + '</div>' +
+                   '<div class="rg-grid" role="img" aria-label="' + title + ' preflop range">' + cells + '</div></div>';
+        }
+
+        // ----- Ranges modal + panel handlers -----
+        function openRangesModal() {
+            if (!currentReport) return;
+            const players = Object.keys(currentReport.perspectives || {});
+            const ranges = currentReport.ranges || {};
+            const body = document.getElementById('rangesModalBody');
+            document.getElementById('rangesModalTitle').textContent = 'Ranges — ' + (currentReport.name || '');
+            body.innerHTML = players.map(p => `
+                <div class="rgm-col">
+                    <div class="rgm-label">${p}</div>
+                    <textarea id="rgmText_${p}" oninput="rangesModalInput('${p}')" placeholder="Paste ${p}'s range, e.g. AA,KK,AKs,AJo:0.5,TT+">${ranges[p] || ''}</textarea>
+                    <div class="rgm-status" id="rgmStatus_${p}"></div>
+                    <div id="rgmPreview_${p}"></div>
+                </div>`).join('');
+            players.forEach(p => rangesModalInput(p));
+            document.getElementById('rangesModal').classList.add('active');
+        }
+        function closeRangesModal() { document.getElementById('rangesModal').classList.remove('active'); }
+        function rangesModalInput(player) {
+            const text = document.getElementById('rgmText_' + player).value;
+            const status = document.getElementById('rgmStatus_' + player);
+            const prev = document.getElementById('rgmPreview_' + player);
+            const parsed = parseRangeText(text);
+            if (!parsed.ok) {
+                status.textContent = parsed.error;
+                status.classList.add('err');
+                prev.innerHTML = '';
+            } else {
+                status.textContent = parsed.empty ? 'Empty — no range will be saved for ' + player + '.'
+                    : parsed.comboCount + ' combos · ' + parsed.pctOfAll + '% of hands';
+                status.classList.remove('err');
+                prev.innerHTML = parsed.empty ? '' : rangeGridHtml(parsed, player);
+            }
+            // Save enabled only while every non-empty box parses
+            const anyErr = [...document.querySelectorAll('#rangesModal .rgm-status.err')].length > 0;
+            document.getElementById('rgmSaveBtn').disabled = anyErr;
+        }
+        function saveRangesFromModal() {
+            if (!currentReport) return;
+            const players = Object.keys(currentReport.perspectives || {});
+            const out = {};
+            for (const p of players) {
+                const text = document.getElementById('rgmText_' + p).value.trim();
+                if (!text) continue;
+                const parsed = parseRangeText(text);
+                if (!parsed.ok) return; // Save is disabled in this state anyway
+                out[p] = text; // raw pasted text is the source of truth
+            }
+            if (Object.keys(out).length) currentReport.ranges = out;
+            else delete currentReport.ranges;
+            localStorage.setItem('gtoReports', JSON.stringify(allReports));
+            closeRangesModal();
+            displayReport(currentReport.id);
+        }
+        function toggleRangesCollapse() {
+            const collapsed = localStorage.getItem('rgPanelCollapsed') === '1';
+            localStorage.setItem('rgPanelCollapsed', collapsed ? '0' : '1');
+            if (currentReport) displayReport(currentReport.id);
+        }
+
         function updateSpotDisplay() {
             const spotBox = document.getElementById('spotDisplayBox');
             
@@ -7716,6 +7969,34 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                 return `<select id="freqField${street}" onchange="setFreqFilterField('${street}', this.value)" title="Which frequency the filter applies to" style="background: #181a19; color: #fff; border: 1px solid #2a2c2b; border-radius: 4px; padding: 4px 6px; font-size: 12px; cursor: pointer; margin-left: 10px; flex-shrink: 0;">${opts}</select><button type="button" onclick="toggleFreqFilterOp('${street}')" title="Show boards above or below the value" style="background: #181a19; color: #fff; border: ${on ? '2px solid #f97316' : '1px solid #2a2c2b'}; border-radius: 4px; padding: ${on ? '3px 9px' : '4px 10px'}; font-size: 12px; cursor: pointer; white-space: nowrap; flex-shrink: 0;">${f.op === 'above' ? 'Above &ge;' : 'Below &le;'}</button><input id="freqVal${street}" type="text" inputmode="numeric" value="${f.val}" oninput="liveFreqFilter('${street}', this.value)" title="Frequency percent 0-100" style="background: #181a19; color: #fff; border: ${on ? '2px solid #f97316' : '1px solid #2a2c2b'}; border-radius: 4px; padding: ${on ? '3px 7px' : '4px 8px'}; font-size: 12px; width: 40px; text-align: center; flex-shrink: 0;"><span style="color: #bcbebc; font-size: 12px; flex-shrink: 0;">%</span>`;
             };
 
+            // ----- Ranges panel beside the board table (empty state = compact Add button;
+            //       with ranges = two grids side by side; collapse state remembered) -----
+            const _rangesPanelHtml = (function () {
+                try {
+                    if (typeof vsMode !== 'undefined' && vsMode) return '';
+                    const players = Object.keys(report.perspectives || {});
+                    const ranges = report.ranges || {};
+                    const withText = players.filter(p => ranges[p]);
+                    if (!withText.length) {
+                        return '<div class="rg-panel"><div class="rg-panelhead"><span class="rg-paneltitle">Ranges</span>' +
+                               '<button type="button" class="rg-btn" onclick="openRangesModal()">+ Add ranges</button></div></div>';
+                    }
+                    const collapsed = localStorage.getItem('rgPanelCollapsed') === '1';
+                    let grids = '';
+                    if (!collapsed) {
+                        grids = '<div class="rg-grids">' + withText.map(p => {
+                            const parsed = parseRangeText(ranges[p]);
+                            return parsed.ok ? rangeGridHtml(parsed, p) : '';
+                        }).join('') + '</div>';
+                    }
+                    return '<div class="rg-panel"><div class="rg-panelhead"><span class="rg-paneltitle">Ranges</span>' +
+                           '<span style="display:flex;gap:6px;">' +
+                           '<button type="button" class="rg-btn" onclick="openRangesModal()" title="Edit the imported ranges">&#9998; Edit</button>' +
+                           '<button type="button" class="rg-btn" onclick="toggleRangesCollapse()" aria-expanded="' + (!collapsed) + '" title="' + (collapsed ? 'Show' : 'Hide') + ' the range grids">' + (collapsed ? '&#9662; Show' : '&#9652; Hide') + '</button>' +
+                           '</span></div>' + grids + '</div>';
+                } catch (e) { return ''; }
+            })();
+
             document.getElementById('dataDisplay').innerHTML = `
             <div class="charts-container">
             <div class="chart-wrapper-main">
@@ -7765,7 +8046,7 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                             <div id="avgLabel" style="position: absolute; left: 0; top: 15px; background-color: #fbbf24; color: #131413; font-size: 12px; font-weight: bold; padding: 3px 6px; border-radius: 3px; transform: translateX(-50%); z-index: 100;">Avg</div>
                             <canvas id="strengthChart"></canvas>
                         </div>
-                        ${_consolTableHtml}
+                        <div class="rg-flex">${_consolTableHtml}${_rangesPanelHtml}</div>
                         </div>
                 </div>
                 
