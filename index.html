@@ -8078,16 +8078,20 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
             })();
 
             // ----- Boards | Categories view toggle (hidden in VS mode) -----
+            // Lives INLINE at the end of the stat-cards row — its own row would cost an
+            // extra line (user: no extra lines). The stat row has the free width, sits
+            // directly above the table the switch controls, and keeps the filter row
+            // single-purpose (filtering vs choosing the view).
             const _viewToggleHtml = (function () {
                 if (typeof vsMode !== 'undefined' && vsMode) return '';
                 const on = 'border: 2px solid #f97316; padding: 3px 9px; color: #edefee;';
                 const off = 'border: 1px solid #2a2c2b; padding: 4px 10px; color: #bcbebc;';
-                const btn = (label, mode, active) => '<button type="button" onclick="setBoardViewMode(\'' + mode + '\')" aria-pressed="' + active + '" style="background: #181a19; ' + (active ? on : off) + ' border-radius: 4px; font-size: 12px; cursor: pointer;">' + label + '</button>';
-                let h = '<div style="display: flex; gap: 6px; align-items: center; margin: 2px 0 10px;">' +
+                const btn = (label, mode, active) => '<button type="button" onclick="setBoardViewMode(\'' + mode + '\')" aria-pressed="' + active + '" style="background: #181a19; ' + (active ? on : off) + ' border-radius: 4px; font-size: 12px; cursor: pointer; white-space: nowrap; flex-shrink: 0;">' + label + '</button>';
+                let h = '<span style="display: inline-flex; gap: 6px; align-items: center; margin-left: 14px; flex-shrink: 0;">' +
                         btn('Boards', 'boards', boardViewMode === 'boards') +
                         btn('Categories', 'categories', boardViewMode === 'categories');
-                if (boardViewMode === 'categories') h += '<button type="button" class="rg-btn" style="margin-left: 8px;" onclick="toggleAddBoardCategory(true)">+ Add category</button>';
-                h += '</div>';
+                if (boardViewMode === 'categories') h += '<button type="button" class="rg-btn" style="margin-left: 8px; flex-shrink: 0;" onclick="toggleAddBoardCategory(true)">+ Add category</button>';
+                h += '</span>';
                 return h;
             })();
 
@@ -8190,7 +8194,7 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                          filters -> stat cards -> table). Same block for FLOP and TURN. -->
                     <div class="chart-header" style="justify-content: flex-start;">
                        <div style="display: flex; gap: 8px; align-items: center; flex-wrap: nowrap;">
-                            ${_statCardsHtml}
+                            ${_statCardsHtml}${_viewToggleHtml}
                         </div>
                     </div>
 
@@ -8199,7 +8203,6 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                             <div id="avgLabel" style="position: absolute; left: 0; top: 15px; background-color: #fbbf24; color: #131413; font-size: 12px; font-weight: bold; padding: 3px 6px; border-radius: 3px; transform: translateX(-50%); z-index: 100;">Avg</div>
                             <canvas id="strengthChart"></canvas>
                         </div>
-                        ${_viewToggleHtml}
                         <div class="rg-flex">${boardViewMode === 'categories' ? _categoryTableHtml : _consolTableHtml}${_rangesPanelHtml}</div>
                         </div>
                 </div>
