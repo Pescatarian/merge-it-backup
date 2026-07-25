@@ -6899,7 +6899,9 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
         function exportSingleReport(index) {
             const report = allReports && allReports[index];
             if (!report) { alert('Report not found'); return; }
-            const payload = { gtoReports: [report], boardDetailData: {} };
+            // boardCategories rides along so the user's custom board categories survive
+            // a browser wipe / move to a new machine via their normal backup files.
+            const payload = { gtoReports: [report], boardDetailData: {}, boardCategories: getBoardCategories() };
             const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
             const url = URL.createObjectURL(blob);
             const link = document.createElement('a');
@@ -6984,6 +6986,24 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
             if (imported && imported.boardDetailData && Object.keys(imported.boardDetailData).length) {
                 const existing = JSON.parse(localStorage.getItem('boardDetailData') || '{}');
                 localStorage.setItem('boardDetailData', JSON.stringify({ ...existing, ...imported.boardDetailData }));
+            }
+
+            // Restore board categories from the file: NON-DESTRUCTIVE union — existing
+            // categories keep their order; file categories not already present (same
+            // label + pattern) are appended. Malformed entries are skipped.
+            if (imported && Array.isArray(imported.boardCategories) && imported.boardCategories.length) {
+                const existingCats = getBoardCategories();
+                const key = c => String(c.label) + ' ' + String(c.pattern);
+                const have = new Set(existingCats.map(key));
+                let added = false;
+                imported.boardCategories.forEach(c => {
+                    if (!c || typeof c.label !== 'string' || typeof c.pattern !== 'string' || !c.label.trim()) return;
+                    if (have.has(key(c))) return;
+                    existingCats.push({ label: c.label, pattern: c.pattern });
+                    have.add(key(c));
+                    added = true;
+                });
+                if (added) localStorage.setItem('boardCategories', JSON.stringify(existingCats));
             }
             return true;
         }
