@@ -2403,6 +2403,9 @@ input, textarea, select, .ds-cell, .ds-table { border-radius: 6px !important; }
         <div id="authStatus">
             <button id="loginBtn" onclick="openAuthModal()" style="background: #4a9eff; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 12px;">Login</button>
         </div>
+        <!-- Storage meter: hidden while comfortably empty; amber >=75%, red >=90%
+             (updateStorageMeter; colors measured AA on this theme). -->
+        <div id="storageMeter" style="display: none; font-size: 11px; font-weight: 600; margin-top: 10px; text-align: center;"></div>
     </div>
     <div class="main-content app-hidden" id="appContent">
         <!-- TOP BAR REMOVED: the account control moved to the far-left .left-strip, so the
@@ -3182,7 +3185,7 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                     allReports.push(newReport);
                 }
                 
-                localStorage.setItem('gtoReports', JSON.stringify(allReports));
+                persistReports();
                 alert(`✓ Imported PioSOLVER data (${data.length} boards)`);
                 
                 closeImportModal();
@@ -4160,7 +4163,7 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                 
                 boardDetailData[dataKey].categoryHands[currentCategory] = parsedData;
                 
-                localStorage.setItem('boardDetailData', JSON.stringify(boardDetailData));
+                persistBoardDetail();
                 
                 alert(`Saved ${parsedData.hands.length} hands for "${currentCategory}"`);
                 
@@ -4240,7 +4243,7 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
             const reportToDelete = allReports[index];
             
             allReports.splice(index, 1);
-            localStorage.setItem('gtoReports', JSON.stringify(allReports));
+            persistReports();
             loadReportsDropdown();
             
             // Now check if the deleted report was the current one
@@ -4261,7 +4264,7 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                 (report.id != null && currentReport.id === report.id));
 
             allReports.splice(index, 1);
-            localStorage.setItem('gtoReports', JSON.stringify(allReports));
+            persistReports();
             loadReportsDropdown(); // keep the hidden legacy list in sync
 
             if (wasCurrent) {
@@ -4577,7 +4580,7 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
             currentReport.notes = editor.value;
             currentReport.notesUpdatedAt = new Date().toISOString();
             try {
-                localStorage.setItem('gtoReports', JSON.stringify(allReports));
+                persistReports();
             } catch (e) {
                 setNotesStatus('error');
                 return;
@@ -6302,7 +6305,7 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
             if (reportIndex !== -1) {
                 allReports[reportIndex] = pendingLinkReport;
             }
-            localStorage.setItem('gtoReports', JSON.stringify(allReports));
+            persistReports();
 
             debugLog(`Added ${player}'s data to "${pendingLinkReport.name}"`);
 
@@ -6772,7 +6775,7 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                         if (comment) existingReport.comment = comment;
                         else if (existingReport.comment == null) existingReport.comment = '';
 
-                        localStorage.setItem('gtoReports', JSON.stringify(allReports));
+                        persistReports();
 
                         currentReport = existingReport;
                       
@@ -6832,7 +6835,7 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                         if (comment) existingReport.comment = comment;
                         else if (existingReport.comment == null) existingReport.comment = '';
 
-                        localStorage.setItem('gtoReports', JSON.stringify(allReports));
+                        persistReports();
                         alert(`✓ Added ${player} data (${data.length} flops)`);
                     }                  
                 } else {
@@ -6862,7 +6865,7 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                     };
 
                     allReports.push(newReport);
-                    localStorage.setItem('gtoReports', JSON.stringify(allReports));
+                    persistReports();
                     alert(`✓ Report saved (${data.length} flops)`);
                 }
 
@@ -6977,7 +6980,10 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
             reader.onload = async function(e) {
                 try {
                     const imported = JSON.parse(e.target.result);
-                    if (ingestReportData(imported)) location.reload();
+                    const ok = ingestReportData(imported);
+                    // ok is false (invalid file) or a Promise resolving once DURABLY saved;
+                    // reload only after the write is on disk (and only if it succeeded).
+                    if (ok) Promise.resolve(ok).then(saved => { if (saved) location.reload(); });
                 } catch (error) {
                     alert('Error reading file: ' + error.message);
                 }
@@ -6985,9 +6991,11 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
             reader.readAsText(file);
         }
 
-        // Append report(s) from a parsed exported-JSON object into allReports + localStorage.
+        // Append report(s) from a parsed exported-JSON object into allReports + the store.
         // Accepts the app export shape { gtoReports:[...], boardDetailData? }, a bare reports
-        // array, or a single bare report object. Returns true on success (caller reloads).
+        // array, or a single bare report object. Returns false on invalid input, else a
+        // Promise resolving true when the data is DURABLY saved (false on save failure) —
+        // the caller must wait for it before reloading, or a reload can outrun the write.
         function ingestReportData(imported) {
             let toAdd = [];
             if (imported && Array.isArray(imported.gtoReports)) toAdd = imported.gtoReports;
@@ -6997,12 +7005,13 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
 
             if (!toAdd.length) { alert('No report found in file'); return false; }
 
+            const _saves = [];
             allReports = [...allReports, ...toAdd];
-            localStorage.setItem('gtoReports', JSON.stringify(allReports));
+            _saves.push(persistReports());
 
             if (imported && imported.boardDetailData && Object.keys(imported.boardDetailData).length) {
-                const existing = JSON.parse(localStorage.getItem('boardDetailData') || '{}');
-                localStorage.setItem('boardDetailData', JSON.stringify({ ...existing, ...imported.boardDetailData }));
+                boardDetailData = { ...boardDetailData, ...imported.boardDetailData };
+                _saves.push(persistBoardDetail());
             }
 
             // Restore board categories from the file: NON-DESTRUCTIVE union — existing
@@ -7022,7 +7031,10 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                 });
                 if (added) localStorage.setItem('boardCategories', JSON.stringify(existingCats));
             }
-            return true;
+            // Resolve true only when every save is durable; persist failures already
+            // alerted loudly — returning false stops the caller from reloading (which
+            // would wipe the in-memory copy the user still sees).
+            return Promise.all(_saves).then(() => true).catch(() => false);
         }
 
         function extractRanks(flop) {
@@ -7707,7 +7719,7 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
             }
             if (Object.keys(out).length) currentReport.ranges = out;
             else delete currentReport.ranges;
-            localStorage.setItem('gtoReports', JSON.stringify(allReports));
+            persistReports();
             closeRangesModal();
             displayReport(currentReport.id);
         }
@@ -8414,7 +8426,7 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
             afterDraw: function(chart) {
                 const ctx = chart.ctx;
                 const yScale = chart.scales.y;
-                const boardDetailData = JSON.parse(localStorage.getItem('boardDetailData') || '{}');
+                // uses the live global boardDetailData (IndexedDB-backed)
                 const labels = chart.data.labels;
                 const reportName = currentReport?.name || '';
                 
@@ -8646,10 +8658,135 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
 
         }
     
+        // ===== PERSISTENT STORE (IndexedDB) ==================================
+        // The big blobs (gtoReports, boardDetailData) live in IndexedDB — GB-scale
+        // capacity — instead of localStorage's ~5MB box, whose silent
+        // QuotaExceededError on setItem was losing the user's imported responses
+        // on refresh. localStorage remains only (a) the one-time migration source,
+        // (b) a fallback when IndexedDB is unavailable, and (c) home of tiny keys
+        // (boardCategories, boardViewMode, ...). EVERY save flows through the
+        // persistReports()/persistBoardDetail() funnels: any failure now raises a
+        // BLOCKING alert instead of silently dropping data.
+        const IDB_NAME = 'mergedStore';
+        const IDB_STORE = 'kv';
+        let idbAvailable = false;   // set true once the store opens successfully
+        function idbOpen() {
+            return new Promise((resolve, reject) => {
+                let req;
+                try { req = indexedDB.open(IDB_NAME, 1); } catch (e) { reject(e); return; }
+                req.onupgradeneeded = () => { req.result.createObjectStore(IDB_STORE); };
+                req.onsuccess = () => resolve(req.result);
+                req.onerror = () => reject(req.error);
+            });
+        }
+        function idbGet(key) {
+            return idbOpen().then(db => new Promise((resolve, reject) => {
+                const tx = db.transaction(IDB_STORE, 'readonly');
+                const rq = tx.objectStore(IDB_STORE).get(key);
+                rq.onsuccess = () => { resolve(rq.result); db.close(); };
+                rq.onerror = () => { reject(rq.error); db.close(); };
+            }));
+        }
+        function idbSet(key, value) {
+            return idbOpen().then(db => new Promise((resolve, reject) => {
+                const tx = db.transaction(IDB_STORE, 'readwrite');
+                tx.objectStore(IDB_STORE).put(value, key);
+                tx.oncomplete = () => { resolve(); db.close(); };
+                tx.onerror = () => { reject(tx.error); db.close(); };
+                tx.onabort = () => { reject(tx.error || new Error('transaction aborted')); db.close(); };
+            }));
+        }
+        function persistFailAlert(what, err) {
+            console.error('PERSIST FAILURE (' + what + '):', err);
+            const msg = 'The app could not write "' + what + '" to disk (' +
+                (err && err.name ? err.name : 'unknown error') + ').<br><br>' +
+                'Your data is still on screen. <b>Export the report NOW</b> to keep it, then reload and try again.';
+            // The app remaps window.alert to a small auto-hiding toast — far too quiet for
+            // data loss. Use the BLOCKING mConfirm dialog so the failure cannot be missed.
+            if (typeof mConfirm === 'function') {
+                mConfirm({ title: '⚠ SAVE FAILED — your last change was NOT saved', body: msg, ok: 'Understood', danger: true });
+            } else {
+                alert('SAVE FAILED - your last change was NOT saved! Could not write "' + what + '". Export the report NOW, then reload.');
+            }
+        }
+        // Save the reports list. Returns a Promise (resolved when durable) so flows
+        // that reload the page right after saving can wait for it.
+        function persistReports() {
+            if (idbAvailable) {
+                return idbSet('gtoReports', allReports).then(updateStorageMeter)
+                    .catch(e => { persistFailAlert('reports', e); throw e; });
+            }
+            try {
+                localStorage.setItem('gtoReports', JSON.stringify(allReports));
+                return Promise.resolve();
+            } catch (e) { persistFailAlert('reports', e); return Promise.reject(e); }
+        }
+        function persistBoardDetail() {
+            if (idbAvailable) {
+                return idbSet('boardDetailData', boardDetailData).then(updateStorageMeter)
+                    .catch(e => { persistFailAlert('board details', e); throw e; });
+            }
+            try {
+                localStorage.setItem('boardDetailData', JSON.stringify(boardDetailData));
+                return Promise.resolve();
+            } catch (e) { persistFailAlert('board details', e); return Promise.reject(e); }
+        }
+        // Small storage meter in the left strip: hidden while comfortably empty,
+        // amber from 75%, red from 90% (colors measured AA on this theme).
+        function updateStorageMeter() {
+            try {
+                if (!navigator.storage || !navigator.storage.estimate) return;
+                navigator.storage.estimate().then(est => {
+                    const el = document.getElementById('storageMeter');
+                    if (!el || !est || !est.quota) return;
+                    const pct = Math.round((est.usage / est.quota) * 100);
+                    if (pct >= 90) { el.textContent = 'Storage ' + pct + '%'; el.style.color = '#f87171'; el.style.display = 'block'; }
+                    else if (pct >= 75) { el.textContent = 'Storage ' + pct + '%'; el.style.color = '#fbbf24'; el.style.display = 'block'; }
+                    else el.style.display = 'none';
+                }).catch(() => {});
+            } catch (e) { /* meter is best-effort only */ }
+        }
+
+        // Fast path: legacy localStorage (also the pre-migration source of truth).
         allReports = JSON.parse(localStorage.getItem('gtoReports') || '[]');
         let currentBoard = null;
         let boardDetailData = JSON.parse(localStorage.getItem('boardDetailData') || '{}');
         let currentBoardAvgBet = 0;
+
+        // Async switch-over to IndexedDB: load it if populated, else migrate the
+        // legacy localStorage blobs into it (verify, then free the 5MB box).
+        // If IndexedDB is unavailable (rare), everything stays on localStorage
+        // exactly as before — with the loud-failure funnels still active.
+        async function initPersistentStore() {
+            try {
+                const [r, b] = await Promise.all([idbGet('gtoReports'), idbGet('boardDetailData')]);
+                idbAvailable = true;
+                if (Array.isArray(r)) {
+                    // IndexedDB is the live store — use it.
+                    allReports = r;
+                    boardDetailData = (b && typeof b === 'object') ? b : {};
+                } else if (allReports.length || Object.keys(boardDetailData).length) {
+                    // One-time migration from localStorage.
+                    await idbSet('gtoReports', allReports);
+                    await idbSet('boardDetailData', boardDetailData);
+                    const check = await idbGet('gtoReports');
+                    if (Array.isArray(check) && check.length === allReports.length) {
+                        localStorage.removeItem('gtoReports');
+                        localStorage.removeItem('boardDetailData');
+                    }
+                } else {
+                    await idbSet('gtoReports', []);
+                }
+                // Refresh the UI that lists reports (picker + legacy dropdown).
+                loadReportsDropdown();
+                if (typeof showBreadcrumbSection === 'function' && !currentReport) showBreadcrumbSection();
+                updateStorageMeter();
+            } catch (e) {
+                // IndexedDB unusable: stay on the localStorage path (idbAvailable stays false).
+                console.error('IndexedDB unavailable, staying on localStorage:', e);
+            }
+        }
+        initPersistentStore();
 
         function openBoardDetail(boardName) {
             selectedBoardName = boardName;
@@ -9128,7 +9265,7 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
         }
 
         function saveBoardDetailData() {
-            localStorage.setItem('boardDetailData', JSON.stringify(boardDetailData));
+            persistBoardDetail();
         }
 
         function resetBoardDetailAdjustments() {
@@ -9153,7 +9290,7 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
             aggregateDetail.style.display = 'block';
             
             // Get all boards from boardDetailData
-            const boardDetailData = JSON.parse(localStorage.getItem('boardDetailData')) || {};
+            // uses the live global boardDetailData (IndexedDB-backed)
             const allBoardKeys = Object.keys(boardDetailData).filter(key => 
                 key.startsWith(currentReport.name + '_')
             );
@@ -9484,7 +9621,7 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
             debugLog('🔴 Deleted key:', key);
             
             // Save back to localStorage
-            localStorage.setItem('boardDetailData', JSON.stringify(boardDetailData));
+            persistBoardDetail();
             
             // Hide the board detail container
             const boardDetailContainer = document.getElementById('boardDetailContainer');
@@ -9629,7 +9766,7 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                 const dataKey = `${currentReport.name}_${currentBoard}`;
                 boardDetailData[dataKey] = parsedData;
                 
-                localStorage.setItem('boardDetailData', JSON.stringify(boardDetailData));
+                persistBoardDetail();
                 
                 alert(`Board data saved successfully! ${parsedData.categories.length} categories imported.`);
                 
