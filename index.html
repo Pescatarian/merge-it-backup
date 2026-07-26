@@ -4409,14 +4409,24 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                     // so MAX gives the distinct count and avoids double-counting on summing).
                     const flopCount = Math.max(0, ...Object.values(r.perspectives || {})
                         .map(p => (p && p.action1 && p.action1.data ? p.action1.data.length : 0)));
-                    // SIZE LINE (Option C): "<TableSize> · <size>". Omit either segment (and its
-                    // separator) when absent; the auto size descriptor is null when undeterminable.
+                    // TITLE = spot + Boards Category (user order 2026-07-26: the category is
+                    // what tells same-named reports apart now that every import is its own
+                    // report, so it sits on the first line — the same "A · B" shape the
+                    // opened-report summary above the list already uses).
+                    const boardCat = (r.flopTexture != null && String(r.flopTexture).trim())
+                        ? String(r.flopTexture).trim() : '';
+                    const title = nm + (boardCat ? ' · ' + boardCat : '');
+                    // SIZE LINE (Option C): "<TableSize> · <size> · <saved date>". Omit any
+                    // absent segment (and its separator); the auto size descriptor is null when
+                    // undeterminable. Date = same toLocaleDateString rendering the reports
+                    // dropdown already uses; skipped when missing/unparseable (old reports).
                     const tableSize = (r.tableSize != null && String(r.tableSize).trim())
                         ? String(r.tableSize).trim() : '';
                     const sizeDesc = computeSizeDescriptor(r);
                     const sizeSegs = [];
                     if (tableSize) sizeSegs.push(escapeHtml(tableSize));
                     if (sizeDesc) sizeSegs.push(escapeHtml(sizeDesc));
+                    if (r.date && !isNaN(Date.parse(r.date))) sizeSegs.push(escapeHtml(new Date(r.date).toLocaleDateString()));
                     const subHtml = sizeSegs.length
                         ? `<div class="rc-pick-sub">${sizeSegs.join(' <span class="rc-pick-sep">·</span> ')}</div>`
                         : '';
@@ -4424,13 +4434,16 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                     const comment = (r.comment != null && String(r.comment).trim())
                         ? String(r.comment).trim() : '';
                     const cmtHtml = comment ? `<div class="rc-pick-cmt">${escapeHtml(comment)}</div>` : '';
+                    // Search matches name + Boards Category + comment (user order 2026-07-26:
+                    // typing a category like "KBL" must filter the list).
+                    const searchHay = [nm, boardCat, comment].filter(Boolean).join(' ');
                     const isCurrent = !!currentReport && (r === currentReport || (r.id != null && r.id === currentReport.id));
                     // Export = ICON-ONLY using the Import-data icon family (tray + line) but with
                     // the arrow pointing UP (export = out). Delete = ICON-ONLY red trash (danger token),
                     // behind an are-you-sure confirm.
                     const exportSvg = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 17v2a2 2 0 002 2h12a2 2 0 002-2v-2"/><path d="M7 9l5-5 5 5"/><path d="M12 4v12"/></svg>`;
                     const deleteSvg = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M8 6V4a1 1 0 011-1h6a1 1 0 011 1v2"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/></svg>`;
-                    return `<div class="rc-pick-item${isCurrent ? ' is-current' : ''}" data-search="${escapeHtml(nm)}"><span class="rc-pick-check" aria-hidden="true">${isCurrent ? '✓' : ''}</span><div class="rc-pick-name" onclick="event.stopPropagation(); selectReportFromDropdown(${i}); toggleHandlinePicker(false);"><div class="rc-pick-title">${escapeHtml(nm)}</div>${subHtml}${cmtHtml}</div><span class="rc-pick-count" title="${flopCount} ${flopCount === 1 ? 'flop' : 'flops'}">${flopCount}</span><div class="rc-pick-actions"><button class="rc-pick-export" title="Export this report to a JSON file" onclick="event.stopPropagation(); exportSingleReport(${i});">${exportSvg}</button><button class="rc-pick-delete" title="Delete this report" onclick="event.stopPropagation(); deleteReportFromDropdown(${i});">${deleteSvg}</button></div></div>`;
+                    return `<div class="rc-pick-item${isCurrent ? ' is-current' : ''}" data-search="${escapeHtml(searchHay)}"><span class="rc-pick-check" aria-hidden="true">${isCurrent ? '✓' : ''}</span><div class="rc-pick-name" onclick="event.stopPropagation(); selectReportFromDropdown(${i}); toggleHandlinePicker(false);"><div class="rc-pick-title">${escapeHtml(title)}</div>${subHtml}${cmtHtml}</div><span class="rc-pick-count" title="${flopCount} ${flopCount === 1 ? 'flop' : 'flops'}">${flopCount}</span><div class="rc-pick-actions"><button class="rc-pick-export" title="Export this report to a JSON file" onclick="event.stopPropagation(); exportSingleReport(${i});">${exportSvg}</button><button class="rc-pick-delete" title="Delete this report" onclick="event.stopPropagation(); deleteReportFromDropdown(${i});">${deleteSvg}</button></div></div>`;
                 }).join('')
                 : '<div class="rc-pick-empty">No saved reports yet</div>';
 
