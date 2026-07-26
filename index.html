@@ -2952,6 +2952,9 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
         // Plain module var (same session-persistence pattern as vsMode / currentStreet) so it
         // survives re-renders within the session without touching localStorage (reports only).
         let statCardsCollapsed = false;
+        // Per-side collapse state for the VS comparison's stat rows (user order 2026-07-26:
+        // "the merging button for each side of the versus"). Index 0 = left side, 1 = right.
+        let vsStatCollapsed = [false, false];
 
         function selectPioCSV() {
             const position = document.getElementById('tagPosition').value;
@@ -3512,83 +3515,94 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
 
             function calcStats(boards) {
                 if (!boards.length) return { total: 0, actions: {} };
-                
+
                 // Handle both nested and flat formats
                 let availableActions;
                 if (boards[0].actions && Object.keys(boards[0].actions).length > 0) {
                     availableActions = Object.keys(boards[0].actions);
                 } else {
-                    availableActions = Object.keys(boards[0]).filter(k => 
-                        k !== 'tree' && k !== 'equity' && k !== 'bet' && 
+                    availableActions = Object.keys(boards[0]).filter(k =>
+                        k !== 'tree' && k !== 'equity' && k !== 'bet' &&
                         (k.startsWith('b') || k.startsWith('r') || k === 'check' || k === 'fold' || k === 'call')
                     );
                 }
-                
+
                 const actionStats = {};
-                
+
                 availableActions.forEach(action => {
                     const total = boards.reduce((sum, b) => sum + (b.actions?.[action] ?? b[action] ?? 0), 0);
-                    actionStats[action] = (total / boards.length).toFixed(1);
+                    actionStats[action] = total / boards.length; // numeric; formatted at render
                 });
-                
-                return { total: boards.length, actions: actionStats };
+
+                return { total: boards.length, actions: actionStats, availableActions };
             }
 
             const stats1 = calcStats(boards1);
             const stats2 = calcStats(boards2);
 
-            const generateStatBoxes = (stats) => {
-                let html = `
-                    <div style="background-color: #181a19; border: 1px solid #2a2c2b; border-radius: 4px; padding: 10px 12px; min-width: 70px; height: 70px; display: flex; flex-direction: column; justify-content: center; align-items: center;">
-                        <div style="font-size: 12px; color: #fff; margin-bottom: 3px; white-space: nowrap;">Total Flops</div>
-                        <div style="font-size: 16px; color: #fff; font-weight: 600;">${stats.total}</div>
-                    </div>
-                `;
-                
-                for (const [action, value] of Object.entries(stats.actions)) {
-                    const color = getActionStatTextColor(action);
-                    html += `
-                        <div style="background-color: #181a19; border: 1px solid #2a2c2b; border-radius: 4px; padding: 10px 12px; min-width: 70px; height: 70px; display: flex; flex-direction: column; justify-content: center; align-items: center;">
-                            <div style="font-size: 12px; color: #fff; margin-bottom: 3px; white-space: nowrap;">Avg. ${displayActionLabel(action)}</div>
-                            <div style="font-size: 16px; color: ${color}; font-weight: 600;">${value}%</div>
-                        </div>
-                    `;
+            // Per-side stat row: the SAME collapse behavior + >< button as the main graph
+            // (user order 2026-07-26: "the merging button for each side of the versus"),
+            // cards via the ONE contrast-fixed statCardHtml recipe. Each side collapses
+            // independently (vsStatCollapsed[sideIdx]).
+            const generateStatBoxes = (stats, sideIdx) => {
+                const isBetSize = a => /^b\d/i.test(String(a));
+                const isRaiseSize = a => /^r\d/i.test(String(a));
+                const sizeToken = a => {
+                    const s = String(a);
+                    const m = s.match(/(\d+(?:\.\d+)?)/);
+                    if (!m) return displayActionLabel(a);
+                    return /x/i.test(s) ? m[1] + 'x' : m[1] + '%';
+                };
+                const acts = stats.availableActions || [];
+                const betSizes = acts.filter(isBetSize);
+                const raiseSizes = acts.filter(isRaiseSize);
+                const collapsed = !!vsStatCollapsed[sideIdx];
+                let html = statCardHtml('Total Flops', String(stats.total), '#fff');
+                let betEmitted = false, raiseEmitted = false;
+                acts.forEach(action => {
+                    if (collapsed && isBetSize(action)) {
+                        if (betEmitted) return;
+                        betEmitted = true;
+                        const sum = betSizes.reduce((s, a) => s + (stats.actions[a] || 0), 0);
+                        html += statCardHtml(`Bet ${betSizes.map(sizeToken).join(' ')}`, `${sum.toFixed(1)}%`, getActionStatTextColor('b50'));
+                        return;
+                    }
+                    if (collapsed && isRaiseSize(action)) {
+                        if (raiseEmitted) return;
+                        raiseEmitted = true;
+                        const sum = raiseSizes.reduce((s, a) => s + (stats.actions[a] || 0), 0);
+                        html += statCardHtml(`Raise ${raiseSizes.map(sizeToken).join(' ')}`, `${sum.toFixed(1)}%`, getActionStatTextColor('r3x'));
+                        return;
+                    }
+                    html += statCardHtml(`Avg. ${displayActionLabel(action)}`, `${(stats.actions[action] || 0).toFixed(1)}%`, getActionStatTextColor(action));
+                });
+                if (betSizes.length >= 2 || raiseSizes.length >= 2) {
+                    html += `<button type="button" class="stat-collapse-btn" onclick="toggleVsStatCollapse(${sideIdx})" aria-pressed="${collapsed}" aria-label="${collapsed ? 'Expand bet and raise size cards back to individual sizes' : 'Collapse bet sizes into one Bet card and raise sizes into one Raise card'}" title="${collapsed ? 'Expand size cards' : 'Collapse size cards'}">${collapsed ? '&lt;&gt;' : '&gt;&lt;'}</button>`;
                 }
                 return html;
             };
 
-            const barHeight = 25;
-            const chart1Height = Math.max(boards1.length * barHeight, 200);
-            const chart2Height = Math.max(boards2.length * barHeight, 200);
-
             container.innerHTML = `
                 <div style="display: flex; gap: 16px; justify-content: center; width: max-content; margin: 0 auto;">
-                    <div style="overflow: visible;">
+                    <div>
                         <div style="text-align: center; margin-bottom: 10px; color: #edefee; font-size: 16px; font-weight: 600;">${filter1}</div>
                         <div style="display: flex; gap: 8px; margin-bottom: 12px; justify-content: center; flex-wrap: nowrap;">
-                            ${generateStatBoxes(stats1)}
+                            ${generateStatBoxes(stats1, 0)}
                         </div>
-                        <div style="height: ${chart1Height}px; position: relative; overflow: visible; z-index: 2; width: 320px;">
-                            <canvas id="vsChart1"></canvas>
-                        </div>
+                        ${dsVsTableHtml(boards1, stats1.availableActions || [])}
                     </div>
-                    <div style="overflow: visible;">
+                    <div>
                         <div style="text-align: center; margin-bottom: 10px; color: #edefee; font-size: 16px; font-weight: 600;">${filter2}</div>
                         <div style="display: flex; gap: 8px; margin-bottom: 12px; justify-content: center; flex-wrap: nowrap;">
-                            ${generateStatBoxes(stats2)}
+                            ${generateStatBoxes(stats2, 1)}
                         </div>
-                        <div style="height: ${chart2Height}px; position: relative; overflow: visible; z-index: 2; width: 320px;">
-                            <canvas id="vsChart2"></canvas>
-                        </div>
+                        ${dsVsTableHtml(boards2, stats2.availableActions || [])}
                     </div>
                 </div>
                 <div style="text-align: center; margin-top: 15px;">
                     <button onclick="exitVsMode()" style="background: #c01c1c; color: #fff; border: none; border-radius: 4px; padding: 8px 16px; cursor: pointer;">Exit Compare</button>
                 </div>
             `;
-
-            renderVsBoardChart('vsChart1', boards1);
-            renderVsBoardChart('vsChart2', boards2);
         }
 
         function renderVsBoardChart(canvasId, boards, accentColor) {
@@ -7885,6 +7899,64 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
             if (currentReport) displayReport(currentReport.id);
         }
 
+        function toggleVsStatCollapse(sideIdx) {
+            vsStatCollapsed[sideIdx] = !vsStatCollapsed[sideIdx];
+            if (vsMode && vsFirstFilter && vsSecondFilter) showVsComparison(vsFirstFilter, vsSecondFilter);
+        }
+
+        // ONE stat-card recipe for the whole app (main graph + both VS sides).
+        // Contrast fix (user order 2026-07-26 — "they're not very visible", measured 1.00:1
+        // face / 1.24:1 border before): face #242525 = the app's own 5%-white raised film
+        // (same recipe as the .ds-strat bar background) composited solid over the #181a19
+        // page; border #6e706f measures 3.51:1 vs the page and 3.08:1 vs the face — both
+        // above the WCAG 2.1 SC 1.4.11 3:1 non-text floor. Text on the lifted face stays
+        // strong: titles 15.4:1, action-colored values 5.2-5.7:1 (4.5:1 floor).
+        function statCardHtml(titleHtml, valueHtml, valueColor, valueId) {
+            return `
+                            <div style="background-color: #242525; border: 1px solid #6e706f; border-radius: 4px; padding: 10px 12px; min-width: 70px; height: 70px; display: flex; flex-direction: column; justify-content: center; align-items: center;">
+                                <div style="font-size: 12px; color: #fff; margin-bottom: 3px; white-space: nowrap;">${titleHtml}</div>
+                                <div ${valueId ? `id="${valueId}"` : 'class="avgStatValue"'} style="font-size: 16px; color: ${valueColor}; font-weight: 600;">${valueHtml}</div>
+                            </div>`;
+        }
+
+        // VS board table — the SAME board-card graphics as the main Boards table (user order
+        // 2026-07-26: "make them look like the normal graph"): identical ds-* classes, suit-chip
+        // colors, strategy bar, per-action gradient cells, equity column, and the same WCAG
+        // header-color lift. No sort handlers (the VS sides are plain views of two filters).
+        function dsVsTableHtml(boards, acts) {
+          try {
+            if (!Array.isArray(boards) || !boards.length || !Array.isArray(acts) || !acts.length) return '';
+            var esc = function(s){ return String(s == null ? '' : s).replace(/[&<>"]/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); };
+            var freqOf = function(h, a){ return actionFreqValue(h, String(a).toLowerCase()); };
+            var SUIT = { h:{bg:'#ce3948',glyph:'♥',tint:'#fef7f7'}, d:{bg:'#3b5fc4',glyph:'♦',tint:'#e1e6f4'}, c:{bg:'#2d812d',glyph:'♣',tint:'#f1faf4'}, s:{bg:'#71717a',glyph:'♠',tint:'#f9f9f9'} };
+            var chip = function(card){ if(!card||card.length<2) return ''; var rk=card[0].toUpperCase(); var m=SUIT[card[1].toLowerCase()]||SUIT.s; return '<span class="ds-chip" style="background:'+m.bg+';"><span class="ds-rank">'+esc(rk)+'</span><span class="ds-suit" style="color:'+m.tint+';">'+m.glyph+'</span></span>'; };
+            var boardChips = function(t){ t=String(t||''); var out=''; if(t.length>=6){ out+=chip(t.substr(0,2))+chip(t.substr(2,2))+chip(t.substr(4,2)); } if(t.length>=8) out+=chip(t.substr(6,2)); if(t.length>=10) out+=chip(t.substr(8,2)); return out || esc(t); };
+            var _lum = function(r,g,b){ var f=function(v){v/=255;return v<=0.03928?v/12.92:Math.pow((v+0.055)/1.055,2.4);}; return 0.2126*f(r)+0.7152*f(g)+0.0722*f(b); };
+            var _CARD_L = _lum(24,26,25); // #181a19 (post-skin card surface)
+            var _cardRatio = function(r,g,b){ var L=_lum(r,g,b); var hi=Math.max(L,_CARD_L), lo=Math.min(L,_CARD_L); return (hi+0.05)/(lo+0.05); };
+            var headerColor = function(a){
+              var c=getActionColor(a), r,g,b, m=/rgb\((\d+),\s*(\d+),\s*(\d+)\)/.exec(c);
+              if(m){ r=+m[1]; g=+m[2]; b=+m[3]; } else { var h=String(c).replace('#',''); r=parseInt(h.substr(0,2),16); g=parseInt(h.substr(2,2),16); b=parseInt(h.substr(4,2),16); }
+              var k=0; while(k<1 && _cardRatio(r+(255-r)*k, g+(255-g)*k, b+(255-b)*k)<4.6){ k+=0.02; }
+              return 'rgb('+Math.round(r+(255-r)*k)+','+Math.round(g+(255-g)*k)+','+Math.round(b+(255-b)*k)+')';
+            };
+            var head = '<div class="ds-row ds-head"><div class="ds-board">Board</div><div class="ds-stratcell"><span>Strategy</span></div>';
+            acts.forEach(function(a){ head += '<div class="ds-cell ds-hcell" style="color:'+headerColor(a)+';">'+esc(displayActionLabel(a))+'</div>'; });
+            head += '<div class="ds-eq ds-hcell">Equity</div></div>';
+            var rows = '';
+            boards.forEach(function(h){
+              var strat = '<div class="ds-strat">';
+              acts.forEach(function(a){ var p=Math.max(0,Math.min(100,freqOf(h,a))); if(p>0) strat += '<span style="width:'+p+'%;background:'+getActionColor(a)+';"></span>'; });
+              strat += '</div>';
+              var cells = '';
+              acts.forEach(function(a){ var col=getActionColor(a); var n=freqOf(h,a); var pct=Math.max(0,Math.min(100,n)); cells += '<div class="ds-cell" style="background:linear-gradient(to right,'+col+' '+pct+'%, transparent '+pct+'%);"><span class="ds-num">'+Math.round(n)+'</span></div>'; });
+              var eq = (h.equity!=null && isFinite(Number(h.equity))) ? Number(h.equity).toFixed(1) : '—';
+              rows += '<div class="ds-row"><div class="ds-board" title="'+esc(h.tree)+'">'+boardChips(h.tree)+'</div><div class="ds-stratcell">'+strat+'</div>'+cells+'<div class="ds-eq">'+eq+'</div></div>';
+            });
+            return '<div class="ds-wrap"><div class="ds-table" role="table" aria-label="Board strategy by action">'+head+rows+'</div></div>';
+          } catch (e) { return ''; }
+        }
+
         function displayReport(reportId) {
             debugLog('🔴 displayReport START - actionHistory:', actionHistory);
             debugLog('🔴 displayReport START - currentPerspective:', currentPerspective);
@@ -8116,19 +8188,12 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                 if (!m) return displayActionLabel(action);
                 return /x/i.test(s) ? m[1] + 'x' : m[1] + '%';
             };
-            const _statCard = (titleHtml, valueHtml, valueColor) => `
-                            <div style="background-color: #181a19; border: 1px solid #2a2c2b; border-radius: 4px; padding: 10px 12px; min-width: 70px; height: 70px; display: flex; flex-direction: column; justify-content: center; align-items: center;">
-                                <div style="font-size: 12px; color: #fff; margin-bottom: 3px; white-space: nowrap;">${titleHtml}</div>
-                                <div class="avgStatValue" style="font-size: 16px; color: ${valueColor}; font-weight: 600;">${valueHtml}</div>
-                            </div>`;
+            // Delegates to the ONE app-wide stat-card recipe (contrast-fixed 2026-07-26).
+            const _statCard = (titleHtml, valueHtml, valueColor) => statCardHtml(titleHtml, valueHtml, valueColor);
             const _betSizes = _statActions.filter(_isBetSize);
             const _raiseSizes = _statActions.filter(_isRaiseSize);
             // Total Flops always leads the row.
-            let _statCardsHtml = `
-                            <div style="background-color: #181a19; border: 1px solid #2a2c2b; border-radius: 4px; padding: 10px 12px; min-width: 70px; height: 70px; display: flex; flex-direction: column; justify-content: center; align-items: center;">
-                                <div style="font-size: 12px; color: #fff; margin-bottom: 3px; white-space: nowrap;">Total Flops</div>
-                                <div id="totalFlopsCount" style="font-size: 16px; color: #fff; font-weight: 600;">${data.length}</div>
-                            </div>`;
+            let _statCardsHtml = statCardHtml('Total Flops', String(data.length), '#fff', 'totalFlopsCount');
             let _betEmitted = false, _raiseEmitted = false;
             _statActions.forEach(action => {
                 if (statCardsCollapsed && _isBetSize(action)) {
