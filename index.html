@@ -1020,7 +1020,7 @@
         .stat-collapse-btn {
             background-color: #181a19;
             border: 1px solid #2a2c2b;
-            border-radius: 4px;
+            border-radius: 6px; /* the book's radius (2026-07-26 panel-rule pass) */
             height: 70px;
             min-width: 36px;
             padding: 0 9px;
@@ -2234,6 +2234,14 @@ a:focus-visible,button:focus-visible,input:focus-visible,textarea:focus-visible,
 /* ============================================================================
    REDESIGN3 (live): narrow no-scroll strip + consolidated DeepSolver board table
    + Supabase skin extras. Loads after proposal-overrides -> wins. Desktop-only.
+
+   THE PANEL RULE (added 2026-07-26, founder-ordered): a small panel that must
+   read as its own object (stat cards, and any future card-like panel) uses ONLY
+   book tones — face #242625 (second surface, one step above #181a19 content),
+   border #3a3c3b (strong border), radius 6, title 12px/700 muted #989a99 (the
+   table-header label recipe), numbers 14px/700 tabular. Colored text must
+   measure >=4.5:1 on its actual surface (lighten toward white to comply — the
+   board table's headerColor mechanism). Never invent tones outside the ramp.
    ============================================================================ */
 
 /* ---------- Supabase skin extras (grey tokens already remapped above) ---------- */
@@ -7904,18 +7912,20 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
             if (vsMode && vsFirstFilter && vsSecondFilter) showVsComparison(vsFirstFilter, vsSecondFilter);
         }
 
-        // ONE stat-card recipe for the whole app (main graph + both VS sides).
-        // Contrast fix (user order 2026-07-26 — "they're not very visible", measured 1.00:1
-        // face / 1.24:1 border before): face #242525 = the app's own 5%-white raised film
-        // (same recipe as the .ds-strat bar background) composited solid over the #181a19
-        // page; border #6e706f measures 3.51:1 vs the page and 3.08:1 vs the face — both
-        // above the WCAG 2.1 SC 1.4.11 3:1 non-text floor. Text on the lifted face stays
-        // strong: titles 15.4:1, action-colored values 5.2-5.7:1 (4.5:1 floor).
+        // ONE stat-card recipe for the whole app (main graph + both VS sides), built ONLY
+        // from the approved rule-book tones (founder order 2026-07-26: "We must follow the
+        // layout that we agreed on, the styling that we agreed on"). THE BOOK'S PANEL RULE
+        // (written this day so panels can never drift again): a small panel that must read
+        // as its own object wears face #242625 (the book's second surface, one step above
+        // the #181a19 content), border #3a3c3b (the book's strong border), radius 6 (the
+        // book's radius), title = the book's label recipe (12px/700 muted #989a99 — same
+        // as the board table's column headers), value = the book's number recipe (14px/700
+        // tabular). Colored values measured 5.4-6.0:1 on this face (4.5:1 text floor).
         function statCardHtml(titleHtml, valueHtml, valueColor, valueId) {
             return `
-                            <div style="background-color: #242525; border: 1px solid #6e706f; border-radius: 4px; padding: 10px 12px; min-width: 70px; height: 70px; display: flex; flex-direction: column; justify-content: center; align-items: center;">
-                                <div style="font-size: 12px; color: #fff; margin-bottom: 3px; white-space: nowrap;">${titleHtml}</div>
-                                <div ${valueId ? `id="${valueId}"` : 'class="avgStatValue"'} style="font-size: 16px; color: ${valueColor}; font-weight: 600;">${valueHtml}</div>
+                            <div style="background-color: #242625; border: 1px solid #3a3c3b; border-radius: 6px; padding: 10px 12px; min-width: 70px; height: 70px; display: flex; flex-direction: column; justify-content: center; align-items: center;">
+                                <div style="font-size: 12px; font-weight: 700; color: #989a99; margin-bottom: 3px; white-space: nowrap;">${titleHtml}</div>
+                                <div ${valueId ? `id="${valueId}"` : 'class="avgStatValue"'} style="font-size: 14px; color: ${valueColor}; font-weight: 700; font-variant-numeric: tabular-nums;">${valueHtml}</div>
                             </div>`;
         }
 
