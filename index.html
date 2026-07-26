@@ -3485,21 +3485,21 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
         function displayVsCharts(filter1, boards1, filter2, boards2) {
             const container = document.getElementById('flopChartContainer');
             if (!container) return;
-            container.style.overflow = 'visible';
             container.style.width = 'fit-content';
             container.style.minWidth = '100%';
             container.style.marginLeft = 'auto';
             container.style.marginRight = 'auto';
-            
-            // Force parent to expand
-            let parent = container.parentElement;
-            while (parent && parent.tagName !== 'BODY') {
-                parent.style.width = '100%';
-                parent.style.maxWidth = 'none';
-                parent.style.overflow = 'visible';
-                parent = parent.parentElement;
-            }
-            
+
+            // NO ancestor mutation (user order 2026-07-26: scrolling built correctly).
+            // The old "force parent to expand" walk stamped overflow:visible on every
+            // ancestor up to <body> — that overwrote .chart-container's overflow-y:auto
+            // (the app's ONE scrolling area), so the VS screen could not be scrolled and,
+            // because the inline style outlived the VS view, normal views stayed
+            // unscrollable after exiting VS until a full reload. The width forcing it
+            // also did is dead weight: the override layer already lifts the old
+            // .chart-wrapper-main width cap. VS content now scrolls in .chart-container
+            // like every other view.
+
             // Hide aggregate chart
             const aggChart = document.getElementById('aggregateChart');
             if (aggChart) aggChart.parentElement.style.display = 'none';
@@ -3873,7 +3873,12 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
             const matchers = [];
             let i = 0;
             while (i < seg.length) {
-                const ch = seg[i];
+                let ch = seg[i];
+                // Case-tolerant where unambiguous (user order 2026-07-26: "no b" must work
+                // like "no B" — it was silently ignored): small letters that can NEVER mean
+                // a suit are promoted to their capital meaning — b→B / l→L groups,
+                // a k q j t → ranks. The four suit letters c d h s keep their suit meaning.
+                if ('blakqjt'.includes(ch)) ch = ch.toUpperCase();
                 if (ch === 'B' || ch === 'L') {
                     matchers.push({ type: 'group', group: ch });
                     i++;
