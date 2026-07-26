@@ -2913,6 +2913,11 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
             TURN: { field: 'bet', op: 'above', val: '' }
         };
         let editingIndex = null;
+        // Id of the report being edited via "Edit Report" (✏️), or null when the modal was
+        // opened by the big Import Data button. Save paths target reports by THIS id, never
+        // by name: duplicate names are legal now that every big-button import creates its
+        // own new report (user ruling 2026-07-26).
+        let editingReportId = null;
         let currentReport = null;
         let searchFilters = {
             situation: null,
@@ -3136,6 +3141,21 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
             const reader = new FileReader();
             reader.onload = async function(e) {
                 const text = e.target.result;
+
+                // A file picked while a response-node edit is active must update THAT node
+                // of the report on screen — never land as base data, never create a report.
+                // Route it through the SAME code the paste path uses (saveReport's editMode
+                // branch parses Pio-CSV text itself and carries every protection: id-targeted
+                // report, snapshot, node write, subsequent-node prune, re-render). One
+                // node-edit path, not two. (Reviewer catch 2026-07-26: this entry point
+                // never goes through openImportModal, so editingReportId is null here and
+                // the always-new-report rule would otherwise create a silent orphan.)
+                if (window.editMode && window.editMode.active) {
+                    document.getElementById('dataInput').value = text;
+                    await saveReport();
+                    return;
+                }
+
                 let parsed;
                 try {
                     parsed = parsePioCSVText(text, filters.position, filters.player, { tableSize: filters.tableSize });
@@ -3156,8 +3176,19 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                 const reportName = `${filters.potType} ${normalizedPosition}`;
                 // posInfo already computed above (perspective drives the equity column).
 
-                let existingReport = allReports.find(r => r.name === reportName);
-                
+                // Target-report resolution (user ruling 2026-07-26: the big Import Data
+                // button ALWAYS creates a completely new report). A file import updates an
+                // existing report ONLY when the modal was opened via "Edit Report" (✏️) —
+                // targeted by ID, never by name (duplicate names are legal now).
+                let existingReport = null;
+                if (typeof editingReportId !== 'undefined' && editingReportId !== null) {
+                    existingReport = allReports.find(r => r.id === editingReportId);
+                    if (!existingReport) {
+                        alert('Error: Could not find the report being edited');
+                        return;
+                    }
+                }
+
                 if (existingReport) {
                     // MERGE, don't replace (same guarantee as the paste path in saveReport):
                     // spreading the previous perspective first keeps every linked response
@@ -3222,16 +3253,18 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                         linkedReports: {}
                     };
                     allReports.push(newReport);
+                    existingReport = newReport;
                 }
-                
+
                 persistReports();
                 alert(`✓ Imported PioSOLVER data (${data.length} boards)`);
-                
+
                 closeImportModal();
                 loadReportsDropdown();
-                
-                // Display the report
-                const report = allReports.find(r => r.name === reportName);
+
+                // Display the exact report that was just created/updated (by id — a
+                // name search would land on the oldest same-named duplicate).
+                const report = existingReport;
                 if (report) {
                     // A currentPerspective left over from a previously-viewed report can be absent
                     // from this freshly-imported report; displayReport then dereferences an undefined
@@ -6527,13 +6560,16 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
             }
             
             editingIndex = editIndex;
-            
+            editingReportId = null;
+
             if (editIndex !== null) {
                 const report = allReports[editIndex];
                 if (!report) {
                     console.error('Report not found at index:', editIndex);
                     return;
                 }
+                // Capture the id (indexes can shift; names can be duplicated).
+                editingReportId = report.id;
                 
                 document.getElementById('modalTitle').textContent = 'Edit Report';
                 document.getElementById('saveBtn').textContent = 'Update Report';
@@ -6586,6 +6622,7 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
             document.getElementById('importModal').classList.remove('active');
             if (typeof setImportModalMsg === 'function') setImportModalMsg('');
             editingIndex = null;
+            editingReportId = null;
             
             // Reset edit mode
             if (window.editMode) {
@@ -6789,7 +6826,29 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
 
                 const reportName = `${potType} ${normalizedPosition}`;
 
-                let existingReport = allReports.find(r => r.name === reportName);
+                // Target-report resolution (user ruling 2026-07-26: the big Import Data
+                // button ALWAYS creates a completely new report — existing reports are
+                // never looked up, never overwritten, no dialog). Only the two EDIT
+                // contexts still target an existing report, and they target it by ID,
+                // never by name — duplicate names are legal now.
+                let existingReport = null;
+                if (window.editMode && window.editMode.active) {
+                    // Response-node edit: the report on screen.
+                    existingReport = (currentReport && currentReport.id != null)
+                        ? allReports.find(r => r.id === currentReport.id)
+                        : null;
+                    if (!existingReport) {
+                        alert('Error: Could not find the report being edited');
+                        return;
+                    }
+                } else if (editingReportId !== null) {
+                    // "Edit Report" (✏️): the exact report the modal was opened for.
+                    existingReport = allReports.find(r => r.id === editingReportId);
+                    if (!existingReport) {
+                        alert('Error: Could not find the report being edited');
+                        return;
+                    }
+                }
 
                 if (existingReport) {
                     // Check if we're in edit mode
