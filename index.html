@@ -2963,6 +2963,10 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
         // Per-side collapse state for the VS comparison's stat rows (user order 2026-07-26:
         // "the merging button for each side of the versus"). Index 0 = left side, 1 = right.
         let vsStatCollapsed = [false, false];
+        // Per-side sort state for the VS board tables (user order 2026-07-26: "the user can
+        // click and rank the boards based on sizes or check" — same behavior as the main
+        // table's pressable headers). Default matches the main table: equity, biggest first.
+        let vsSort = [{ key: 'equity', dir: 'desc' }, { key: 'equity', dir: 'desc' }];
 
         function selectPioCSV() {
             const position = document.getElementById('tagPosition').value;
@@ -3597,14 +3601,14 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
                         <div style="display: flex; gap: 8px; margin-bottom: 12px; justify-content: center; flex-wrap: nowrap;">
                             ${generateStatBoxes(stats1, 0)}
                         </div>
-                        ${dsVsTableHtml(boards1, stats1.availableActions || [])}
+                        ${dsVsTableHtml(boards1, stats1.availableActions || [], 0)}
                     </div>
                     <div>
                         <div style="text-align: center; margin-bottom: 10px; color: #edefee; font-size: 16px; font-weight: 600;">${filter2}</div>
                         <div style="display: flex; gap: 8px; margin-bottom: 12px; justify-content: center; flex-wrap: nowrap;">
                             ${generateStatBoxes(stats2, 1)}
                         </div>
-                        ${dsVsTableHtml(boards2, stats2.availableActions || [])}
+                        ${dsVsTableHtml(boards2, stats2.availableActions || [], 1)}
                     </div>
                 </div>
                 <div style="text-align: center; margin-top: 15px;">
@@ -7912,6 +7916,14 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
             if (vsMode && vsFirstFilter && vsSecondFilter) showVsComparison(vsFirstFilter, vsSecondFilter);
         }
 
+        // Same toggle logic as the main table's setBoardSort, per VS side.
+        function setVsBoardSort(sideIdx, key) {
+            const s = vsSort[sideIdx];
+            if (s.key === key) s.dir = (s.dir === 'desc') ? 'asc' : 'desc';
+            else { s.key = key; s.dir = 'desc'; }
+            if (vsMode && vsFirstFilter && vsSecondFilter) showVsComparison(vsFirstFilter, vsSecondFilter);
+        }
+
         // ONE stat-card recipe for the whole app (main graph + both VS sides), built ONLY
         // from the approved rule-book tones (founder order 2026-07-26: "We must follow the
         // layout that we agreed on, the styling that we agreed on"). THE BOOK'S PANEL RULE
@@ -7932,8 +7944,10 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
         // VS board table — the SAME board-card graphics as the main Boards table (user order
         // 2026-07-26: "make them look like the normal graph"): identical ds-* classes, suit-chip
         // colors, strategy bar, per-action gradient cells, equity column, and the same WCAG
-        // header-color lift. No sort handlers (the VS sides are plain views of two filters).
-        function dsVsTableHtml(boards, acts) {
+        // header-color lift. Headers are PRESSABLE like the main table's (user order same day:
+        // "click and rank the boards based on sizes or check") — per-side vsSort state,
+        // default equity biggest-first, press again to flip.
+        function dsVsTableHtml(boards, acts, sideIdx) {
           try {
             if (!Array.isArray(boards) || !boards.length || !Array.isArray(acts) || !acts.length) return '';
             var esc = function(s){ return String(s == null ? '' : s).replace(/[&<>"]/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); };
@@ -7950,11 +7964,22 @@ set	6.0000	0	0.0089	0.6926	2.6382	2.6602		2.9474	0	0.0046	0.3531	1.3133	1.2766">
               var k=0; while(k<1 && _cardRatio(r+(255-r)*k, g+(255-g)*k, b+(255-b)*k)<4.6){ k+=0.02; }
               return 'rgb('+Math.round(r+(255-r)*k)+','+Math.round(g+(255-g)*k)+','+Math.round(b+(255-b)*k)+')';
             };
+            // Per-side sort (same mechanics as the main table): validate the stored key
+            // against THIS side's columns, sort a copy, arrows/aria mark the active column.
+            var side = (vsSort && vsSort[sideIdx]) ? vsSort[sideIdx] : { key: 'equity', dir: 'desc' };
+            var lowActs = acts.map(function(a){ return String(a).toLowerCase(); });
+            var sortKey = (side.key === 'equity' || lowActs.indexOf(side.key) !== -1) ? side.key : 'equity';
+            var sortedBoards = boards.slice().sort(function(a, b){
+                var d = actionFreqValue(b, sortKey) - actionFreqValue(a, sortKey);
+                return side.dir === 'desc' ? d : -d;
+            });
+            var sortArrow = function(k){ return (sortKey === k) ? (side.dir === 'desc' ? ' ↓' : ' ↑') : ''; };
+            var ariaSort = function(k){ return (sortKey === k) ? (side.dir === 'desc' ? 'descending' : 'ascending') : 'none'; };
             var head = '<div class="ds-row ds-head"><div class="ds-board">Board</div><div class="ds-stratcell"><span>Strategy</span></div>';
-            acts.forEach(function(a){ head += '<div class="ds-cell ds-hcell" style="color:'+headerColor(a)+';">'+esc(displayActionLabel(a))+'</div>'; });
-            head += '<div class="ds-eq ds-hcell">Equity</div></div>';
+            acts.forEach(function(a){ var k = String(a).toLowerCase(); head += '<div class="ds-cell ds-hcell" role="button" tabindex="0" aria-sort="'+ariaSort(k)+'" title="Sort by '+esc(displayActionLabel(a))+'" onclick="setVsBoardSort('+sideIdx+',\''+k+'\')" onkeydown="if(event.key===\'Enter\')setVsBoardSort('+sideIdx+',\''+k+'\')" style="color:'+headerColor(a)+'; cursor:pointer;">'+esc(displayActionLabel(a))+sortArrow(k)+'</div>'; });
+            head += '<div class="ds-eq ds-hcell" role="button" tabindex="0" aria-sort="'+ariaSort('equity')+'" title="Sort by Equity" onclick="setVsBoardSort('+sideIdx+',\'equity\')" onkeydown="if(event.key===\'Enter\')setVsBoardSort('+sideIdx+',\'equity\')" style="cursor:pointer;">Equity'+sortArrow('equity')+'</div></div>';
             var rows = '';
-            boards.forEach(function(h){
+            sortedBoards.forEach(function(h){
               var strat = '<div class="ds-strat">';
               acts.forEach(function(a){ var p=Math.max(0,Math.min(100,freqOf(h,a))); if(p>0) strat += '<span style="width:'+p+'%;background:'+getActionColor(a)+';"></span>'; });
               strat += '</div>';
